@@ -128,7 +128,7 @@
         $contents .= "//It contains the class/file map for the autoloading Factory object\n";
         
         foreach ($classes as $class => $file) {
-            $contents .= "Factory::add('{$class}','{$file}');\n";
+            $contents .= "Factory::add('{$class}','".str_replace(ROOT,"",$file)."');\n";
         }
         
         fwrite($fp, $contents);
