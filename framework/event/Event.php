@@ -2,7 +2,6 @@
 /**
  * @author Linus Norton <linusnorton@gmail.com>
  *
- * @version 0.1
  * @package event
  *
  * An event encapsulates a given request

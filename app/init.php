@@ -1,6 +1,6 @@
 <?php
 
-Registry::set("SITE","http://yourwebsite.com/");
+Registry::set("SITE","http://home.linusnorton.co.uk/xframe");
 Registry::set("ADMIN","linusnorton@gmail.com");
 
 //Database settings
@@ -11,8 +11,8 @@ Registry::set("DATABASE_HOST", "");
 Registry::set("DATABASE_NAME", "");
 
 //set up the object factory
-require_once(ROOT."app/.classes.php");
+include(ROOT."app/.classes.php");
 //set up the events
-require_once(ROOT."app/events.php");
+include(ROOT."app/events.php");
 
 ?>

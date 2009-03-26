@@ -3,7 +3,6 @@
 /**
  * @author Linus Norton <linusnorton@gmail.com>
  *
- * @version 0.1
  * @package event
  *
  * This dispatcher stores a mapping of events to handlers and dispatches events to their correct handler

@@ -3,7 +3,6 @@
 /**
  * @author Linus Norton <linusnorton@gmail.com>
  *
- * @version 0.1
  * @package database
  *
  * This is essentially a singleton for a PDO database
@@ -12,7 +11,9 @@ class DB {
 	private static $instance = false;
 
 
-	/** this had to be done so you could use DB statically */
+	/**
+     * Create a PDO instance based on the settings in the registry
+     */
 	private static function connect() {
         $db = Registry::get("DATABASE_ENGINE");
 
@@ -31,6 +32,9 @@ class DB {
 
 	}
 
+    /**
+     * Return the current PDO database instance or create one if one does not exist
+     */
     public static function dbh() {
         if (!self::$instance instanceof PDO) {
             self::connect();
@@ -39,6 +43,11 @@ class DB {
         return self::$instance;
     }
 
+    /**
+     * Override the current instance with the given instance
+     *
+     * @param $newInstance PDO new PDO instance
+     */
     public static function setInstance(PDO $newInstance) {
         self::$instance = $newInstance;
     }
