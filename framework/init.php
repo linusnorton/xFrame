@@ -53,7 +53,7 @@ function custom_error($type, $msg, $filename, $line ) {
     }
 
     $string .= "</backtrace>";
-    $string .= "<session><![CDATA[".print_r($_SESSION,true)."]]></session>";
+    //$string .= "<session><![CDATA[".print_r($_SESSION,true)."]]></session>";
 	$string .= "</error>";
 
     //return the error do no more
@@ -93,12 +93,16 @@ function custom_exception($exception) {
  * @return [Object]
  */
 function __autoload($className) {
-    Factory::includeFile($className);
+    //if the factory does not have the class
+    if (!Factory::includeFile($className)) {
+        //rebuild the class/file mapping
+        Factory::rebuild();
+        //try to see if we have it now
+        Factory::includeFile($className);
+    }
 }
 
 //set up the object factory
-require_once(ROOT."framework/classes.php");
-//set up the events
-require_once(ROOT."framework/events.php");
+require_once(ROOT."framework/.classes.php");
 //setup the project
 require_once(ROOT."app/init.php");

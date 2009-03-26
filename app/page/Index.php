@@ -17,6 +17,8 @@ class Index {
         $record->delete();*/
         Page::addXML($xml);
         Page::$xsl = ROOT."app/xsl/index.xsl";
+
+        //Factory::rebuild();
     }
 
 }

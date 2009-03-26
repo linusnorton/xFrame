@@ -10,6 +10,11 @@
 class Registry {
     private static $settings = array();
 
+    /**
+     * This function gets a value from the registry
+     *
+     * @param $get mixed key of variable get from the registry
+     */
 	public static function get($key) {
 		if (!array_key_exists($key ,self::$settings)) {
 			return null;
@@ -18,6 +23,11 @@ class Registry {
 		return self::$settings[$key];
 	}
 
+    /**
+     * Sets a value in the registry
+     *
+     * @param key key of the variable to return
+     */
 	public static function set($key, $value) {
 		self::$settings[$key] = $value;
 	}

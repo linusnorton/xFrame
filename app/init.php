@@ -11,7 +11,7 @@ Registry::set("DATABASE_HOST", "localhost");
 Registry::set("DATABASE_NAME", "cmsve");
 
 //set up the object factory
-require_once(ROOT."app/classes.php");
+require_once(ROOT."app/.classes.php");
 //set up the events
 require_once(ROOT."app/events.php");
 
