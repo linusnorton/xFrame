@@ -49,14 +49,22 @@ class Page {
         $xml .= "</root>";
 
         $dom = new DOMDocument;
-        $dom->loadXML($xml);
+        if (!$dom->loadXML($xml)) {
+            throw new MalformedPage("There are errors in the xml file");
+        }
+
         $dom->xinclude();
 
         $xslt = new Xsltprocessor;
-        $xsl = $xslt->importStylesheet($xsl);
+        $xslt->importStylesheet($xsl);
         $xslt->setParameter(null, self::$parameters);
-        $transformation = $xslt->transformToXml($dom);
 
+        //unfortunately this doesn't capture any warnings generated whilst transforming
+        if (!$transformation = $xslt->transformToXml($dom)) {
+            throw new MalformedPage("There was an error tranforming the page");
+        }
+
+        //later I will make an option to turn this off
         if ($_GET["debug"] == "true") {
             echo "<strong>Execution Time: ";
             echo number_format(microtime(true) - $GLOBALS["executionTime"], 2);
