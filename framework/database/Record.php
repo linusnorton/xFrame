@@ -20,7 +20,7 @@ class Record implements XML {
      */
     public function __construct($schema, $id) {
         //check schema and id have been set to something
-        if (isset($schema[0]) || isset($id[0]) ) {
+        if (!isset($schema[0]) || !isset($id[0]) ) {
             return; //if not dont worry we may be populated manually
         }
 
