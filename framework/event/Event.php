@@ -94,7 +94,7 @@ class Event implements ArrayAccess {
      * @param $key string array key to check
      */
     public function offsetExists($key) {
-        return array_key_exists($key  $this->params);
+        return array_key_exists($key, $this->params);
     }
 
     /**
@@ -112,7 +112,7 @@ class Event implements ArrayAccess {
      * @param $key string key of the value to set
      * @param $value mixed value to set
      */
-    public function offsetGet($key, $value) {
+    public function offsetSet($key, $value) {
         return $this->params[$key] = $value;
     }
 
@@ -121,7 +121,7 @@ class Event implements ArrayAccess {
      *
      * @param $key string key to unset
      */
-    public function offsetGet($key) {
+    public function offsetUnset($key) {
         unset($this->params[$key]);
     }
 
