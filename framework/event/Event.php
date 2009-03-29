@@ -6,7 +6,7 @@
  *
  * An event encapsulates a given request
  */
-class Event {
+class Event implements ArrayAccess {
 	private $params = array();
     private $name;
 
@@ -33,7 +33,7 @@ class Event {
 	 * @param unknown_type $key
 	 * @return unknown
 	 */
-	function __get($key) {
+	public function __get($key) {
 		if (array_key_exists($key, $this->params)) {
 			return $this->params[$key];
         }
@@ -48,7 +48,7 @@ class Event {
 	 * @param unknown_type $key
 	 * @param unknown_type $value
 	 */
-	function __set($key, $value) {
+	public function __set($key, $value) {
 		$this->params[$key] = $value;
 	}
 
@@ -57,7 +57,7 @@ class Event {
 	 *
 	 * @return String
 	 */
-	function getName() {
+	public function getName() {
 		return $this->name;
 	}
 	/**
@@ -65,7 +65,7 @@ class Event {
 	 *
 	 * @param String $name
 	 */
-	function setName($name) {
+	public function setName($name) {
 		$this->name = $name;
 	}
 	/**
@@ -73,16 +73,58 @@ class Event {
 	 *
 	 * @return String
 	 */
-	function getParams() {
+	public function getParams() {
 		return $this->params;
 	}
 
     /**
      * Dispatches the event using Dispatcher::dispatch
      */
-    function dispatch() {
+    public function dispatch() {
         return Dispatcher::dispatch($this);
     }
+
+    ////////////////////////////////////////////////////////////////////
+    // ArrayAccess implementation
+    ////////////////////////////////////////////////////////////////////
+
+    /**
+     * check to see whether an array key exists
+     *
+     * @param $key string array key to check
+     */
+    public function offsetExists($key) {
+        return array_key_exists($key  $this->params);
+    }
+
+    /**
+     * return a value
+     *
+     * @param $key string value to return
+     */
+    public function offsetGet($key) {
+        return $this->params[$key];
+    }
+
+    /**
+     * set a value
+     *
+     * @param $key string key of the value to set
+     * @param $value mixed value to set
+     */
+    public function offsetGet($key, $value) {
+        return $this->params[$key] = $value;
+    }
+
+    /**
+     * unset a value from the array
+     *
+     * @param $key string key to unset
+     */
+    public function offsetGet($key) {
+        unset($this->params[$key]);
+    }
+
 }
 
 ?>
