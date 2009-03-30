@@ -60,7 +60,6 @@ class Record implements XML {
                 return new Record($tableName, $stmt->fetch(PDO::FETCH_ASSOC));
             }
             else {
-                echo $class.'<br />';
                 return call_user_func(array($class, 'create'), $stmt->fetch(PDO::FETCH_ASSOC));
                 //return call_user_func($class->create($stmt->fetch(PDO::FETCH_ASSOC));
             }
