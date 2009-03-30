@@ -9,50 +9,61 @@
  */
 class Record implements XML {
     private $attributes = array();
-    private $schema;
+    private $tableName;
 
     /**
      * Manually setup a record. Please remember that there is no sanity checking here
      * if you give it rubbish, there will be problems if you try to commit it to the db
      *
-     * @param $schema string table name
-     * @param $attributes array associative array containing the fields in the schema
+     * @param $tableName string table name
+     * @param $attributes array associative array containing the fields in the tableName
      */
-    public function __construct($schema = null, array $attributes = array()) {
-        //check schema has been set to something
-        if ($schema == null) {
+    public function __construct($tableName = null, array $attributes = array()) {
+        //check tableName has been set to something
+        if ($tableName == null) {
             return; //if not dont worry we may be populated manually
         }
         
-        $this->schema = addslashes($schema);
+        $this->tableName = addslashes($tableName);
         $this->attributes = $attributes;
     }
-    
+       
+    public static function create($schema, array $attributes = array()) {
+        return new Record($schema, $attributes);
+    }
+
     /**
-     * If a schema is constructed with a schema and id we will try to load the data from the database
+     * If a tableName is constructed with a tableName and id we will try to load the data from the database
      * If not we just create an empty record that can be populated using the setup() method
      *
-     * @param $schema string table name
+     * @param $tableName string table name
      * @param $id mixed unique identifier, assumed to be id!!
-     * @param $class class to instanciate (will be replaced with __STATIC__ in 5.3
+     * @param $class class to instanciate (will be replaced with __STATIC__ in 5.3)
      */
-    public static function load($schema, $id, $class = "Record") {
+    public static function load($tableName, $id, $class = "Record") {
 
         //lets try to get the data from the db
         try {
-            $stmt = DB::dbh()->prepare('SELECT * FROM `'.$schema.'` WHERE `id` = :id');
+            $stmt = DB::dbh()->prepare('SELECT * FROM `'.$tableName.'` WHERE `id` = :id');
             $stmt->bindValue(':id', $id);
             $stmt->execute();
 
             //if we dont get any records or we get multiple throw an exception
             if ($stmt->rowCount() === 0) {
-                throw new MissingRecord("Could not find a {$schema} where id = {$id}");
+                throw new MissingRecord("Could not find a {$tableName} where id = {$id}");
             }
             if ($stmt->rowCount() > 1) {
                 throw new MultipleRecord("Multiple records were matched");
             }
 
-            return new $class(addslashes($schema), $stmt->fetch(PDO::FETCH_ASSOC));
+            if ($class == "Record") {
+                return new Record($tableName, $stmt->fetch(PDO::FETCH_ASSOC));
+            }
+            else {
+                echo $class.'<br />';
+                return call_user_func(array($class, 'create'), $stmt->fetch(PDO::FETCH_ASSOC));
+                //return call_user_func($class->create($stmt->fetch(PDO::FETCH_ASSOC));
+            }
         }
         catch (PDOException $ex) {
             //there was some kind of database error
@@ -64,7 +75,7 @@ class Record implements XML {
      * This function is called before a save, it flatterns the record so it 
      * can inserted into the database
      */
-     public function flattern() {
+     public function flatten() {
          foreach($this->attributes as $key => $value) {
              if ($value instanceof Record) {
                 $this->attributes[$key] = $value->id;
@@ -76,9 +87,9 @@ class Record implements XML {
      * Commit this record to the db.
      */
     public function save() {
-        $this->flattern();
+        $this->flatten();
         //create the SQL string
-        $sql = "INSERT INTO `".$this->schema."` SET ";
+        $sql = "INSERT INTO `".$this->tableName."` SET ";
         $updateSql = " ON DUPLICATE KEY UPDATE ";
 
         foreach($this->attributes as $key => $value) {
@@ -102,7 +113,7 @@ class Record implements XML {
         }
 
         if ($this->id == "") {
-            $this->id = DB::dbh()->getLastInsertId();
+            $this->id = DB::dbh()->lastInsertId();
         }
     }
 
@@ -110,12 +121,12 @@ class Record implements XML {
      * Delete the record from the database
      */
     public function delete() {
-        if ($this->schema == "" || $this->id == "") {
+        if ($this->tableName == "" || $this->id == "") {
             throw new FrameEx("You cannot delete a record that isn't initialised");
         }
 
         try {
-            $stmt = DB::dbh()->prepare("DELETE FROM `".$this->schema."` WHERE id = :id");
+            $stmt = DB::dbh()->prepare("DELETE FROM `".$this->tableName."` WHERE id = :id");
             $stmt->bindValue(':id', $this->attributes["id"]);
             $stmt->execute();
         }
@@ -128,7 +139,7 @@ class Record implements XML {
      * Return an XML string representation of the record
      */
     public function getXML() {
-        $xml = "\n<record schema='{$this->schema}' id='{$this->attributes['id']}'>";
+        $xml = "\n<record table='{$this->tableName}' id='{$this->attributes['id']}'>";
 
         foreach ($this->attributes as $key => $value) {
             $xml .= "\n\t<{$key}>";
