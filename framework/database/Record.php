@@ -34,8 +34,9 @@ class Record implements XML {
      *
      * @param $schema string table name
      * @param $id mixed unique identifier, assumed to be id!!
+     * @param $class class to instanciate (will be replaced with __STATIC__ in 5.3
      */
-    public static function load($schema, $id) {
+    public static function load($schema, $id, $class = "Record") {
 
         //lets try to get the data from the db
         try {
@@ -51,7 +52,7 @@ class Record implements XML {
                 throw new MultipleRecord("Multiple records were matched");
             }
 
-            return new __CLASS__(addslashes($schema), $stmt->fetch(PDO::FETCH_ASSOC));
+            return new $class(addslashes($schema), $stmt->fetch(PDO::FETCH_ASSOC));
         }
         catch (PDOException $ex) {
             //there was some kind of database error
@@ -98,6 +99,10 @@ class Record implements XML {
         }
         catch (PDOException $ex) {
             throw new FrameEx($ex->getMessage());
+        }
+
+        if ($this->id == "") {
+            $this->id = DB::dbh()->getLastInsertId();
         }
     }
 
