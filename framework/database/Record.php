@@ -59,10 +59,23 @@ class Record implements XML {
         }
     }
 
+    /** 
+     * This function is called before a save, it flatterns the record so it 
+     * can inserted into the database
+     */
+     public function flattern() {
+         foreach($this->attributes as $key => $value) {
+             if ($value instanceof Record) {
+                $this->attributes[$key] = $value->id;
+             }
+         }
+     }
+
     /**
      * Commit this record to the db.
      */
     public function save() {
+        $this->flattern();
         //create the SQL string
         $sql = "INSERT INTO `".$this->schema."` SET ";
         $updateSql = " ON DUPLICATE KEY UPDATE ";
