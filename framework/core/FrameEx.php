@@ -42,7 +42,7 @@ class FrameEx extends Exception {
             $out .= "<step number='".$i++."' line='{$back['line']}' file='{$back['file']}' class='{$back['class']}' function='{$back['function']}' />";
 		}
         $out .= "</backtrace>";
-        $out .= "<session><![CDATA[".print_r($_SESSION,true)."]]></session>";
+        //$out .= "<session><![CDATA[".print_r($_SESSION,true)."]]></session>";
         $out .= "</exception>";
 
         //return the error do no more
