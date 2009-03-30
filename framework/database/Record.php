@@ -35,8 +35,7 @@ class Record implements XML {
      * @param $schema string table name
      * @param $id mixed unique identifier, assumed to be id!!
      */
-    public function load($schema, $id) {
-        $this->schema = addslashes($schema);
+    public static function load($schema, $id) {
 
         //lets try to get the data from the db
         try {
@@ -52,7 +51,7 @@ class Record implements XML {
                 throw new MultipleRecord("Multiple records were matched");
             }
 
-            $this->attributes = $stmt->fetch(PDO::FETCH_ASSOC);
+            return new __CLASS__(addslashes($schema), $stmt->fetch(PDO::FETCH_ASSOC));
         }
         catch (PDOException $ex) {
             //there was some kind of database error
