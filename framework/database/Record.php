@@ -12,18 +12,30 @@ class Record implements XML {
     private $schema;
 
     /**
+     * Manually setup a record. Please remember that there is no sanity checking here
+     * if you give it rubbish, there will be problems if you try to commit it to the db
+     *
+     * @param $schema string table name
+     * @param $attributes array associative array containing the fields in the schema
+     */
+    public function __construct($schema = null, array $attributes = array()) {
+        //check schema has been set to something
+        if ($schema == null) {
+            return; //if not dont worry we may be populated manually
+        }
+        
+        $this->schema = addslashes($schema);
+        $this->attributes = $attributes;
+    }
+    
+    /**
      * If a schema is constructed with a schema and id we will try to load the data from the database
      * If not we just create an empty record that can be populated using the setup() method
      *
      * @param $schema string table name
      * @param $id mixed unique identifier, assumed to be id!!
      */
-    public function __construct($schema, $id) {
-        //check schema and id have been set to something
-        if (!isset($schema[0]) || !isset($id[0]) ) {
-            return; //if not dont worry we may be populated manually
-        }
-
+    public function load($schema, $id) {
         $this->schema = addslashes($schema);
 
         //lets try to get the data from the db
@@ -46,18 +58,6 @@ class Record implements XML {
             //there was some kind of database error
             throw FrameEx($ex->getMessage());
         }
-    }
-
-    /**
-     * Manually setup a record. Please remember that there is no sanity checking here
-     * if you give it rubbish, there will be problems if you try to commit it to the db
-     *
-     * @param $schema string table name
-     * @param $attributes array associative array containing the fields in the schema
-     */
-    public function setup($schema, array $attributes) {
-        $this->schema = addslashes($schema);
-        $this->attributes = $attributes;
     }
 
     /**
