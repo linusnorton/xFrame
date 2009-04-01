@@ -55,7 +55,7 @@ class Record implements XML {
      *
      * @param $tableName string table name
      * @param $id mixed unique identifier, assumed to be id!!
-     * @param $class class to instanciate (will be replaced with __STATIC__ in 5.3)
+     * @param $class class to instantiate (will be replaced with __STATIC__ in 5.3)
      */
     public static function load($tableName, $id, $class = "Record") {
 
@@ -83,7 +83,7 @@ class Record implements XML {
         }
         catch (PDOException $ex) {
             //there was some kind of database error
-            throw FrameEx($ex->getMessage());
+            throw new FrameEx($ex->getMessage());
         }
     }
 
@@ -113,7 +113,7 @@ class Record implements XML {
     }
 
     /** 
-     * This function is called before a save, it flatterns the record so it 
+     * This function is called before a save, it flattens the record so it 
      * can inserted into the database
      */
      public function flatten() {
