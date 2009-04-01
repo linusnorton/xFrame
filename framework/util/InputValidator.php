@@ -13,7 +13,7 @@ class InputValidator {
      * 
      * @param $email string email address input to validate
      */ 
-    public static isEmail($email) {
+    public static function isEmail($email) {
         $pattern = '/^([\w\-\.]+)@((\[([0-9]{1,3}\.){3}[0-9]{1,3}\])|(([\w\-]+\.)+)([a-zA-Z]{2,4}))$/';
         return (preg_match($pattern, $email)) ? true : false;        
     }
@@ -25,7 +25,7 @@ class InputValidator {
      * @param $input string string to check
      * @param $length int length to check
      */
-    public static isLength($input, $length) {
+    public static function isLength($input, $length) {
         return (strlen($input) >= $length);
     }
 
@@ -34,8 +34,8 @@ class InputValidator {
      *
      * @param $input string string to check
      */
-    public static notEmpty($input) {
-        return isset($input[0]);
+    public static function isEmpty($input) {
+        return !isset($input[0]);
     }
 
     /**
@@ -43,9 +43,19 @@ class InputValidator {
      *
      * @param $input string string to check
      */
-    public static notNull($input) {
+    public static function notNull($input) {
         return $input === null;
     }
+
+    /**
+     * Check to see if the string is a sha1 hash
+     *
+     * @param $input string string to check
+     */
+    public static function isSha1($input) {
+        return preg_match("/^[a-f0-9]{40}$/", strtolower($input));
+    }
+
 
 }
 
