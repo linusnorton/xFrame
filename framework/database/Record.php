@@ -206,6 +206,13 @@ class Record implements XML {
     }
 
     /**
+     * @return The name of the database table that the record maps to.
+     */
+    public function getTableName() {
+        return $this->tableName;
+    }
+
+    /**
      * Make all the attributes public using this getter
      */
     public function __get($key) {
