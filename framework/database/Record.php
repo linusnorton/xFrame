@@ -23,11 +23,11 @@ class Record implements XML {
         if ($tableName == null) {
             return; //if not dont worry we may be populated manually
         }
-        
+
         $this->tableName = addslashes($tableName);
         $this->attributes = $attributes;
     }
-       
+
     /**
      * Instantiate new record from the given associative array. This method
      * should take a flat packed array (usually from a db query) and map
@@ -112,13 +112,24 @@ class Record implements XML {
         return $records;
     }
 
-    /** 
-     * This function is called before a save, it flattens the record so it 
+    /**
+     * This function is called before a save, it flattens the record so it
      * can inserted into the database
+     *
+     * @param $cascade boolean save related records
      */
-     public function flatten() {
-         foreach($this->attributes as $key => $value) {
-             if ($value instanceof Record) {
+    public function flatten($cascade) {
+
+        //foreach attribute
+        foreach($this->attributes as $key => $value) {
+            //if i am also a record
+            if ($value instanceof Record) {
+                //check if I need to cascade the save
+                if ($cascade || $value->id == "") {
+                    $value->save($cascade); //this could throw an error
+                }
+
+                //and store my id
                 $this->attributes[$key] = $value->id;
              }
          }
@@ -126,10 +137,12 @@ class Record implements XML {
 
     /**
      * Commit this record to the db.
+     *
+     * @param $cascade boolean save related records as well
      */
-    public function save() {
+    public function save($cascade = false) {
         //before we save convert objects to ids
-        $this->flatten();
+        $this->flatten($cascade);
 
         //create the SQL string
         $sql = "INSERT INTO `".$this->tableName."` SET ";
