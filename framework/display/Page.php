@@ -50,7 +50,7 @@ class Page {
 
         $dom = new DOMDocument;
         if (!$dom->loadXML($xml)) {
-            throw new MalformedPage("There are errors in the xml file");
+            throw new MalformedPage("There was an error inside the xml:\n". htmlentities($xml));
         }
 
         $dom->xinclude();

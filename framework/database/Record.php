@@ -28,8 +28,25 @@ class Record implements XML {
         $this->attributes = $attributes;
     }
        
-    public static function create($schema, array $attributes = array()) {
-        return new Record($schema, $attributes);
+    /**
+     * Instantiate new record from the given associative array. This method
+     * should take a flat packed array (usually from a db query) and map
+     * those values to the constructor. For the default implementation this
+     * is a simple copy but you're implementation might look something like
+     *
+     * public static function create(array $attributes) {
+     *     $customer = Customer::load($attributes["customer_id"]);
+     *      return new Address($attributes["address1"], $attributes["city"], $attribute["country"], $customer);
+     *
+     * }
+     *
+     * This means that you can have a constructor for Address that type checks the Customer input
+     *
+     * @param $tableName string name of table
+     * @param $attributes array associative array of fields loaded from db
+     */
+    public static function create($tableName, array $attributes = array()) {
+        return new Record($tableName, $attributes);
     }
 
     /**
@@ -44,7 +61,7 @@ class Record implements XML {
 
         //lets try to get the data from the db
         try {
-            $stmt = DB::dbh()->prepare('SELECT * FROM `'.$tableName.'` WHERE `id` = :id');
+            $stmt = DB::dbh()->prepare('SELECT * FROM `'.addslashes($tableName).'` WHERE `id` = :id');
             $stmt->bindValue(':id', $id);
             $stmt->execute();
 
@@ -60,14 +77,39 @@ class Record implements XML {
                 return new Record($tableName, $stmt->fetch(PDO::FETCH_ASSOC));
             }
             else {
+                //call the given object's create method, this will be replaced with __STATIC__
                 return call_user_func(array($class, 'create'), $stmt->fetch(PDO::FETCH_ASSOC));
-                //return call_user_func($class->create($stmt->fetch(PDO::FETCH_ASSOC));
             }
         }
         catch (PDOException $ex) {
             //there was some kind of database error
             throw FrameEx($ex->getMessage());
         }
+    }
+
+    /**
+     * Load a whole table of results and return an array of objects of type $class
+     *
+     * @param $tableName string table to load
+     * @param $class string class to instantiate as records
+     */
+    public static function loadAll($tableName, $class = "Record") {
+        $records = array();
+        $results = DB::dbh()->query("SELECT * FROM ".addslashes($tableName));
+
+        if ($class == "Record") {
+            while ($row = $results->fetch(PDO::FETCH_ASSOC)) {
+                $records[] = new Record($tableName, $row);
+            }
+        }
+        else {
+            while ($row = $results->fetch(PDO::FETCH_ASSOC)) {
+                //call the given object's create method, this will be replaced with __STATIC__
+                $records[] = call_user_func(array($class, 'create'), $row);
+            }
+        }
+
+        return $records;
     }
 
     /** 
@@ -86,7 +128,9 @@ class Record implements XML {
      * Commit this record to the db.
      */
     public function save() {
+        //before we save convert objects to ids
         $this->flatten();
+
         //create the SQL string
         $sql = "INSERT INTO `".$this->tableName."` SET ";
         $updateSql = " ON DUPLICATE KEY UPDATE ";

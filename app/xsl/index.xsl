@@ -3,10 +3,9 @@
   version="1.0"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-exclude-result-prefixes="xhtml xsl">
+exclude-result-prefixes="xsl">
 
-<xsl:output method="xml" version="1.0" encoding="UTF-8" charset="utf-8" doctype-public="-//W3C//DTD XHTML 1.1//EN"
-doctsystem="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" indent="yes" />
+<xsl:output method="xml" version="1.0" encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.1//EN" indent="yes" />
 
 <xsl:include href="error.xsl"/>
 
