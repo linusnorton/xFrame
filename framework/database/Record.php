@@ -213,6 +213,13 @@ class Record implements XML {
     }
 
     /**
+     * @return An associative array that maps field names to values.
+     */
+    public function getAttributes() {
+        return $this->attributes;
+    }
+
+    /**
      * Make all the attributes public using this getter
      */
     public function __get($key) {
