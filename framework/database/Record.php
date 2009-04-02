@@ -195,7 +195,7 @@ class Record implements XML {
         }
         catch (PDOException $ex) {
             if ($transactional) {
-                DB::dbh()->commit();
+                DB::dbh()->rollBack();
             }
             throw new FrameEx($ex->getMessage());
         }
