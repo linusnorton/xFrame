@@ -136,8 +136,8 @@ class Record implements XML {
             }
             else if ($cascade && is_array($value)) {
                foreach ($value as $item) {
-                   if ($item instanceof Record && !array_key_exists($value->hash(), $saveGraph)) {
-                       $saveGraph[$value->hash()] = true;
+                   if ($item instanceof Record && !array_key_exists($item->hash(), $saveGraph)) {
+                       $saveGraph[$item->hash()] = true;
                        $item->save(true, $saveGraph);
                    }
                }
@@ -273,7 +273,7 @@ class Record implements XML {
      * @return A hash of the record consisting of the the table name and id
      */
     public function hash() {
-        return $value->getTableName().$value->id;
+        return $this->tableName.$this->id;
     }
     /**
      * Make all the attributes public using this getter
