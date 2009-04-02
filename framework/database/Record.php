@@ -94,8 +94,32 @@ class Record implements XML {
      * @param $class string class to instantiate as records
      */
     public static function loadAll($tableName, $class = "Record") {
+        return self::loadMatching($tableName, array(), $class);
+    }
+
+
+    /**
+     * Loads all records that match the fields specified in the associative array
+     * $criteria.  This allows for simple equality matching of fields but not for
+     * complex comparisons such as less than, greater than, etc.
+     *
+     * @param $tableName string table to load
+     * @param $criteria array A mapping from column names to values.  The returned records will
+     * match all specified columns. 
+     * @param $class string class to instantiate as records
+     */
+    public static function loadMatching($tableName, array $criteria = array(), $class = "Record") {
         $records = array();
-        $results = DB::dbh()->query("SELECT * FROM ".addslashes($tableName));
+        $sql = "SELECT * FROM ".addslashes($tableName);
+        if (sizeof($criteria) > 0) {
+            $sql.=' WHERE ';
+            $where = '';
+            foreach($criteria as $column => $value) {
+                $where .= ($where != '' ? ' AND ' : '').addslashes($column).'='.addslashes($value);
+            }
+            $sql.=$where;
+        }
+        $results = DB::dbh()->query($sql);
 
         if ($class == "Record") {
             while ($row = $results->fetch(PDO::FETCH_ASSOC)) {
