@@ -114,11 +114,11 @@ class Record implements XML {
 
     /**
      * This function is called before a save, it flattens the record so it
-     * can inserted into the database
+     * can inserted into the database. 
      *
      * @param $cascade boolean save related records
      */
-    private function flatten($cascade) {
+    private function flatten($cascade, array &$saveGraph = array()) {
         $flatAttributes = array();
 
         //foreach attribute
@@ -126,8 +126,9 @@ class Record implements XML {
             //if i am also a record
             if ($value instanceof Record) {
                 //check if I need to cascade the save
-                if ($cascade) {
-                    $value->save($cascade); //this could throw an error
+                if ($cascade && !array_key_exists($value->hash(), $saveGraph)) {
+                    $saveGraph[$value->hash()] = true;
+                    $value->save($cascade, $saveGraph); //this could throw an error
                 }
 
                 //and store my id
@@ -135,8 +136,9 @@ class Record implements XML {
             }
             else if ($cascade && is_array($value)) {
                foreach ($value as $item) {
-                   if ($item instanceof Record) {
-                       $item->save(true);
+                   if ($item instanceof Record && !array_key_exists($value->hash(), $saveGraph)) {
+                       $saveGraph[$value->hash()] = true;
+                       $item->save(true, $saveGraph);
                    }
                }
             }
@@ -153,7 +155,7 @@ class Record implements XML {
      *
      * @param $cascade boolean save related records as well
      */
-    public function save($cascade = false) {
+    public function save($cascade = false, array &$saveGraph = array()) {
         try {
             $transactional = DB::dbh()->beginTransaction();
         }
@@ -163,7 +165,7 @@ class Record implements XML {
 
         try {
             //before we save convert objects to ids
-            $flatAttributes = $this->flatten($cascade);
+            $flatAttributes = $this->flatten($cascade, $saveGraph);
 
             //create the SQL string
             $sql = "INSERT INTO `".$this->tableName."` SET ";
@@ -267,6 +269,12 @@ class Record implements XML {
         return $this->attributes;
     }
 
+    /**
+     * @return A hash of the record consisting of the the table name and id
+     */
+    public function hash() {
+        return $value->getTableName().$value->id;
+    }
     /**
      * Make all the attributes public using this getter
      */
