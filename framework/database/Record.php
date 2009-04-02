@@ -50,7 +50,7 @@ class Record implements XML {
     }
 
     /**
-     * If a tableName is constructed with a tableName and id we will try to load the data from the database
+     * If a Record is constructed with a tableName and id we will try to load the data from the database
      * If not we just create an empty record that can be populated using the setup() method
      *
      * @param $tableName string table name
@@ -114,7 +114,7 @@ class Record implements XML {
 
     /**
      * This function is called before a save, it flattens the record so it
-     * can inserted into the database. 
+     * can be inserted into the database. 
      *
      * @param $cascade boolean save related records
      */
@@ -166,18 +166,7 @@ class Record implements XML {
             //before we save convert objects to ids
             $flatAttributes = $this->flatten($cascade, $saveGraph);
 
-            //create the SQL string
-            $sql = "INSERT INTO `".$this->tableName."` SET ";
-            $updateSql = " ON DUPLICATE KEY UPDATE ";
-
-            foreach($flatAttributes as $key => $value) {
-                $fields .= " `{$key}` = :".$key.",";
-            }
-
-            $fields = substr($fields,0 , -1);
-            $sql = $sql.$fields.$updateSql.$fields; //combine the sql parts
-            echo $sql;
-            $stmt = DB::dbh()->prepare($sql);
+            $stmt = DB::dbh()->prepare($this->createSaveSQL($flatAttributes));
 
             foreach($flatAttributes as $key => $value) {
                 $stmt->bindValue(':'.$key, $value);
@@ -207,6 +196,24 @@ class Record implements XML {
             }
             throw new FrameEx($ex->getMessage());
         }
+    }
+
+    private function createSaveSQL($flatAttributes) {
+        if (empty($flatAttributes)) { // Special case for unsaved records with no explicitly set fields.
+            $sql = "INSERT INTO `".$this->tableName."` SET `id`=DEFAULT";
+        }
+        else {
+            $sql = "INSERT INTO `".$this->tableName."` SET ";
+            $updateSql = " ON DUPLICATE KEY UPDATE ";
+
+            foreach($flatAttributes as $key => $value) {
+                $fields .= " `{$key}` = :".$key.",";
+            }
+
+            $fields = substr($fields,0 , -1);
+            $sql = $sql.$fields.$updateSql.$fields; //combine the sql parts
+        }
+        return $sql;
     }
 
     /**
