@@ -58,33 +58,46 @@ class Record implements XML {
      * @param $class class to instantiate (will be replaced with __STATIC__ in 5.3)
      */
     public static function load($tableName, $id, $class = "Record") {
+        $attributes = false;
+        
+        //if we're not caching or the record is not in the cache
+        if (Registry::get("CACHE") != "on" || false === ($attributes = Cache::mch()->get($tableName.$id))) {
+            //lets try to get the data from the db
+            try {
+                $stmt = DB::dbh()->prepare('SELECT * FROM `'.addslashes($tableName).'` WHERE `id` = :id');
+                $stmt->bindValue(':id', $id);
+                $stmt->execute();
 
-        //lets try to get the data from the db
-        try {
-            $stmt = DB::dbh()->prepare('SELECT * FROM `'.addslashes($tableName).'` WHERE `id` = :id');
-            $stmt->bindValue(':id', $id);
-            $stmt->execute();
+                //if we dont get any records or we get multiple throw an exception
+                if ($stmt->rowCount() === 0) {
+                    throw new MissingRecord("Could not find a {$tableName} where id = {$id}");
+                }
+                if ($stmt->rowCount() > 1) {
+                    throw new MultipleRecord("Multiple records were matched");
+                }
+            }
+            catch (PDOException $ex) {
+                //there was some kind of database error
+                throw new FrameEx($ex->getMessage());
+            }
 
-            //if we dont get any records or we get multiple throw an exception
-            if ($stmt->rowCount() === 0) {
-                throw new MissingRecord("Could not find a {$tableName} where id = {$id}");
-            }
-            if ($stmt->rowCount() > 1) {
-                throw new MultipleRecord("Multiple records were matched");
-            }
+            $attributes = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($class == "Record") {
-                return new Record($tableName, $stmt->fetch(PDO::FETCH_ASSOC));
-            }
-            else {
-                //call the given object's create method, this will be replaced with __STATIC__
-                return call_user_func(array($class, 'create'), $stmt->fetch(PDO::FETCH_ASSOC));
+            //if we're caching, put it in
+            if (Registry::get("CACHE") == "on") {
+                Cache::mch()->set($tableName.$id, $attributes, false, 0);
             }
         }
-        catch (PDOException $ex) {
-            //there was some kind of database error
-            throw new FrameEx($ex->getMessage());
+
+        if ($class == "Record") {
+            return new Record($tableName, $attributes);
         }
+        else {
+            //call the given object's create method, this will be replaced with __STATIC__
+            return call_user_func(array($class, 'create'), $attributes);
+        }
+
+    
     }
 
     /**
@@ -133,11 +146,17 @@ class Record implements XML {
 
         if ($class == "Record") {
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                if (Registry::get("CACHE") == "on") {
+                    Cache::mch()->set($tableName.$row["id"], $row, false, 0);
+                }
                 $records[] = new Record($tableName, $row);
             }
         }
         else {
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                if (Registry::get("CACHE") == "on") {
+                    Cache::mch()->set($tableName.$row["id"], $row, false, 0);
+                }
                 //call the given object's create method, this will be replaced with __STATIC__
                 $records[] = call_user_func(array($class, 'create'), $row);
             }
@@ -230,6 +249,10 @@ class Record implements XML {
             }
             throw new FrameEx($ex->getMessage());
         }
+
+        if (Registry::get("CACHE") == "on") {
+            Cache::mch()->delete($this->tableName.$this->id);
+        }
     }
 
     private function createSaveSQL($flatAttributes) {
@@ -265,6 +288,10 @@ class Record implements XML {
         }
         catch (PDOException $ex) {
             throw new FrameEx($ex->getMessage());
+        }
+
+        if (Registry::get("CACHE") == "on") {
+            Cache::mch()->delete($this->tableName.$this->id);
         }
     }
 
