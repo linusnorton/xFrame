@@ -118,7 +118,7 @@ class Record implements XML {
      *
      * @param $cascade boolean save related records
      */
-    public function flatten($cascade) {
+    private function flatten($cascade) {
         $flatAttributes = array();
 
         //foreach attribute
@@ -147,21 +147,28 @@ class Record implements XML {
      * @param $cascade boolean save related records as well
      */
     public function save($cascade = false) {
-        //before we save convert objects to ids
-        $flatAttributes = $this->flatten($cascade);
-
-        //create the SQL string
-        $sql = "INSERT INTO `".$this->tableName."` SET ";
-        $updateSql = " ON DUPLICATE KEY UPDATE ";
-
-        foreach($flatAttributes as $key => $value) {
-            $fields .= " `{$key}` = :".$key.",";
+        try {
+            $transactional = DB::dbh()->beginTransaction();
+        }
+        catch (PDOException $ex) { // Thrown if there is already a transaction in progress.
+            $transactional = false;
         }
 
-        $fields = substr($fields,0 , -1);
-        $sql = $sql.$fields.$updateSql.$fields; //combine the sql parts
-
         try {
+            //before we save convert objects to ids
+            $flatAttributes = $this->flatten($cascade);
+
+            //create the SQL string
+            $sql = "INSERT INTO `".$this->tableName."` SET ";
+            $updateSql = " ON DUPLICATE KEY UPDATE ";
+
+            foreach($flatAttributes as $key => $value) {
+                $fields .= " `{$key}` = :".$key.",";
+            }
+
+            $fields = substr($fields,0 , -1);
+            $sql = $sql.$fields.$updateSql.$fields; //combine the sql parts
+
             $stmt = DB::dbh()->prepare($sql);
 
             foreach($flatAttributes as $key => $value) {
@@ -169,13 +176,28 @@ class Record implements XML {
             }
 
             $stmt->execute();
+
+            // Have to read the insert ID before committing the transaction, even though
+            // we only want to set it after a successful commit.
+            $insertId = DB::dbh()->lastInsertId();
+
+            if ($transactional) {
+                $success = DB::dbh()->commit();
+                if (!$success) {
+                    throw new FrameEx('Failed to commit transaction.');
+                }
+            }
+            
+            // Set the ID assigned for this record.
+            if ($this->id == "") {
+                $this->id = $insertId;
+            }
         }
         catch (PDOException $ex) {
+            if ($transactional) {
+                DB::dbh()->commit();
+            }
             throw new FrameEx($ex->getMessage());
-        }
-
-        if ($this->id == "") {
-            $this->id = DB::dbh()->lastInsertId();
         }
     }
 
