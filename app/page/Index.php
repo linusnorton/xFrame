@@ -3,9 +3,9 @@
 class Index {
 
     /**
-     * This class provides the implementation for the Index event as specified 
+     * This class provides the implementation for the Index event as specified
      * in the app/events.php file
-     * 
+     *
      * @param $e Event encapsulation of the request variables
      */
     public static function run(Event $e) {
@@ -18,22 +18,22 @@ class Index {
             `name` VARCHAR(255),
             PRIMARY KEY(id)
         );
-        
+
         INSERT INTO test_table VALUES (1,"Linus");
         INSERT INTO test_table VALUES (2,"Jason");
         INSERT INTO test_table VALUES (3,"Dan");
         INSERT INTO test_table VALUES (4,"John");
         INSERT INTO test_table VALUES (5,"Jon");
         INSERT INTO test_table VALUES (6,"Jez");
-        */
 
-        //Example 1: load one record 
+
+        //Example 1: load one record
         $record = Record::load("test_table", 1);
         Page::addXML($record->getXML());
 
         //Example 2: load entire table
         $records = Record::loadAll("test_table");
-        
+
         foreach ($records as $record) {
             Page::addXML($record->getXML());
         }
@@ -49,7 +49,7 @@ class Index {
             //create function you wouldnt need PDO::FETCH_ASSOC
             $record = Record::create("test_table", $row);
             Page::addXML($record->getXML());
-        }   
+        }
 
         //Example 4: modifying a record
         $record = Record::load("test_table", 1);
@@ -76,7 +76,7 @@ class Index {
         $record = Record::load("test_table", 1);
         $record->fieldThatIsNotInDB = "Ha, this isn't in the database";
         Page::addXML($record->getXML());
-
+        */
         Page::$xsl = ROOT."app/xsl/index.xsl";
     }
 

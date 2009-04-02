@@ -16,7 +16,7 @@ try {
 
     //check to see if we can get the cache version
     if (Dispatcher::getCacheLength($event) !== false && $_GET["cache"] != "no" && Registry::get("CACHE") == "on") {
-        $page = Cache::mch()->get($event->hash()); 
+        $page = Cache::mch()->get($event->hash());
     }
 
     if ($page === false) {
@@ -28,7 +28,7 @@ try {
         }
     }
     else {
-        $page .= "<!--This page was generated from the cache-->";
+        $cacheMessage = "from the cache";
     }
 
     //output the page
@@ -40,5 +40,7 @@ catch (FrameEx $ex) {
     //replace the xslt with the standard errors.xsl and display the page
     echo Page::displayErrors();
 }
+
+echo "<!-- Page executed in: ".number_format(microtime(true) - $GLOBALS["executionTime"], 5)." secs {$cacheMessage}-->";
 
 ?>
