@@ -127,7 +127,6 @@ class Record implements XML {
             if ($value instanceof Record) {
                 //check if I need to cascade the save
                 if ($cascade && !array_key_exists($value->hash(), $saveGraph)) {
-                    $saveGraph[$value->hash()] = true;
                     $value->save($cascade, $saveGraph); //this could throw an error
                 }
 
@@ -136,8 +135,7 @@ class Record implements XML {
             }
             else if ($cascade && is_array($value)) {
                foreach ($value as $item) {
-                   if ($item instanceof Record && !array_key_exists($item->hash(), $saveGraph)) {
-                       $saveGraph[$item->hash()] = true;
+                   if ($item instanceof Record && !array_key_exists($item->hash(), $saveGraph)) {                       
                        $item->save(true, $saveGraph);
                    }
                }
@@ -156,6 +154,7 @@ class Record implements XML {
      * @param $cascade boolean save related records as well
      */
     public function save($cascade = false, array &$saveGraph = array()) {
+        $saveGraph[$this->hash()] = true;
         try {
             $transactional = DB::dbh()->beginTransaction();
         }
@@ -177,7 +176,7 @@ class Record implements XML {
 
             $fields = substr($fields,0 , -1);
             $sql = $sql.$fields.$updateSql.$fields; //combine the sql parts
-
+            echo $sql;
             $stmt = DB::dbh()->prepare($sql);
 
             foreach($flatAttributes as $key => $value) {
@@ -273,7 +272,7 @@ class Record implements XML {
      * @return A hash of the record consisting of the the table name and id
      */
     public function hash() {
-        return $this->tableName.$this->id;
+        return spl_object_hash($this);
     }
     /**
      * Make all the attributes public using this getter
