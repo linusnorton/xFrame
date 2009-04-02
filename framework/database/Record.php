@@ -126,12 +126,19 @@ class Record implements XML {
             //if i am also a record
             if ($value instanceof Record) {
                 //check if I need to cascade the save
-                if ($cascade || $value->id == "") {
+                if ($cascade) {
                     $value->save($cascade); //this could throw an error
                 }
 
                 //and store my id
                 $flatAttributes[$key] = $value->id;
+            }
+            else if ($cascade && is_array($value)) {
+               foreach ($value as $item) {
+                   if ($item instanceof Record) {
+                       $item->save(true);
+                   }
+               }
             }
             else {
                 $flatAttributes[$key] = $value;
