@@ -119,6 +119,7 @@ class Record implements XML {
      * @param $cascade boolean save related records
      */
     public function flatten($cascade) {
+        $flatAttributes = array();
 
         //foreach attribute
         foreach($this->attributes as $key => $value) {
@@ -130,9 +131,14 @@ class Record implements XML {
                 }
 
                 //and store my id
-                $this->attributes[$key] = $value->id;
-             }
-         }
+                $flatAttributes[$key] = $value->id;
+            }
+            else {
+                $flatAttributes[$key] = $value;
+            }
+        }
+
+        return $flatAttributes;
      }
 
     /**
@@ -142,13 +148,13 @@ class Record implements XML {
      */
     public function save($cascade = false) {
         //before we save convert objects to ids
-        $this->flatten($cascade);
+        $flatAttributes = $this->flatten($cascade);
 
         //create the SQL string
         $sql = "INSERT INTO `".$this->tableName."` SET ";
         $updateSql = " ON DUPLICATE KEY UPDATE ";
 
-        foreach($this->attributes as $key => $value) {
+        foreach($flatAttributes as $key => $value) {
             $fields .= " `{$key}` = :".$key.",";
         }
 
@@ -158,7 +164,7 @@ class Record implements XML {
         try {
             $stmt = DB::dbh()->prepare($sql);
 
-            foreach($this->attributes as $key => $value) {
+            foreach($flatAttributes as $key => $value) {
                 $stmt->bindValue(':'.$key, $value);
             }
 
