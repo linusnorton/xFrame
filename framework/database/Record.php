@@ -118,10 +118,9 @@ class Record implements XML {
 
             //generate the sql string
             foreach($criteria as $column => $value) {
-                $sql.= "AND `{$column}` = :".$column;
+                $sql.= " AND `{$column}` = :".$column;
             }
         }
-
 
         $stmt = DB::dbh()->prepare($sql);
 
@@ -130,15 +129,15 @@ class Record implements XML {
             $stmt->bindValue(':'.$column, $value);
         }
 
-        $results = DB::dbh()->query($sql);
+        $stmt->execute();
 
         if ($class == "Record") {
-            while ($row = $results->fetch(PDO::FETCH_ASSOC)) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $records[] = new Record($tableName, $row);
             }
         }
         else {
-            while ($row = $results->fetch(PDO::FETCH_ASSOC)) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 //call the given object's create method, this will be replaced with __STATIC__
                 $records[] = call_user_func(array($class, 'create'), $row);
             }
