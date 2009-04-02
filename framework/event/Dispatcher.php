@@ -35,9 +35,23 @@ class Dispatcher {
 	 * @param String $class
 	 * @param String $method
 	 */
-	static function addListener($event, $class, $method) {
-	    self::$listeners[$event] = array("class" => $class, "method" => $method);
+	static function addListener($event, $class, $method, $cacheLength = false) {
+	    self::$listeners[$event] = array("class" => $class, "method" => $method, "cacheLength" => $cacheLength);
 	}
+
+    /**
+     * get the cache length for the given event
+     *
+     * @param $event Event to get the cache length for
+     */
+    static function getCacheLength(Event $e) {
+	    if (array_key_exists($e->getName(), self::$listeners)) {
+	        return self::$listeners[$e->getName()]["cacheLength"];;
+        }
+	    else {
+	       return false;
+        }
+    }
 }
 
 ?>

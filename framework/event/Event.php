@@ -84,6 +84,13 @@ class Event implements ArrayAccess {
         return Dispatcher::dispatch($this);
     }
 
+    /**
+     * Return a hash of the Event
+     */
+    public function hash() {
+        return md5($this->name.implode($this->params).implode(array_keys($this->params)));
+    }
+
     ////////////////////////////////////////////////////////////////////
     // ArrayAccess implementation
     ////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 
 <xsl:include href="error.xsl"/>
 
-<xsl:output method="html" encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.1//EN" />
+<xsl:output doctype-public="-//W3C//DTD XHTML 1.1//EN" doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"/>
 <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>

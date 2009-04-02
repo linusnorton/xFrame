@@ -3,7 +3,8 @@
 /////////////////////////////////////////////////////////////////////////////////////
 // Setup dispatcher methods here                                                   //
 /////////////////////////////////////////////////////////////////////////////////////
-Dispatcher::addListener("Index", "Index", "run"); //n/a
+//Dispatcher::addListener("Index", "Index", "run"); 
+Dispatcher::addListener("Index", "Index", "run", 60); //n/a
 
 
 ?>

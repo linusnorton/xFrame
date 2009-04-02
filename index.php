@@ -12,16 +12,33 @@ $request = ($request == '' || $request == '/') ? 'Index' : $request;
 try {
     //generate and dispatch the event
     $event = new Event($request, $_REQUEST);
-    $event->dispatch();
+    $page = false;
+
+    //check to see if we can get the cache version
+    if (Dispatcher::getCacheLength($event) !== false && $_GET["cache"] != "no" && Registry::get("CACHE") == "on") {
+        $page = Cache::mch()->get($event->hash()); 
+    }
+
+    if ($page === false) {
+        $event->dispatch();
+        $page = Page::build();
+
+        if (false !== ($cacheLength = Dispatcher::getCacheLength($event))) {
+            Cache::mch()->set($event->hash(), $page, false, $cacheLength);
+        }
+    }
+    else {
+        $page .= "<!--This page was generated from the cache-->";
+    }
 
     //output the page
-    Page::display();
+    echo $page;
 }
 catch (FrameEx $ex) {
     //this exception can be UnknownEvent MalformedPage or just an uncaught FrameEx
     $ex->output();
     //replace the xslt with the standard errors.xsl and display the page
-    Page::displayErrors();
+    echo Page::displayErrors();
 }
 
 ?>

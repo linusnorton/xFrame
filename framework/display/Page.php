@@ -15,9 +15,9 @@ class Page {
     public static $xml = "";
 
     /**
-     * Transform the XSL and XML and echo out the result
+     * Transform the XSL and XML and return out the result
      */
-    public static function display() {
+    public static function build() {
         $xsl = new DomDocument;
 
         //if the xsl has not been set or has been set incorrectly
@@ -66,20 +66,21 @@ class Page {
 
         //later I will make an option to turn this off
         if ($_GET["debug"] == "true") {
-            echo "<strong>Execution Time: ";
-            echo number_format(microtime(true) - $GLOBALS["executionTime"], 2);
-            echo " secs</strong><br /><strong>Page XML</strong><br /><pre>";
+            $return = "<strong>Execution Time: ";
+            $return .= number_format(microtime(true) - $GLOBALS["executionTime"], 2);
+            $return .=" secs</strong><br /><strong>Page XML</strong><br /><pre>";
             $xml = str_replace("<", "&lt;" , $xml);
             $xml = str_replace(">", "&gt;" , $xml);
-            echo $xml;
-            echo "</pre>";
+            $return .= $xml;
+            $return .= "</pre>";
+            return $return;
         }
         else if ($_GET["debug"] == "xml" ) {
             header("content-type: text/xml");
-            die($xml);
+            return $xml;
         }
         else {
-            echo $transformation;
+            return $transformation;
         }
 
     }
@@ -140,6 +141,6 @@ class Page {
         self::$parameters = array();
         self::$xsl = ROOT."app/xsl/error.xsl";
 
-        self::display();
+        return self::build();
     }
 }
