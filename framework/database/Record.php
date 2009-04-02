@@ -111,14 +111,25 @@ class Record implements XML {
     public static function loadMatching($tableName, array $criteria = array(), $class = "Record") {
         $records = array();
         $sql = "SELECT * FROM ".addslashes($tableName);
-        if (sizeof($criteria) > 0) {
-            $sql.=' WHERE ';
-            $where = '';
+        
+        //if we have criteria
+        if (count($criteria) > 0) {
+            $sql .= ' WHERE 1';
+
+            //generate the sql string
             foreach($criteria as $column => $value) {
-                $where .= ($where != '' ? ' AND ' : '').addslashes($column).'='.addslashes($value);
+                $sql.= "AND `{$column}` = :".$column;
             }
-            $sql.=$where;
         }
+
+
+        $stmt = DB::dbh()->prepare($sql);
+
+        //bind values
+        foreach($criteria as $column => $value) {
+            $stmt->bindValue(':'.$column, $value);
+        }
+
         $results = DB::dbh()->query($sql);
 
         if ($class == "Record") {
