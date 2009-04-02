@@ -23,7 +23,7 @@ try {
         $event->dispatch();
         $page = Page::build();
 
-        if (false !== ($cacheLength = Dispatcher::getCacheLength($event))) {
+        if (false !== ($cacheLength = Dispatcher::getCacheLength($event)) && Registry::get("CACHE") == "on") {
             Cache::mch()->set($event->hash(), $page, false, $cacheLength);
         }
     }
