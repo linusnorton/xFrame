@@ -183,7 +183,7 @@ class Record implements XML {
                     $value->save($cascade, $saveGraph); //this could throw an error
                 }
                 //if i dont have an id and im in the save graph we have an unresolvable cycle
-                else if ($value->id != "" && array_key_exists($value->hash(), $saveGraph)) {
+                else if ($value->id == "" && array_key_exists($value->hash(), $saveGraph)) {
                     throw new CyclicalRelationshipException("Found cyclical reference between {$this->tableName} and {$value->getTableName()}");
                 }
 
@@ -196,7 +196,7 @@ class Record implements XML {
                         $item->save(true, $saveGraph);
                     }
                     //if i dont have an id and im in the save graph we have an unresolvable cycle
-                    else if ($item->id != "" && array_key_exists($item->hash(), $saveGraph)) {
+                    else if ($item->id == "" && array_key_exists($item->hash(), $saveGraph)) {
                         throw new CyclicalRelationshipException("Found cyclical reference between {$this->tableName} and {$item->getTableName()}");
                     }
                 }
