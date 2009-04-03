@@ -178,20 +178,28 @@ class Record implements XML {
         foreach($this->attributes as $key => $value) {
             //if i am also a record
             if ($value instanceof Record) {
-                //check if I need to cascade the save
+                //check if I need to cascade the save to get the id
                 if ($cascade && !array_key_exists($value->hash(), $saveGraph)) {
                     $value->save($cascade, $saveGraph); //this could throw an error
+                }
+                //if i dont have an id and im in the save graph we have an unresolvable cycle
+                else if ($value->id != "" && array_key_exists($value->hash(), $saveGraph)) {
+                    throw new CyclicalRelationshipException("Found cyclical reference between {$this->tableName} and {$value->getTableName()}");
                 }
 
                 //and store my id
                 $flatAttributes[$key] = $value->id;
             }
             else if ($cascade && is_array($value)) {
-               foreach ($value as $item) {
-                   if ($item instanceof Record && !array_key_exists($item->hash(), $saveGraph)) {                       
-                       $item->save(true, $saveGraph);
-                   }
-               }
+                foreach ($value as $item) {
+                    if ($item instanceof Record && !array_key_exists($item->hash(), $saveGraph)) {                       
+                        $item->save(true, $saveGraph);
+                    }
+                    //if i dont have an id and im in the save graph we have an unresolvable cycle
+                    else if ($item->id != "" && array_key_exists($item->hash(), $saveGraph)) {
+                        throw new CyclicalRelationshipException("Found cyclical reference between {$this->tableName} and {$item->getTableName()}");
+                    }
+                }
             }
             else {
                 $flatAttributes[$key] = $value;
@@ -208,6 +216,7 @@ class Record implements XML {
      */
     public function save($cascade = false, array &$saveGraph = array()) {
         $saveGraph[$this->hash()] = true;
+
         try {
             $transactional = DB::dbh()->beginTransaction();
         }
@@ -239,11 +248,23 @@ class Record implements XML {
             }
             
             // Set the ID assigned for this record.
-            if ($this->id == "") {
+            if ($this->id == "" && $insertId == "") {
+                throw new FrameEx("Tried to insert a record but didn't get an ID back - usually a constraint error");
+            }
+            else if ($this->id == "") {
                 $this->id = $insertId;
             }
         }
+        catch (CyclicalRelationshipException $ex) {
+            //if there were errors rollback the transaction
+            if ($transactional) {
+                DB::dbh()->rollBack();
+            }
+            throw new FrameEx($ex->getMessage());
+
+        }
         catch (PDOException $ex) {
+            //if there were errors rollback the transaction
             if ($transactional) {
                 DB::dbh()->rollBack();
             }
