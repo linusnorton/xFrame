@@ -9,7 +9,6 @@ class Index {
      * @param $e Event encapsulation of the request variables
      */
     public static function run(Event $e) {
-
         /*Example PDO/Active Record database interaction
           needs this sql table:
 

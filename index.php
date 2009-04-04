@@ -3,15 +3,11 @@
 @define('ROOT', './');
 require_once(ROOT.'framework/init.php');
 
-//use the site address to work out the sub dir
-$path = (parse_url(Registry::get('SITE')));
-//remove sub dir and params to leave request
-$request = str_replace(array($path['path'],'?'.$_SERVER['QUERY_STRING']), '', $_SERVER['REQUEST_URI']);
-$request = ($request == '' || $request == '/') ? 'Index' : $request;
+//generate the event
 
 try {
     //generate and dispatch the event
-    $event = new Event($request, $_REQUEST);
+    $event = Event::buildEvent();
     $page = false;
 
     //check to see if we can get the cache version
@@ -19,10 +15,13 @@ try {
         $page = Cache::mch()->get($event->hash());
     }
 
+    //if the page wasnt in the cache or the cache is off
     if ($page === false) {
+        //dispatch the event and build the page
         $event->dispatch();
         $page = Page::build();
 
+        //store the event response if possible
         if (false !== ($cacheLength = Dispatcher::getCacheLength($event)) && Registry::get("CACHE") == "on") {
             Cache::mch()->set($event->hash(), $page, false, $cacheLength);
         }

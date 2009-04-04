@@ -16,7 +16,7 @@ class Dispatcher {
      * @param Event $e
      * @return unknown
      */
-	static function dispatch(Event $e) {
+	public static function dispatch(Event $e) {
 
 	    if (array_key_exists($e->getName(), self::$listeners)) {
             $object = new self::$listeners[$e->getName()]["class"];
@@ -34,9 +34,11 @@ class Dispatcher {
 	 * @param String $event
 	 * @param String $class
 	 * @param String $method
+     * @param int $cacheLength
+     * @param array $parameterMap
 	 */
-	static function addListener($event, $class, $method, $cacheLength = false) {
-	    self::$listeners[$event] = array("class" => $class, "method" => $method, "cacheLength" => $cacheLength);
+	public static function addListener($event, $class, $method, $cacheLength = false, array $parameterMap = null) {
+	    self::$listeners[$event] = array("class" => $class, "method" => $method, "cacheLength" => $cacheLength, "parameterMap" => $parameterMap);
 	}
 
     /**
@@ -44,13 +46,17 @@ class Dispatcher {
      *
      * @param $event Event to get the cache length for
      */
-    static function getCacheLength(Event $e) {
+    public static function getCacheLength(Event $e) {
 	    if (array_key_exists($e->getName(), self::$listeners)) {
 	        return self::$listeners[$e->getName()]["cacheLength"];;
         }
 	    else {
 	       return false;
         }
+    }
+
+    public static function getParameterMap($event) {
+        return self::$listeners[$event]["parameterMap"];
     }
 }
 

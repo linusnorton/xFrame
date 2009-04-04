@@ -1,6 +1,5 @@
 <?php
 
-Registry::set("SITE",$_SERVER["SITE"]);
 Registry::set("ADMIN","linusnorton@gmail.com");
 
 //Database settings

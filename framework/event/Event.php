@@ -11,6 +11,35 @@ class Event implements ArrayAccess {
     private $name;
 
     /**
+     * Create an event from the current page request
+     */
+    public static function buildEvent() {
+        //take of the index.php so we can work out the sub folder
+        $path = substr($_SERVER["PHP_SELF"], 0, -9);
+        //remove the subfolders and query from the request
+        $request = str_replace(array($path, "?".$_SERVER["QUERY_STRING"]), "", $_SERVER["REQUEST_URI"]);
+        //check for blank request
+        $request = ($request == '' || $request == '/') ? 'home' : $request;
+        //support for urls with event/param/param
+        $request = explode("/", $request);
+        //get the event name
+        $event = $request[0];
+        //everything else is param so get the param and map params to names
+        $pm = Dispatcher::getParameterMap($event);
+        $request = array_slice($request, 1);
+        $mappedRequest = array();
+        $numParams = count($request);
+
+        for($i = 0; $i < $numParams; $i++) {
+            $mappedRequest[$pm[$i]] = $request[$i];
+        }
+
+        $request = array_merge($_REQUEST, $mappedRequest);
+
+        return new Event($event, $request);
+    }
+
+    /**
      * The event to be passed to the dispatcher. The $name is used to get the
      * type of event and the argArray is all the properties you want the event
      * to have so if your updating a product for example this could be the
@@ -19,7 +48,7 @@ class Event implements ArrayAccess {
      * @param String $name
      * @param array $argArray
      */
-	public function __construct($name, array $argArray = null) {
+	public function __construct($name, array $argArray = array()) {
 		$this->name = $name;
 		$this->params = $argArray;
 	}
