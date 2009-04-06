@@ -1,4 +1,4 @@
-<?php
+request-map<?php
 
 Registry::set("ADMIN","linusnorton@gmail.com");
 
@@ -25,7 +25,7 @@ Registry::set("CACHE", "on");
 
 //set up the object factory
 include(ROOT."app/.classes.php");
-//set up the events
-include(ROOT."app/events.php");
+//set up the requests
+include(ROOT."app/request-map.php");
 
 ?>

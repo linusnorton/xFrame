@@ -2,30 +2,30 @@
 /**
  * @author Linus Norton <linusnorton@gmail.com>
  *
- * @package event
+ * @package request
  *
- * An event encapsulates a given request
+ * An request encapsulates a given request
  */
-class Event implements ArrayAccess {
+class Request implements ArrayAccess {
 	private $params = array();
     private $name;
 
     /**
-     * Create an event from the current page request
+     * Create an request from the current page request
      */
-    public static function buildEvent() {
+    public static function buildRequest() {
         //take of the index.php so we can work out the sub folder
         $path = substr($_SERVER["PHP_SELF"], 0, -9);
         //remove the subfolders and query from the request
         $request = str_replace(array($path, "?".$_SERVER["QUERY_STRING"]), "", $_SERVER["REQUEST_URI"]);
         //check for blank request
         $request = ($request == '' || $request == '/') ? 'home' : $request;
-        //support for urls with event/param/param
+        //support for urls with request/param/param
         $request = explode("/", $request);
-        //get the event name
-        $event = $request[0];
+        //get the request name
+        $request = $request[0];
         //everything else is param so get the param and map params to names
-        $pm = Dispatcher::getParameterMap($event);
+        $pm = Dispatcher::getParameterMap($request);
         $request = array_slice($request, 1);
         $mappedRequest = array();
         $numParams = count($request);
@@ -41,12 +41,12 @@ class Event implements ArrayAccess {
         unset($request["__utmz"]);
         unset($request["PHPSESSID"]);
 
-        return new Event($event, $request);
+        return new Request($request, $request);
     }
 
     /**
-     * The event to be passed to the dispatcher. The $name is used to get the
-     * type of event and the argArray is all the properties you want the event
+     * The request to be passed to the dispatcher. The $name is used to get the
+     * type of request and the argArray is all the properties you want the request
      * to have so if your updating a product for example this could be the
      * $_POST variable containing all the new lovely product values.
      *
@@ -87,7 +87,7 @@ class Event implements ArrayAccess {
 	}
 
 	/**
-	 * Returns the name of the event
+	 * Returns the name of the request
 	 *
 	 * @return String
 	 */
@@ -95,7 +95,7 @@ class Event implements ArrayAccess {
 		return $this->name;
 	}
 	/**
-	 * Sets the name of the event
+	 * Sets the name of the request
 	 *
 	 * @param String $name
 	 */
@@ -103,7 +103,7 @@ class Event implements ArrayAccess {
 		$this->name = $name;
 	}
 	/**
-	 * Returns the params of the event
+	 * Returns the params of the request
 	 *
 	 * @return String
 	 */
@@ -112,14 +112,14 @@ class Event implements ArrayAccess {
 	}
 
     /**
-     * Dispatches the event using Dispatcher::dispatch
+     * Dispatches the request using Dispatcher::dispatch
      */
     public function dispatch() {
         return Dispatcher::dispatch($this);
     }
 
     /**
-     * Return a hash of the Event
+     * Return a hash of the Request
      */
     public function hash() {
         return md5($this->name.implode($this->params).implode(array_keys($this->params)));
