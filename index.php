@@ -3,27 +3,27 @@
 @define('ROOT', './');
 require_once(ROOT.'framework/init.php');
 
-//generate the event
+//generate the request
 
 try {
-    //generate and dispatch the event
-    $event = Event::buildEvent();
+    //generate and dispatch the request
+    $request = Request::buildRequest();
     $page = false;
 
     //check to see if we can get the cache version
-    if (Dispatcher::getCacheLength($event) !== false && $_GET["cache"] != "no" && Registry::get("CACHE") == "on") {
-        $page = Cache::mch()->get($event->hash());
+    if (Dispatcher::getCacheLength($request) !== false && $_GET["cache"] != "no" && Registry::get("CACHE") == "on") {
+        $page = Cache::mch()->get($request->hash());
     }
 
     //if the page wasnt in the cache or the cache is off
     if ($page === false) {
-        //dispatch the event and build the page
-        $event->dispatch();
+        //dispatch the request and build the page
+        $request->dispatch();
         $page = Page::build();
 
-        //store the event response if possible
-        if (false !== ($cacheLength = Dispatcher::getCacheLength($event)) && Registry::get("CACHE") == "on") {
-            Cache::mch()->set($event->hash(), $page, false, $cacheLength);
+        //store the request response if possible
+        if (false !== ($cacheLength = Dispatcher::getCacheLength($request)) && Registry::get("CACHE") == "on") {
+            Cache::mch()->set($request->hash(), $page, false, $cacheLength);
         }
     }
     else {
@@ -34,7 +34,7 @@ try {
     echo $page;
 }
 catch (FrameEx $ex) {
-    //this exception can be UnknownEvent MalformedPage or just an uncaught FrameEx
+    //this exception can be UnknownRequest MalformedPage or just an uncaught FrameEx
     $ex->output();
     //replace the xslt with the standard errors.xsl and display the page
     echo Page::displayErrors();
