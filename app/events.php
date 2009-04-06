@@ -12,7 +12,7 @@
 //                                                                                 //
 /////////////////////////////////////////////////////////////////////////////////////
 
-//Event name, class handler, method, cache length (optional), param mapping (optional)
+//Event name, class handler, method, [cache length], [param mapping]
 $parameterMap = array("yourParamHere", "yourSecondParamHere");
 Dispatcher::addListener("home", "Index", "run", 60, $parameterMap);
 
