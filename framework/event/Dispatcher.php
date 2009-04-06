@@ -37,7 +37,7 @@ class Dispatcher {
      * @param int $cacheLength
      * @param array $parameterMap
 	 */
-	public static function addListener($event, $class, $method, $cacheLength = false, array $parameterMap = null) {
+	public static function addListener($event, $class, $method, $cacheLength = false, array $parameterMap = array()) {
 	    self::$listeners[$event] = array("class" => $class, "method" => $method, "cacheLength" => $cacheLength, "parameterMap" => $parameterMap);
 	}
 
