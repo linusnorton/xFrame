@@ -1,4 +1,4 @@
-request-map<?php
+<?php
 
 Registry::set("ADMIN","linusnorton@gmail.com");
 
