@@ -16,15 +16,15 @@ class Dispatcher {
      * @param Event $e
      * @return unknown
      */
-	public static function dispatch(Request $e) {
+	public static function dispatch(Request $r) {
 
-	    if (array_key_exists($e->getName(), self::$listeners)) {
-            $object = new self::$listeners[$e->getName()]["class"];
-            $method = self::$listeners[$e->getName()]["method"];
-	        return $object->$method($e);
+	    if (array_key_exists($r->getName(), self::$listeners)) {
+            $object = new self::$listeners[$r->getName()]["class"];
+            $method = self::$listeners[$r->getName()]["method"];
+	        return $object->$method($r);
         }
 	    else {
-	       throw new UnknownRequest("No handler for ".$e->getName());
+	       throw new UnknownRequest("No handler for ".$r->getName());
         }
     }
 
@@ -37,8 +37,8 @@ class Dispatcher {
      * @param int $cacheLength
      * @param array $parameterMap
 	 */
-	public static function addListener($event, $class, $method, $cacheLength = false, array $parameterMap = array()) {
-	    self::$listeners[$event] = array("class" => $class, "method" => $method, "cacheLength" => $cacheLength, "parameterMap" => $parameterMap);
+	public static function addListener($requestName, $class, $method, $cacheLength = false, array $parameterMap = array()) {
+	    self::$listeners[$requestName] = array("class" => $class, "method" => $method, "cacheLength" => $cacheLength, "parameterMap" => $parameterMap);
 	}
 
     /**
@@ -46,17 +46,17 @@ class Dispatcher {
      *
      * @param $request Request to get the cache length for
      */
-    public static function getCacheLength(Request $e) {
-	    if (array_key_exists($e->getName(), self::$listeners)) {
-	        return self::$listeners[$e->getName()]["cacheLength"];;
+    public static function getCacheLength(Request $r) {
+	    if (array_key_exists($r->getName(), self::$listeners)) {
+	        return self::$listeners[$r->getName()]["cacheLength"];;
         }
 	    else {
 	       return false;
         }
     }
 
-    public static function getParameterMap($request) {
-        return self::$listeners[$request]["parameterMap"];
+    public static function getParameterMap($requestName) {
+        return self::$listeners[$requestName]["parameterMap"];
     }
 }
 

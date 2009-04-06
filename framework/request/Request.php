@@ -23,9 +23,9 @@ class Request implements ArrayAccess {
         //support for urls with request/param/param
         $request = explode("/", $request);
         //get the request name
-        $request = $request[0];
+        $requestResource = $request[0];
         //everything else is param so get the param and map params to names
-        $pm = Dispatcher::getParameterMap($request);
+        $pm = Dispatcher::getParameterMap($requestResource);
         $request = array_slice($request, 1);
         $mappedRequest = array();
         $numParams = count($request);
@@ -41,7 +41,7 @@ class Request implements ArrayAccess {
         unset($request["__utmz"]);
         unset($request["PHPSESSID"]);
 
-        return new Request($request, $request);
+        return new Request($requestResource, $request);
     }
 
     /**
