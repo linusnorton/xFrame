@@ -55,7 +55,7 @@ class Page {
 
         $dom->xinclude();
 
-        $xslt = new Xsltprocessor;
+        $xslt = new XSLTProcessor();
         $xslt->importStylesheet($xsl);
         $xslt->setParameter(null, self::$parameters);
 
@@ -139,7 +139,7 @@ class Page {
         self::$xml = "";
         self::$staticIncludes = array();
         self::$parameters = array();
-        self::$xsl = ROOT."app/xsl/error.xsl";
+        self::$xsl = ROOT.Registry::get("ERROR_XSL");
 
         return self::build();
     }

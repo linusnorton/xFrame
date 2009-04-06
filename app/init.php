@@ -1,6 +1,12 @@
 <?php
 
+////////////////////////////////////////////////////////////////////////////////////
+// Setup Registry settings here                                                   //
+////////////////////////////////////////////////////////////////////////////////////
+
+//General settings
 Registry::set("ADMIN","linusnorton@gmail.com");
+Registry::set("ERROR_XSL","app/view/error.xsl");
 
 //Database settings
 Registry::set("DATABASE_ENGINE","MySQL");
@@ -9,23 +15,29 @@ Registry::set("DATABASE_PASSWORD", $_SERVER["DB_PASS"]);
 Registry::set("DATABASE_HOST", $_SERVER["DB_HOST"]);
 Registry::set("DATABASE_NAME", $_SERVER["DB_NAME"]);
 
-
-/* Setup memcache (optional)
-
-$servers = array(
-               array(
-                   "address" => "localhost",
-                   "port" => "11211"
-               )
-           );
+/* Memcache settings (optional)
+$servers = $server = array();
+$server["address"] = "localhost";
+$server["port"] = "11211";
+$servers[] = $server;
 
 Registry::set("MEMCACHE_SERVERS", $servers);
 Registry::set("CACHE", "on");
 */
 
-//set up the object factory
+
+////////////////////////////////////////////////////////////////////////////////////
+// Setup dispatcher methods here                                                  //
+////////////////////////////////////////////////////////////////////////////////////
+
+//request name, class handler, method, [cache length], [param mapping]
+$parameterMap = array("param1", "param2");
+Dispatcher::addListener("home", "Index", "run", 60, $parameterMap);
+
+
+////////////////////////////////////////////////////////////////////////////////////
+// Include class mappings (don't change)                                          //
+////////////////////////////////////////////////////////////////////////////////////
 include(ROOT."app/.classes.php");
-//set up the requests
-include(ROOT."app/request-map.php");
 
 ?>
