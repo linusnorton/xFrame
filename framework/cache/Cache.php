@@ -15,18 +15,7 @@ class Cache {
      * Create a Memcahe instance based on the settings in the registry
      */
 	private static function connect() {
-
         self::$instance = new Memcache();
-        $servers = Registry::get("MEMCACHE_SERVERS");
-
-        if (!is_array($servers)) {
-            return;
-        }
-        foreach ($servers as $server) {
-            if (!self::$instance->addServer($server["address"], $server["port"])) {
-                throw new FrameEx("Couldn't add memcached server: {$server['address']}:{$server['port']}");   
-            }
-        }
 	}
 
     /**

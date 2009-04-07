@@ -16,15 +16,9 @@ Registry::set("DATABASE_HOST", $_SERVER["DB_HOST"]);
 Registry::set("DATABASE_NAME", $_SERVER["DB_NAME"]);
 
 /* Memcache settings (optional)
-$servers = $server = array();
-$server["address"] = "localhost";
-$server["port"] = "11211";
-$servers[] = $server;
-
-Registry::set("MEMCACHE_SERVERS", $servers);
 Registry::set("CACHE", "on");
+Memcache::mch()->addServer("localhost", "11211");
 */
-
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Setup dispatcher methods here                                                  //
@@ -34,6 +28,8 @@ Registry::set("CACHE", "on");
 $parameterMap = array("param1", "param2");
 Dispatcher::addListener("home", "Index", "run", 60, $parameterMap);
 
+//Simple version
+//Dispatcher::addListener("home", "Index", "run");
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Include class mappings (don't change)                                          //
