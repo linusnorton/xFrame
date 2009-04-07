@@ -20,6 +20,11 @@
     /** include the class do not create the object */
     public static function includeFile($className) {
         if (array_key_exists($className, self::$objects)) {
+            if (!file_exists(ROOT.self::$objects[$className])) {
+                self::rebuild();
+                return self::includeFile($className);
+            }
+
             require_once(ROOT.self::$objects[$className]);
             return true;
         }
