@@ -2,7 +2,6 @@
 
 //if root not defined, define it so we can correctly include
 @define("ROOT", "../");
-@define("VERSION", "0.1");
 session_start();
 
 $GLOBALS["executionTime"] = microtime(true); //used for script execution time
