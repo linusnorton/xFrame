@@ -2,10 +2,8 @@
 
 //if root not defined, define it so we can correctly include
 @define("ROOT", "../");
-session_start();
 
 $GLOBALS["executionTime"] = microtime(true); //used for script execution time
-
 require_once(ROOT."framework/core/Factory.php");//Object Factory
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -105,3 +103,5 @@ function __autoload($className) {
 require_once(ROOT."framework/.classes.php");
 //setup the project
 require_once(ROOT."app/init.php");
+
+session_start();
