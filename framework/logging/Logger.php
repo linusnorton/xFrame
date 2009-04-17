@@ -1,56 +1,98 @@
 <?php
+
 /**
  * @author Linus Norton <linus.norton@assertis.co.uk>
  *
- * This class logs to a file
+ * This class logs to a database record
+ *
+ * SQL Required for logger:
+
+
+CREATE TABLE log (
+    `id` INT(11) UNSIGNED auto_increment,
+    `ip` VARCHAR(255),
+    `key` VARCHAR(255),
+    `level` VARCHAR(5),
+    `message` TEXT,
+    `date_time` DATETIME,
+    `session_id` VARCHAR(255),
+    `execution_time` VARCHAR(11),
+    PRIMARY KEY(id)
+);
+
+ *
  */
 class Logger {
+    const OFF = 0, DEBUG = 5, INFO = 4, WARN = 3, ERROR = 2, FATAL = 1;
     private $key;
-    private $file;
-    private $maxLogSize;
+    private $tableName;
+    private $logLevel;
 
     public function __construct($key) {
         $this->key = $key;
-        $this->file = Registry::get("LOGGER_FILE") or "/var/log/httpd/logger_log";
-        $this->maxLogSize = Registry::get("MAX_LOG_FILESIZE") or 1048576;
+        $this->tableName = (Registry::get("LOG_TABLE")) ? Registry::get("LOG_TABLE") : "log";
+        $this->logLevel = (Registry::get("LOG_LEVEL")) ? Registry::get("LOG_LEVEL") : self::OFF;
     }
 
+    /**
+     * Override the level of logging set in the Registry
+     */
+    public function setLogLevel($level) {
+        $this->logLevel = $level;
+    }
+
+    /**
+     * Override the level of logging set in the Registry
+     */
+    public function setLogTable($tableName) {
+        $this->tableName = $tableName;
+    }
+
+
+    /**
+     * Log a debug message (dependant on the level of logging)
+     */
     public function debug($message) {
-        $this->log("debug", $message);
+        if ($this->logLevel >= self::DEBUG){ 
+            $this->log("debug", $message);
+        }
     }
 
     public function info($message) {
-        $this->log("info", $message);
+        if ($this->logLevel >= self::INFO){ 
+            $this->log("info", $message);
+        }
     }
 
     public function warn($message) {
-        $this->log("warn", $message);
+        if ($this->logLevel >= self::DEBUG){ 
+            $this->log("warn", $message);
+        }
     }
 
     public function error($message) {
-        $this->log("error", $message);
+        if ($this->logLevel >= self::DEBUG){ 
+            $this->log("error", $message);
+        }
     }
 
     public function fatal($message) {
-        $this->log("fetal", $message);
+        if ($this->logLevel >= self::DEBUG){ 
+            $this->log("fetal", $message);
+        }
     }
 
     private function log($level, $message) {
-        // open file
-        $fd = fopen($this->file, "a");
+        $log = new Record($this->tableName);
+        $log->ip = $_SERVER['REMOTE_ADDR'];;
+        $log->key = $this->key;
+        $log->level = $level;
+        $log->message = $message;
+        $log->date_time = date("Y-m-d H:i:s");
+        $log->session_id = session_id();
+        $log->execution_time = number_format(microtime(true) - $GLOBALS["executionTime"], 5); 
 
-        if ($fd === false) {
-            throw new FrameEx("Could not open: {$this->file} for logging");
-        }
-
-        // append date/time to message
-        $log = "[" . date("Y/m/d h:i:s", mktime()) . "] " . $message;
-
-        // write string
-        fwrite($fd, $log . "\n");
-
-        // close file
-        fclose($fd);
+        $log->save();
     }
 
 }

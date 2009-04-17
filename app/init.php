@@ -20,6 +20,10 @@ Registry::set("CACHE", "on");
 Memcache::mch()->addServer("localhost", "11211");
 */
 
+/* Logging settings (optional) 
+Registry::set("LOG_LEVEL", Logger::DEBUG);
+*/
+
 ////////////////////////////////////////////////////////////////////////////////////
 // Setup dispatcher methods here                                                  //
 ////////////////////////////////////////////////////////////////////////////////////

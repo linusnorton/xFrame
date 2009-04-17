@@ -9,6 +9,8 @@ class Index {
      * @param Request $r encapsulation of the request variables
      */
     public static function run(Request $r) {
+        $log = LoggerManager::getLogger("home");
+        $log->debug("Entering Index->run() for handling of home event");
         /*Example PDO/Active Record database interaction
           needs this sql table:
 
