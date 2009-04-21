@@ -1,8 +1,6 @@
 <?php
 /**
  * @author Linus Norton <linusnorton@gmail.com>
- *
- * @version 0.1
  * @package core
  *
  * This class encapsulates the default behaviour for framework exceptions.
@@ -53,7 +51,7 @@ class FrameEx extends Exception {
         if (Registry::get("EMAIL_ERRORS") === true) {
             $headers  = 'MIME-Version: 1.0' . "\r\n";
             $headers .= 'Content-type: text/xml; charset=iso-8859-1' . "\r\n";
-            mail(Registry::get("ADMIN"), "Error from: ".Registry::get("SITE"),$out, $headers );
+            mail(Registry::get("ADMIN"), "Error from: ".$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"],$out, $headers );
         }
 
         Page::addException($out);
