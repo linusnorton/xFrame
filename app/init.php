@@ -32,12 +32,11 @@ Registry::set("LOG_LEVEL", Logger::DEBUG);
 $parameterMap = array("param1", "param2");
 Dispatcher::addListener("home", "Index", "run", 60, $parameterMap);
 
-//Simple version
-//Dispatcher::addListener("home", "Index", "run");
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Include class mappings (don't change)                                          //
 ////////////////////////////////////////////////////////////////////////////////////
+
 include(ROOT."app/.classes.php");
 
 ?>

@@ -7,6 +7,9 @@
  * This object provides the view transformation. It takes XML and an XSLT file and transforms them
  */
 class Page {
+    const OUTPUT_XSL = 0, OUTPUT_XML = 1, OUTPUT_OFF = 2;
+
+    private static $outputMode = OUTPUT_XSL;
     private static $exceptions = array();
     private static $errors = array();
     private static $staticIncludes = array();
@@ -18,6 +21,10 @@ class Page {
      * Transform the XSL and XML and return out the result
      */
     public static function build() {
+        if (self::$outputMode == self::OUTPUT_OFF) {
+            return; //nothing to do 
+        }
+
         $xsl = new DomDocument;
 
         //if the xsl has not been set or has been set incorrectly
@@ -30,23 +37,12 @@ class Page {
             throw new MalformedPage("There are errors in the xsl file: ".self::$xsl);
         }
 
-        $xml = '<?xml version="1.0" encoding="utf-8"?><root xmlns:xi="http://www.w3.org/2001/XInclude">';
+        $xml = Page::generateXML();
 
-        //add some xincludes
-        foreach (self::$staticIncludes as $inc) {
-            $xml .= '
-                    <xi:include href="'.ROOT.$inc.'">
-                        <xi:fallback>
-                            <error>xinclude: '.ROOT.$inc.' not found</error>
-                        </xi:fallback>
-                    </xi:include>';
+        if (self::$outputMode == self::OUTPUT_XML || $_GET["debug"] == "xml") {
+            header("content-type: text/xml");
+            return $xml;
         }
-
-        //add the xml that ive been given and errors and exceptions generated
-        $xml .= self::$xml;
-        $xml .= "<errors>".implode(self::$errors)."</errors>";
-        $xml .= "<exceptions>".implode(self::$exceptions)."</exceptions>";
-        $xml .= "</root>";
 
         $dom = new DOMDocument;
         if (!$dom->loadXML($xml)) {
@@ -74,10 +70,6 @@ class Page {
             $return .= $xml;
             $return .= "</pre>";
             return $return;
-        }
-        else if ($_GET["debug"] == "xml" ) {
-            header("content-type: text/xml");
-            return $xml;
         }
         else {
             return $transformation;
@@ -140,7 +132,41 @@ class Page {
         self::$staticIncludes = array();
         self::$parameters = array();
         self::$xsl = ROOT.Registry::get("ERROR_XSL");
+        self::$outputMode = self::OUTPUT_XSL;
 
         return self::build();
+    }
+
+    /**
+     * Set output mode. 
+     *
+     * Page::OUTPUT_OFF lets you do all the echoing
+     * Page::OUTPUT_XML returns just the XML
+     * Page::OUTPUT_XSL does a standard page transformation
+     */ 
+    public static function setOutputMode($mode) {
+        self::$outputMode = $mode;
+    }
+
+    private static function generateXML() {
+        $xml = '<?xml version="1.0" encoding="utf-8"?><root xmlns:xi="http://www.w3.org/2001/XInclude">';
+
+        //add some xincludes
+        foreach (self::$staticIncludes as $inc) {
+            $xml .= '
+                    <xi:include href="'.ROOT.$inc.'">
+                        <xi:fallback>
+                            <error>xinclude: '.ROOT.$inc.' not found</error>
+                        </xi:fallback>
+                    </xi:include>';
+        }
+
+        //add the xml that ive been given and errors and exceptions generated
+        $xml .= self::$xml;
+        $xml .= "<errors>".implode(self::$errors)."</errors>";
+        $xml .= "<exceptions>".implode(self::$exceptions)."</exceptions>";
+        $xml .= "</root>";
+
+        return $xml;
     }
 }
