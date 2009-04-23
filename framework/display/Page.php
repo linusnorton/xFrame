@@ -24,22 +24,13 @@ class Page {
         if (self::$outputMode == self::OUTPUT_OFF) {
             return; //nothing to do 
         }
-
-        $xsl = new DomDocument;
-
-        //if the xsl has not been set or has been set incorrectly
-        if (!file_exists(self::$xsl)) {
-            throw new MalformedPage("Could not locate xsl file: ".self::$xsl);
-        }
-
-        //if the xsl contained errors
-        if (!$xsl->load(self::$xsl)) {
-            throw new MalformedPage("There are errors in the xsl file: ".self::$xsl);
+        if (self::$outputMode == self::OUTPUT_XML) {
+            return self::$xml;
         }
 
         $xml = Page::generateXML();
 
-        if (self::$outputMode == self::OUTPUT_XML || $_GET["debug"] == "xml") {
+        if ($_GET["debug"] == "xml") {
             header("content-type: text/xml");
             return $xml;
         }
@@ -50,6 +41,18 @@ class Page {
         }
 
         $dom->xinclude();
+
+        $xsl = new DomDocument();
+
+        //if the xsl has not been set or has been set incorrectly
+        if (!file_exists(self::$xsl)) {
+            throw new MalformedPage("Could not locate xsl file: ".self::$xsl);
+        }
+
+        //if the xsl contained errors
+        if (!$xsl->load(self::$xsl)) {
+            throw new MalformedPage("There are errors in the xsl file: ".self::$xsl);
+        }
 
         $xslt = new XSLTProcessor();
         $xslt->importStylesheet($xsl);
