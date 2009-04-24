@@ -25,7 +25,9 @@ class Page {
             return; //nothing to do 
         }
         if (self::$outputMode == self::OUTPUT_XML) {
-            return self::$xml;
+            $doc = new DomDocument();
+            $doc->loadXML(self::$xml);
+            return $doc->saveXML();
         }
 
         $xml = Page::generateXML();
