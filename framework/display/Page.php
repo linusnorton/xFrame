@@ -24,7 +24,8 @@ class Page {
         if (self::$outputMode == self::OUTPUT_OFF) {
             return; //nothing to do 
         }
-        if (self::$outputMode == self::OUTPUT_XML) {
+        if (self::$outputMode == self::OUTPUT_XML || $_GET["debug"] == "xml") {
+            header("content-type: text/xml");
             $doc = new DomDocument();
             $doc->loadXML(self::$xml);
             return $doc->saveXML();
@@ -32,12 +33,7 @@ class Page {
 
         $xml = Page::generateXML();
 
-        if ($_GET["debug"] == "xml") {
-            header("content-type: text/xml");
-            return $xml;
-        }
-
-        $dom = new DOMDocument;
+        $dom = new DomDocument();
         if (!$dom->loadXML($xml)) {
             throw new MalformedPage("There was an error inside the xml:\n". htmlentities($xml));
         }
