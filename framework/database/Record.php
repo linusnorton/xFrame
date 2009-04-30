@@ -123,7 +123,7 @@ class Record implements XML {
      */
     public static function loadMatching($tableName, array $criteria = array(), $class = "Record") {
         $records = array();
-        $sql = "SELECT * FROM ".addslashes($tableName);
+        $sql = "SELECT * FROM `".addslashes($tableName)."`";
         
         //if we have criteria
         if (count($criteria) > 0) {
