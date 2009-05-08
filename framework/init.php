@@ -102,6 +102,5 @@ function __autoload($className) {
 //set up the object factory
 require_once(ROOT."framework/.classes.php");
 //setup the project
-require_once(ROOT."app/init.php");
-
 session_start();
+require_once(ROOT."app/init.php");

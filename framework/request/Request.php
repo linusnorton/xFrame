@@ -35,11 +35,6 @@ class Request implements ArrayAccess {
         }
 
         $request = array_merge($_REQUEST, $mappedRequest);
-        unset($request["__utma"]);
-        unset($request["__utmb"]);
-        unset($request["__utmc"]);
-        unset($request["__utmz"]);
-        unset($request["PHPSESSID"]);
 
         return new Request($requestResource, $request);
     }

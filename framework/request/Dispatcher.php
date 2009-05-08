@@ -48,7 +48,7 @@ class Dispatcher {
      */
     public static function getCacheLength(Request $r) {
 	    if (array_key_exists($r->getName(), self::$listeners)) {
-	        return self::$listeners[$r->getName()]["cacheLength"];;
+	        return self::$listeners[$r->getName()]["cacheLength"];
         }
 	    else {
 	       return false;

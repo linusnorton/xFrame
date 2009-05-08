@@ -27,7 +27,11 @@ class Page {
         if (self::$outputMode == self::OUTPUT_XML || $_GET["debug"] == "xml") {
             header("content-type: text/xml");
             $doc = new DomDocument();
-            $doc->loadXML(self::$xml);
+
+            if ($doc->loadXML(self::$xml) === false) {
+                throw new FrameEx("There was an error inside the xml:\n".htmlentities($xml));
+            }
+
             return $doc->saveXML();
         }
 
