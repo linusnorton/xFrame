@@ -4,14 +4,14 @@
  *
  * @package request
  *
- * An request encapsulates a given request
+ * A request encapsulates a given request
  */
 class Request implements ArrayAccess {
 	private $params = array();
     private $name;
 
     /**
-     * Create an request from the current page request
+     * Create a request from the current page request
      */
     public static function buildRequest() {
         //take of the index.php so we can work out the sub folder
