@@ -89,12 +89,12 @@ class Form {
 	 * @param string $location
 	 */
     public function doSessionPostBack($location) {
-        $_SESSION['field']['field'] = array();
-        $_SESSION['error']['error'] = array();
+        $_SESSION['field'] = array();
+        $_SESSION['error'] = array();
         foreach ($this->field as $id => $field) {
-            $_SESSION['field']['field'][$id] = $field['value'];
+            $_SESSION['field'][$id] = $field['value'];
             if ($field['errorMessage'] != '') {
-                $_SESSION['error']['error'][$id] = $field['errorMessage'];             
+                $_SESSION['error'][$id] = $field['errorMessage'];             
             }
         }
         header("Location: {$location}");
