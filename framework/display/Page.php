@@ -61,7 +61,9 @@ class Page {
         $xslt->setParameter(null, self::$parameters);
 
         //unfortunately this doesn't capture any warnings generated whilst transforming
-        if (!$transformation = $xslt->transformToXml($dom)) {
+        $transformation = $xslt->transformToXml($dom);
+
+        if ($transformation === false) {
             throw new MalformedPage("There was an error tranforming the page");
         }
 
