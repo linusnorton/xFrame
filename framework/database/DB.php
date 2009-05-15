@@ -24,6 +24,14 @@ class DB {
                                           Registry::get("DATABASE_PASSWORD"));
 
                 self::$instance->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+                //self::$instance->setAttribute (PDO::ATTR_STATEMENT_CLASS, array ('LoggedPDOStatement', array())); 
+
+            } else if ($db == "MySQLDebug") {
+                self::$instance = new LoggedPDO("mysql:host=".Registry::get("DATABASE_HOST").";dbname=".Registry::get("DATABASE_NAME"),
+                                                  Registry::get("DATABASE_USERNAME"),
+                                                  Registry::get("DATABASE_PASSWORD"));
+
+                self::$instance->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             }
         }
 		catch (PDOException $ex) {
