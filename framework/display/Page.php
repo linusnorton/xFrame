@@ -24,7 +24,7 @@ class Page {
         if (self::$outputMode == self::OUTPUT_OFF) {
             return; //nothing to do 
         }
-        if (self::$outputMode == self::OUTPUT_XML || $_GET["debug"] == "xml") {
+        if (self::$outputMode == self::OUTPUT_XML) {
             header("content-type: text/xml");
             $doc = new DomDocument();
 
@@ -77,6 +77,10 @@ class Page {
             $return .= $xml;
             $return .= "</pre>";
             return $return;
+        } 
+        else if ($_GET["debug"] == "xml") {
+            header("content-type: text/xml");
+            return $xml;
         }
         else {
             return $transformation;
