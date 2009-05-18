@@ -20,7 +20,7 @@
         <h2>The following errors occured:</h2>
         <xsl:for-each select="/root/errors/error">
             <div style="margin:5px;padding: 5px; border: 1px solid black;">
-                <strong><xsl:value-of select="./@type" /></strong>: <xsl:value-of select="./message" disable-output-escaping="yes" /><br />
+                <strong><xsl:value-of select="./@type" /></strong>: <xsl:value-of select="./message" /><br />
                 <strong>Backtrace:</strong>
                 <p>
                     <xsl:for-each select="./backtrace/step">
@@ -37,7 +37,7 @@
         <h2>The following exceptions occured:</h2>
         <xsl:for-each select="/root/exceptions/exception">
             <div style="margin:5px;padding: 5px; border: 1px solid black;">
-                <strong><xsl:if test="./@caught='false'">Uncaught </xsl:if>Exception</strong>: <xsl:value-of select="./message" disable-output-escaping="yes" /><br />
+                <strong><xsl:if test="./@caught='false'">Uncaught </xsl:if>Exception</strong>: <xsl:value-of select="./message" /><br />
                 <strong>Backtrace:</strong>
                 <p>
                     <xsl:for-each select="./backtrace/step">

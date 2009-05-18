@@ -11,6 +11,8 @@ class Index {
     public static function run(Request $r) {
         $log = LoggerManager::getLogger("home");
         $log->debug("Entering Index->run() for handling of home event");
+
+        throw new FrameEx("Your Face <face> Face");
         /*Example PDO/Active Record database interaction
           needs this sql table:
 

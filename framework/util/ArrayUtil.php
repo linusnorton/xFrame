@@ -28,7 +28,7 @@ class ArrayUtil {
 				$xml .= "<{$key}>".self::getXML($value)."</{$key}>";
 			}
 			else {
-				$xml .= "<{$key}><![CDATA[".strip_tags($value)."]]></{$key}>";
+				$xml .= "<{$key}>".htmlentities($value, ENT_COMPAT, "UTF-8", false)."</{$key}>";
 			}
 		}
 		return $xml;

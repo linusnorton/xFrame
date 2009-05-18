@@ -36,7 +36,7 @@ function custom_error($type, $msg, $filename, $line ) {
 	$filename = basename($filename);
 
     $string = "<error type='{$errortype[$type]}' line='{$line}' file='{$filename}'>";
-	$string .= "<message><![CDATA[{$msg}]]></message>";
+	$string .= "<message>".htmlentities($msg, ENT_COMPAT, "UTF-8", false)."</message>";
 	$string .= "<backtrace>";
     $i = 1;
 
@@ -50,7 +50,6 @@ function custom_error($type, $msg, $filename, $line ) {
     }
 
     $string .= "</backtrace>";
-    //$string .= "<session><![CDATA[".print_r($_SESSION,true)."]]></session>";
 	$string .= "</error>";
 
     //return the error do no more
@@ -60,12 +59,13 @@ function custom_error($type, $msg, $filename, $line ) {
 
     if (Registry::get("EMAIL_ERRORS") === true) {
         $headers  = 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'Content-type: text/xml; charset=iso-8859-1' . "\r\n";
-        mail(Registry::get("ADMIN"), "Error from: ".Registry::get("SITE"),$string, $headers );
+        $headers .= 'Content-type: text/plain; charset=iso-8859-1' . "\r\n";
+        mail(Registry::get("ADMIN"), "Error from: ".$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"],$string, $headers );
     }
 
     Page::addError($string);
-    error_log($msg);
+    LoggerManager::getLogger("Error")->error($msg);
+    error_log($string);
 }
 
 /**

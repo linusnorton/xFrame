@@ -335,7 +335,7 @@ class Record implements XML {
                 $xml .= ArrayUtil::getXML($value);
             }
             else {
-				$xml .= "<![CDATA[{$value}]]>";
+				$xml .= htmlentities($value, ENT_COMPAT, "UTF-8", false);
 			}
 
             $xml .= "</{$key}>";

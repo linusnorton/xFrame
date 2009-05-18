@@ -31,7 +31,7 @@ class FrameEx extends Exception {
 		$style = ($uncaught) ? "true" : "false";
 
 		$out .= "<exception caught='{$style}'>";
-        $out .= "<message><![CDATA[{$this->message}]]></message>";
+        $out .= "<message>".htmlentities($this->message, ENT_COMPAT, "UTF-8", false)."</message>";
 		$out .= "<backtrace>";
         $i = 1;
 
@@ -40,7 +40,6 @@ class FrameEx extends Exception {
             $out .= "<step number='".$i++."' line='{$back['line']}' file='{$back['file']}' class='{$back['class']}' function='{$back['function']}' />";
 		}
         $out .= "</backtrace>";
-        //$out .= "<session><![CDATA[".print_r($_SESSION,true)."]]></session>";
         $out .= "</exception>";
 
         //return the error do no more
@@ -50,11 +49,12 @@ class FrameEx extends Exception {
 
         if (Registry::get("EMAIL_ERRORS") === true) {
             $headers  = 'MIME-Version: 1.0' . "\r\n";
-            $headers .= 'Content-type: text/xml; charset=iso-8859-1' . "\r\n";
+            $headers .= 'Content-type: text/plain; charset=iso-8859-1' . "\r\n";
             mail(Registry::get("ADMIN"), "Error from: ".$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"],$out, $headers );
         }
 
         Page::addException($out);
+        LoggerManager::getLogger("Exception")->error($this->message);
         error_log($this->message);
     }
 }
