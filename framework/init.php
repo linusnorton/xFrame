@@ -100,7 +100,7 @@ function __autoload($className) {
 }
 
 //set up the object factory
-require_once(ROOT."framework/.classes.php");
+include_once(ROOT."framework/.classes.php");
 //setup the project
 session_start();
 require_once(ROOT."app/init.php");
