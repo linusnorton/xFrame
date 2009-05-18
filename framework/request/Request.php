@@ -17,7 +17,11 @@ class Request implements ArrayAccess {
         //take of the index.php so we can work out the sub folder
         $path = substr($_SERVER["PHP_SELF"], 0, -9);
         //remove the subfolders and query from the request
-        $request = str_replace(array($path, "?".$_SERVER["QUERY_STRING"]), "", $_SERVER["REQUEST_URI"]);
+        if ($path == "/") {
+            $request = substr(str_replace("?".$_SERVER["QUERY_STRING"], "", $_SERVER["REQUEST_URI"]), 1);
+        } else {
+            $request = str_replace(array($path, "?".$_SERVER["QUERY_STRING"]), "", $_SERVER["REQUEST_URI"]);
+        }
         //check for blank request
         $request = ($request == '' || $request == '/') ? 'home' : $request;
         //support for urls with request/param/param
