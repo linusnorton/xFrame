@@ -16,7 +16,7 @@ class LoggedPDOStatement {
 
     public function execute() {  
         $start = microtime(true);  
-        $this->statement->execute(); 
+        $result = $this->statement->execute(); 
         $time = microtime(true) - $start;  
         DB::dbh()->log($this->postBindingStatement, round($time * 1000, 3));
         return $result;  
@@ -28,7 +28,7 @@ class LoggedPDOStatement {
      */
     public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR) {        
         $this->postBindingStatement = str_replace("{$parameter}", "'{$value}'", $this->postBindingStatement);
-        $this->statement->bindValue($parameter, $value, $dataType);
+        return $this->statement->bindValue($parameter, $value, $dataType);
     }
 
     function __call ($method, $params) {
