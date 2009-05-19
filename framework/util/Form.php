@@ -93,10 +93,11 @@ class Form {
         $_SESSION['error'] = array();
         foreach ($this->field as $id => $field) {
             $_SESSION['field'][$id] = $field['value'];
-            if ($field['errorMessage'] != '') {
-                $_SESSION['error'][$id] = $field['errorMessage'];             
+            if ($field['error'] != '') {
+                $_SESSION['error'][$id] = $field['error'];             
             }
         }
+
         header("Location: {$location}");
         die();
     }
