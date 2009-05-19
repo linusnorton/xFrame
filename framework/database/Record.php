@@ -8,7 +8,7 @@
  * and display as xml to any record.
  */
 class Record implements XML {
-    private $attributes = array();
+    protected $attributes = array();
     private $tableName;
 
     /**
