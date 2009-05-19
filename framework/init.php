@@ -65,7 +65,7 @@ function custom_error($type, $msg, $filename, $line ) {
 
     Page::addError($string);
     LoggerManager::getLogger("Error")->error($msg);
-    error_log($string);
+    error_log($msg);
 }
 
 /**
