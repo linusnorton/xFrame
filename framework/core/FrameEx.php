@@ -30,8 +30,9 @@ class FrameEx extends Exception {
 	public function output($uncaught = false, $return = false) {
 		$style = ($uncaught) ? "true" : "false";
 
-		$out .= "<exception caught='{$style}'>";
+		$out .= "<exception uncaught='{$style}'>";
         $out .= "<message>".htmlentities($this->message, ENT_COMPAT, "UTF-8", false)."</message>";
+        $out .= "<code>".htmlentities($this->code, ENT_COMPAT, "UTF-8", false)."</code>";
 		$out .= "<backtrace>";
         $i = 1;
 
