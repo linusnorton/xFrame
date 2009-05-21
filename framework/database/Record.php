@@ -131,7 +131,12 @@ class Record implements XML {
 
             //generate the sql string
             foreach($criteria as $column => $value) {
-                $sql.= " AND `{$column}` = :".$column;
+                if ($value == null) {
+                    $sql.= " AND `{$column}` IS NULL";
+                }
+                else {
+                    $sql.= " AND `{$column}` = :".$column;
+                }
             }
         }
 
@@ -139,7 +144,9 @@ class Record implements XML {
 
         //bind values
         foreach($criteria as $column => $value) {
-            $stmt->bindValue(':'.$column, $value);
+            if ($value != null) {
+                $stmt->bindValue(':'.$column, $value);
+            }
         }
 
         $stmt->execute();
