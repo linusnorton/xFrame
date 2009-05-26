@@ -59,7 +59,7 @@ class Record implements XML {
      */
     public static function load($tableName, $id, $class = "Record") {
         $attributes = false;
-        
+
         //if we're not caching or the record is not in the cache
         if (Registry::get("CACHE") != "on" || false === ($attributes = Cache::mch()->get($tableName.$id))) {
             //lets try to get the data from the db
@@ -97,7 +97,7 @@ class Record implements XML {
             return call_user_func(array($class, 'create'), $attributes);
         }
 
-    
+
     }
 
     /**
@@ -118,19 +118,19 @@ class Record implements XML {
      *
      * @param $tableName string table to load
      * @param $criteria array A mapping from column names to values.  The returned records will
-     * match all specified columns. 
+     * match all specified columns.
      * @param $class string class to instantiate as records
      */
     public static function loadMatching($tableName, array $criteria = array(), $class = "Record") {
         $records = array();
-        $sql = "SELECT * FROM `".addslashes($tableName)."`";
-        
-        //if we have criteria
-        if (count($criteria) > 0) {
-            $sql .= ' WHERE 1';
+        $sql = "SELECT * FROM `".addslashes($tableName)."` WHERE 1";
 
-            //generate the sql string
-            foreach($criteria as $column => $value) {
+        //generate the sql string
+        foreach($criteria as $column => $value) {
+            if ($value == null) {
+                $sql.= " AND `{$column}` IS NULL";
+            }
+            else {
                 if ($value == null) {
                     $sql.= " AND `{$column}` IS NULL";
                 }
@@ -174,7 +174,7 @@ class Record implements XML {
 
     /**
      * This function is called before a save, it flattens the record so it
-     * can be inserted into the database. 
+     * can be inserted into the database.
      *
      * @param $cascade boolean save related records
      */
@@ -256,7 +256,7 @@ class Record implements XML {
                     throw new FrameEx('Failed to commit transaction.');
                 }
             }
-            
+
             // Set the ID assigned for this record.
             if ($this->id == "" && $insertId == "") {
                 throw new FrameEx("Tried to insert a record but didn't get an ID back - usually a constraint error");
