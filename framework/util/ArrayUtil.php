@@ -22,7 +22,7 @@ class ArrayUtil {
 			}
 
 			if ($value instanceof XML) {
-				$xml .= "<{$key}>".$value->getXML()."</{$key}>";
+				$xml .= $value->getXML();
 			}
 			else if (is_array($value)) {
 				$xml .= "<{$key}>".self::getXML($value)."</{$key}>";
