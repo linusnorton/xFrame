@@ -4,7 +4,7 @@
  *
  * @package database
  *
- * Incapsulates an array of results that implement the XML interface. Allows easy pagination and XML access
+ * Encapsulates an array of results that implement the XML interface. Allows easy pagination and XML access
  */
 class Results {
     private $results;
