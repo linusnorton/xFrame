@@ -267,17 +267,13 @@ class Record implements XML {
         }
         catch (CyclicalRelationshipException $ex) {
             //if there were errors rollback the transaction
-            if ($transactional) {
-                DB::dbh()->rollBack();
-            }
+            DB::dbh()->rollBack();
             throw new FrameEx($ex->getMessage());
 
         }
         catch (PDOException $ex) {
             //if there were errors rollback the transaction
-            if ($transactional) {
-                DB::dbh()->rollBack();
-            }
+            DB::dbh()->rollBack();
             throw new FrameEx($ex->getMessage());
         }
 
