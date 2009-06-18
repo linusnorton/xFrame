@@ -274,7 +274,7 @@ class Record implements XML {
         catch (PDOException $ex) {
             //if there were errors rollback the transaction
             DB::dbh()->rollBack();
-            throw new FrameEx($ex->getMessage());
+            throw new FrameEx("Error saving {$this->tableName} - ".$ex->getMessage());
         }
 
         if (Registry::get("CACHE") == "on") {
@@ -338,8 +338,8 @@ class Record implements XML {
                 $xml .= ArrayUtil::getXML($value);
             }
             else {
-				$xml .= htmlentities($value, ENT_COMPAT, "UTF-8", false);
-			}
+                $xml .= htmlentities($value, ENT_COMPAT, "UTF-8", false);
+            }
 
             $xml .= "</{$key}>";
         }
@@ -372,8 +372,8 @@ class Record implements XML {
     /**
      * Make all the attributes public using this getter
      */
-    public function __get($key) {
-        return $this->attributes[$key];
+    public function __get($key) {   
+        return $this->attributes[$key];                     
     }
 
     /**
