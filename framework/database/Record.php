@@ -45,7 +45,7 @@ class Record implements XML {
      * @param $tableName string name of table
      * @param $attributes array associative array of fields loaded from db
      */
-    public static function create($tableName, array $attributes = array()) {
+    public static function createRecord($tableName, array $attributes = array()) {
         return new Record($tableName, $attributes);
     }
 
@@ -57,7 +57,7 @@ class Record implements XML {
      * @param $id mixed unique identifier, assumed to be id!!
      * @param $class class to instantiate (will be replaced with __STATIC__ in 5.3)
      */
-    public static function load($tableName, $id, $class = "Record") {
+    public static function load($tableName, $id, $class = "Record", $method = "create") {
         $attributes = false;
 
         //if we're not caching or the record is not in the cache
@@ -94,7 +94,7 @@ class Record implements XML {
         }
         else {
             //call the given object's create method, this will be replaced with __STATIC__
-            return call_user_func(array($class, 'create'), $attributes);
+            return call_user_func(array($class, $method), $attributes);
         }
 
 
@@ -106,8 +106,8 @@ class Record implements XML {
      * @param $tableName string table to load
      * @param $class string class to instantiate as records
      */
-    public static function loadAll($tableName, $class = "Record") {
-        return self::loadMatching($tableName, array(), $class);
+    public static function loadAll($tableName, $class = "Record", $method = "create") {
+        return self::loadMatching($tableName, array(), $class, $method);
     }
 
 
@@ -121,7 +121,7 @@ class Record implements XML {
      * match all specified columns.
      * @param $class string class to instantiate as records
      */
-    public static function loadMatching($tableName, array $criteria = array(), $class = "Record") {
+    public static function loadMatching($tableName, array $criteria = array(), $class = "Record", $method = "create") {
         $records = array();
         $sql = "SELECT * FROM `".addslashes($tableName)."` WHERE 1";
 
@@ -165,7 +165,7 @@ class Record implements XML {
                     Cache::mch()->set($tableName.$row["id"], $row, false, 0);
                 }
                 //call the given object's create method, this will be replaced with __STATIC__
-                $records[] = call_user_func(array($class, 'create'), $row);
+                $records[] = call_user_func(array($class, $method), $row);
             }
         }
 
