@@ -14,7 +14,7 @@ set_exception_handler("custom_exception");
 
 function custom_error($type, $msg, $filename, $line ) {
     //surpress notices
-	if ($type == E_NOTICE)
+	if ($type == E_NOTICE || E_STRICT)
 		return;
 
 	$errortype = array (
@@ -46,16 +46,12 @@ function custom_error($type, $msg, $filename, $line ) {
         }
 
         $back['file'] = basename($back['file']);
+        $back['class'] = array_key_exists('class', $back) ? $back['class'] : '';
         $string .= "<step number='".$i++."' class='{$back['class']}' function='{$back['function']}' line='{$back['line']}' file='{$back['file']}'/>";
     }
 
     $string .= "</backtrace>";
 	$string .= "</error>";
-
-    //return the error do no more
-    if ($return) {
-        return $string;
-    }
 
     if (Registry::get("EMAIL_ERRORS") === true) {
         $headers  = 'MIME-Version: 1.0' . "\r\n";

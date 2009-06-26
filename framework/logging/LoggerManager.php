@@ -11,11 +11,11 @@ class LoggerManager {
      * Return the requested logger if one does not exist, create on
      */
     public static function getLogger($key) {
-        if (!self::$loggers[$key] instanceof Logger) {
+        if (!array_key_exists($key, self::$loggers) || !self::$loggers[$key] instanceof Logger) {
             self::$loggers[$key] = new Logger($key);
         }
-        return self::$loggers[$key];  
-    }    
+        return self::$loggers[$key];
+    }
 }
 
 

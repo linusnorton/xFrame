@@ -9,7 +9,7 @@
 class Page {
     const OUTPUT_XSL = 0, OUTPUT_XML = 1, OUTPUT_OFF = 2;
 
-    private static $outputMode = OUTPUT_XSL;
+    private static $outputMode = self::OUTPUT_XSL;
     private static $exceptions = array();
     private static $errors = array();
     private static $staticIncludes = array();
@@ -22,7 +22,7 @@ class Page {
      */
     public static function build() {
         if (self::$outputMode == self::OUTPUT_OFF) {
-            return; //nothing to do 
+            return; //nothing to do
         }
         if (self::$outputMode == self::OUTPUT_XML) {
             header("content-type: text/xml");
@@ -77,7 +77,7 @@ class Page {
             $return .= $xml;
             $return .= "</pre>";
             return $return;
-        } 
+        }
         else if ($_GET["debug"] == "xml") {
             header("content-type: text/xml");
             return $xml;
@@ -149,12 +149,12 @@ class Page {
     }
 
     /**
-     * Set output mode. 
+     * Set output mode.
      *
      * Page::OUTPUT_OFF lets you do all the echoing
      * Page::OUTPUT_XML returns just the XML
      * Page::OUTPUT_XSL does a standard page transformation
-     */ 
+     */
     public static function setOutputMode($mode) {
         self::$outputMode = $mode;
     }
