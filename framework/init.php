@@ -14,7 +14,7 @@ set_exception_handler("custom_exception");
 
 function custom_error($type, $msg, $filename, $line ) {
     //surpress notices
-	if ($type == E_NOTICE || E_STRICT)
+	if ($type == E_NOTICE || $type == E_STRICT)
 		return;
 
 	$errortype = array (
