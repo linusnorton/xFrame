@@ -131,12 +131,7 @@ class Record implements XML {
                 $sql.= " AND `{$column}` IS NULL";
             }
             else {
-                if ($value == null) {
-                    $sql.= " AND `{$column}` IS NULL";
-                }
-                else {
-                    $sql.= " AND `{$column}` = :".$column;
-                }
+                $sql.= " AND `{$column}` = :".$column;
             }
         }
 
