@@ -13,8 +13,9 @@ set_error_handler("custom_error");
 set_exception_handler("custom_exception");
 
 function custom_error($type, $msg, $filename, $line ) {
-    //surpress notices
-	if ($type == E_NOTICE || $type == E_STRICT)
+    //filter out notices
+
+    if (!(ini_get("error_reporting") & $type))
 		return;
 
 	$errortype = array (
