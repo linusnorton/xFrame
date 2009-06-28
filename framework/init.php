@@ -29,7 +29,8 @@ function custom_error($type, $msg, $filename, $line ) {
                 E_USER_ERROR         => 'User Error',
                 E_USER_WARNING       => 'User Warning',
                 E_USER_NOTICE        => 'User Notice',
-                E_STRICT             => 'Runtime Notice'
+                E_STRICT             => 'Runtime Notice',
+                E_RECOVERABLE_ERROR  => 'Recoverable Error'
                 );
 
 

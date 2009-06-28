@@ -8,7 +8,7 @@
  * and display as xml to any record.
  */
 class Record implements XML {
-    protected $attributes = array();
+    protected $attributes;
     private $tableName;
 
     /**
@@ -19,9 +19,9 @@ class Record implements XML {
      * @param $attributes array associative array containing the fields in the tableName
      */
     public function __construct($tableName = null, array $attributes = array()) {
-        //check tableName has been set to something
+        //check tableName has been set to something, if not assume class name
         if ($tableName == null) {
-            return; //if not dont worry we may be populated manually
+            $tableName = __CLASS__;
         }
 
         $this->tableName = addslashes($tableName);
@@ -45,7 +45,7 @@ class Record implements XML {
      * @param $tableName string name of table
      * @param $attributes array associative array of fields loaded from db
      */
-    public static function createRecord($tableName, array $attributes = array()) {
+    public static function create($tableName, array $attributes = array()) {
         return new Record($tableName, $attributes);
     }
 
@@ -372,8 +372,8 @@ class Record implements XML {
     /**
      * Make all the attributes public using this getter
      */
-    public function __get($key) {   
-        return $this->attributes[$key];                     
+    public function __get($key) {
+        return $this->attributes[$key];
     }
 
     /**
