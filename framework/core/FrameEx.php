@@ -58,4 +58,50 @@ class FrameEx extends Exception {
         LoggerManager::getLogger("Exception")->error($this->message);
         error_log($this->message);
     }
+
+    /**
+     * Handles PHP generated errors
+     */
+    public function errorHandler($type, $msg, $filename, $line ) {
+
+        $errortype = array (
+                        E_ERROR              => 'Error',
+                        E_WARNING            => 'Warning',
+                        E_PARSE              => 'Parsing Error',
+                        E_NOTICE             => 'Notice',
+                        E_CORE_ERROR         => 'Core Error',
+                        E_CORE_WARNING       => 'Core Warning',
+                        E_COMPILE_ERROR      => 'Compile Error',
+                        E_COMPILE_WARNING    => 'Compile Warning',
+                        E_USER_ERROR         => 'User Error',
+                        E_USER_WARNING       => 'User Warning',
+                        E_USER_NOTICE        => 'User Notice',
+                        E_STRICT             => 'Runtime Notice',
+                        E_RECOVERABLE_ERROR  => 'Recoverable Error'
+                    );
+
+
+        throw new FrameEx($errortype[$type].": ".$msg);
+    }
+
+
+    /**
+     * If an exception is thrown that is not in a try catch statement it comes
+     * here. It is then output to the screen and code execution stops
+     *
+     * @param Exception $exception
+     */
+    public function exceptionHandler($exception) {
+        if ($exception instanceof FrameEx) {
+            try {
+                $exception->output(true);
+            }
+            catch (Exception $e) {
+                die("Error processing exception");
+            }
+        }
+        else {
+            echo $exception;
+        }
+    }
 }
