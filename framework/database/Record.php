@@ -329,6 +329,9 @@ class Record implements XML {
             if ($value instanceof XML) {
                 $xml .= $value->getXML();
             }
+            else if (is_bool($value)) {
+                $xml .= ($value) ? "true" : "false";
+            }
             else if (is_array($value)) {
                 $xml .= ArrayUtil::getXML($value);
             }
