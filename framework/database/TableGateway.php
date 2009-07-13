@@ -119,6 +119,12 @@ class TableGateway {
         //if we didn't start 0 there might be more, if the num results we got was there num we asked for there might be more
         if ((ctype_digit("{$num}") && $stmt->rowCount() == $num) || ctype_digit("{$start}")) {
             $countSTMT = DB::dbh()->prepare($countSQL);
+            //bind values
+            foreach($criteria as $column => $value) {
+                if ($value != null) {
+                    $countSTMT->bindValue(':'.$column, $value);
+                }
+            }
             $countSTMT->execute();
             $numResults = current($countSTMT->fetch());
         }
