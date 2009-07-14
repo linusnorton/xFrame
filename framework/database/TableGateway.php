@@ -167,7 +167,7 @@ class TableGateway {
     }
 
     private static function generateOrderSQL(array $orderBy = array()) {
-        $sql = "";
+        $sql = " ORDER BY ";
 
         foreach ($orderBy as $field => $order) {
             if ($order == self::ASC || $order == self::DESC) {
