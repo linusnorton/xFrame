@@ -133,6 +133,8 @@ class TableGateway {
             $start = 0;
         }
 
+        $records = array();
+
         if ($class == "Record") {
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 if (Registry::get("CACHE") == "on") {
