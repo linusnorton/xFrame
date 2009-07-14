@@ -9,7 +9,7 @@
  * for doing all your SQL
  */
 class TableGateway {
-
+    const ASC = "ASC", DESC = "DESC";
     /**
      * If a Record is constructed with a tableName and id we will try to load the data from the database
      * If not we just create an empty record that can be populated using the setup() method
@@ -91,18 +91,14 @@ class TableGateway {
                                         $class = "Record",
                                         $method = "create",
                                         $start = null,
-                                        $num = null) {
+                                        $num = null,
+                                        array $orderBy = array()) {
 
         $criteriaSQL = self::generateCriteriaSQL($criteria);
-        $sql = "SELECT * FROM `".addslashes($tableName)."` WHERE 1".$criteriaSQL;
+        $orderSQL = self::generateOrderSQL($orderBy);
+        $limitSQL = self::generateLimitSQL($start, $num);
+        $sql = "SELECT * FROM `".addslashes($tableName)."` WHERE 1".$criteriaSQL.$orderSQL.$limitSQL;
         $countSQL = "SELECT count(id) as num FROM `".addslashes($tableName)."` WHERE 1".$criteriaSQL;
-
-        if (ctype_digit("{$start}")) {
-            $sql .= " LIMIT {$start}, {$num} ";
-        }
-        else if (ctype_digit("{$num}")) {
-            $sql .= " LIMIT {$num}";
-        }
 
         $stmt = DB::dbh()->prepare($sql);
 
@@ -168,5 +164,26 @@ class TableGateway {
             }
         }
         return $sql;
+    }
+
+    private static function generateOrderSQL(array $orderBy = array()) {
+        $sql = "";
+
+        foreach ($orderBy as $field => $order) {
+            if ($order == self::ASC || $order == self::DESC) {
+                $sql .= "`".addslashes($field)."` ".$order.",";
+            }
+        }
+
+        return substr($sql, 0, -1);
+    }
+
+    private static function generateLimitSQL($start, $num) {
+        if (ctype_digit("{$start}") && ctype_digit("{$num}")) {
+            return " LIMIT {$start}, {$num} ";
+        }
+        else if (ctype_digit("{$num}")) {
+            return " LIMIT {$num} ";
+        }
     }
 }
