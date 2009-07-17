@@ -19,7 +19,9 @@
 
     /** include the class do not create the object */
     public static function includeFile($className) {
+        //if we have a mapping for the object
         if (array_key_exists($className, self::$objects)) {
+            //but it doesn't exist, we need to rebuild
             if (!file_exists(ROOT.self::$objects[$className])) {
                 self::rebuild();
                 return self::includeFile($className);
@@ -28,7 +30,6 @@
             require_once(ROOT.self::$objects[$className]);
             return true;
         }
-
         return false;
     }
 
@@ -61,6 +62,10 @@
                     //rebuild the directories classes.php file
                     Factory::rebuildDirectory(ROOT.$file."/");
                 }
+                else if (ucfirst($file) == "Zend") {
+                    //go into "zend mode"
+                    Factory::rebuildDirectory(ROOT.$file."/", true);
+                }
             }
             closedir($dh);
         }
@@ -70,9 +75,9 @@
     /**
      * Rebuilds a particular directories class mapping
      */
-    private static function rebuildDirectory($dir) {
+    private static function rebuildDirectory($dir, $zendMode = false) {
         $classes = array();
-        Factory::getClassesInDirectory($dir, $classes);
+        Factory::getClassesInDirectory($dir, $classes, $zendMode);
         Factory::buildClassFile($dir.".classes.php", $classes);
         include($dir.".classes.php");
     }
@@ -85,7 +90,7 @@
      * @param $dir string directory to look in
      * @param &$classes array stores the classes that are found
      */
-    private static function getClassesInDirectory($dir, &$classes) {
+    private static function getClassesInDirectory($dir, &$classes, $zendMode = false) {
         if (!is_dir($dir)) {
             return;
         }
@@ -104,11 +109,15 @@
                 //if im a directory
                 if (is_dir($dir.$file)) {
                     //lets get recursive and add all the classes in this dir
-                    Factory::getClassesInDirectory($dir.$file."/", $classes);
+                    Factory::getClassesInDirectory($dir.$file."/", $classes, $zendMode);
                 }
                 //if im an acceptable file and the first char is upper case(!!!!)
                 else if (in_array($ext, self::$fileTypes) && ctype_upper($file[0])) {
                     $class = str_replace($ext, "", $file);
+
+                    if ($zendMode) {
+                        $class = str_replace("/", "_", substr($dir.$class,11));
+                    }
                     $classes[$class] = $dir.$file;
                 }
             }

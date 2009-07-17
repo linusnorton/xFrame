@@ -56,12 +56,13 @@ class Record implements XML {
      * @param $tableName string table name
      * @param $id mixed unique identifier, assumed to be id!!
      * @param $class class to instantiate (will be replaced with __STATIC__ in 5.3)
+     * @param $method function to call to initialize the class
      */
     public static function load($tableName, $id, $class = "Record", $method = "create") {
         $attributes = false;
 
         //if we're not caching or the record is not in the cache
-        if (Registry::get("CACHE") != "on" || false === ($attributes = Cache::mch()->get($tableName.$id))) {
+        if (!Registry::get("CACHE_ENABLED") || false === ($attributes = Cache::mch()->get($tableName.$id))) {
             //lets try to get the data from the db
             try {
                 $stmt = DB::dbh()->prepare('SELECT * FROM `'.addslashes($tableName).'` WHERE `id` = :id');
@@ -84,7 +85,7 @@ class Record implements XML {
             $attributes = $stmt->fetch(PDO::FETCH_ASSOC);
 
             //if we're caching, put it in
-            if (Registry::get("CACHE") == "on") {
+            if (Registry::get("CACHE_ENABLED")) {
                 Cache::mch()->set($tableName.$id, $attributes, false, 0);
             }
         }
@@ -120,6 +121,7 @@ class Record implements XML {
      * @param $criteria array A mapping from column names to values.  The returned records will
      * match all specified columns.
      * @param $class string class to instantiate as records
+     * @param $method function to call to initialize the class
      */
     public static function loadMatching($tableName, array $criteria = array(), $class = "Record", $method = "create") {
         $records = array();
@@ -148,7 +150,7 @@ class Record implements XML {
 
         if ($class == "Record") {
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                if (Registry::get("CACHE") == "on") {
+                if (Registry::get("CACHE_ENABLED")) {
                     Cache::mch()->set($tableName.$row["id"], $row, false, 0);
                 }
                 $records[] = new Record($tableName, $row);
@@ -156,7 +158,7 @@ class Record implements XML {
         }
         else {
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                if (Registry::get("CACHE") == "on") {
+                if (Registry::get("CACHE_ENABLED")) {
                     Cache::mch()->set($tableName.$row["id"], $row, false, 0);
                 }
                 //call the given object's create method, this will be replaced with __STATIC__
@@ -171,7 +173,8 @@ class Record implements XML {
      * This function is called before a save, it flattens the record so it
      * can be inserted into the database.
      *
-     * @param $cascade boolean save related records
+     * @param boolean $cascade boolean save related records
+     * @param array $saveGraph
      */
     private function flatten($cascade, array &$saveGraph = array()) {
         $flatAttributes = array();
@@ -272,7 +275,7 @@ class Record implements XML {
             throw new FrameEx("Error saving {$this->tableName} - ".$ex->getMessage());
         }
 
-        if (Registry::get("CACHE") == "on") {
+        if (Registry::get("CACHE_ENABLED")) {
             Cache::mch()->delete($this->tableName.$this->id);
         }
     }
@@ -312,13 +315,14 @@ class Record implements XML {
             throw new FrameEx($ex->getMessage());
         }
 
-        if (Registry::get("CACHE") == "on") {
+        if (Registry::get("CACHE_ENABLED")) {
             Cache::mch()->delete($this->tableName.$this->id);
         }
     }
 
     /**
      * Return an XML string representation of the record
+     * @return string $xml
      */
     public function getXML() {
         $xml = "\n<record table='{$this->tableName}' id='{$this->attributes['id']}'>";
@@ -369,6 +373,8 @@ class Record implements XML {
     }
     /**
      * Make all the attributes public using this getter
+     * @param mixed $key
+     * @return mixed $value
      */
     public function __get($key) {
         return $this->attributes[$key];
@@ -376,9 +382,28 @@ class Record implements XML {
 
     /**
      * Make all the attributes public using this setter
+     * @param mixed $key
+     * @param mixed $value
+     * @return mixed $value
      */
     public function __set($key, $value) {
         return $this->attributes[$key] = $value;
+    }
+
+    /**
+     * Unset the given variable
+     * @param mixed $key
+     */
+    public function __unset($key) {
+        unset($this->attributes[$key]);
+    }
+
+    /**
+     * @param $key
+     * @return boolean
+     */
+    public function __isset($key) {
+        return isset($this->attributes[$key]);
     }
 
 }

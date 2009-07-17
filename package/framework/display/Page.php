@@ -14,11 +14,13 @@ class Page {
     private static $errors = array();
     private static $staticIncludes = array();
     private static $parameters = array();
+    private static $executionTime;
     public static $xsl = null;
     public static $xml = "";
 
     /**
      * Transform the XSL and XML and return out the result
+     * @return string $html transformation
      */
     public static function build() {
         if (self::$outputMode == self::OUTPUT_OFF) {
@@ -68,9 +70,9 @@ class Page {
         }
 
         //later I will make an option to turn this off
-        if ($_GET["debug"] == "true") {
+        if (array_key_exists("debug",$_GET) && $_GET["debug"] == "true") {
             $return = "<strong>Execution Time: ";
-            $return .= number_format(microtime(true) - $GLOBALS["executionTime"], 2);
+            $return .= number_format(microtime(true) - self::$executionTime, 2);
             $return .=" secs</strong><br /><strong>Page XML</strong><br /><pre>";
             $xml = str_replace("<", "&lt;" , $xml);
             $xml = str_replace(">", "&gt;" , $xml);
@@ -78,7 +80,7 @@ class Page {
             $return .= "</pre>";
             return $return;
         }
-        else if ($_GET["debug"] == "xml") {
+        else if (array_key_exists("debug",$_GET) && $_GET["debug"] == "xml") {
             header("content-type: text/xml");
             return $xml;
         }
@@ -159,6 +161,21 @@ class Page {
         self::$outputMode = $mode;
     }
 
+    /**
+     * If headers haven't been sent, redirect to the given location
+     * If the headers have been sent... throw an exception.
+     */
+    public function redirect($location) {
+        if (!headers_sent()) {
+            header('Location: {$location}');
+            die();
+        }
+        else {
+            throw new FrameEx("Could not redirect to {$location}, headers already sent");
+        }
+    }
+
+
     private static function generateXML() {
         $xml = '<?xml version="1.0" encoding="utf-8"?><root xmlns:xi="http://www.w3.org/2001/XInclude">';
 
@@ -179,5 +196,14 @@ class Page {
         $xml .= "</root>";
 
         return $xml;
+    }
+
+
+    public function init() {
+        self::$executionTime = microtime(true); //used for script execution time
+    }
+
+    public function getExecutionTime() {
+        return self::$executionTime;
     }
 }

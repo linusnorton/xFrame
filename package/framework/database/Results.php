@@ -57,6 +57,10 @@ class Results implements ArrayAccess, Countable, SeekableIterator, XML {
         }
 
         $xml .= "</pagination>";
+        $xml .= "<maxNumResults>{$this->maxNumResults}</maxNumResults>" ;
+        $xml .= "<numResults>{$this->numResults}</numResults>" ;
+        $xml .= "<currentResultNumber>{$this->currentResultNumber}</currentResultNumber>" ;
+        $xml .= "<resultsPerPage>{$this->resultsPerPage}</resultsPerPage>" ;
         $xml .= "</{$this->customTag}>";
 
         return $xml;

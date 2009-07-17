@@ -1,6 +1,6 @@
 <?php
 
-@define('ROOT', './');
+@define('ROOT', '../package/');
 require_once(ROOT.'framework/init.php');
 
 /**
@@ -16,7 +16,7 @@ require_once(ROOT.'framework/init.php');
 
 //generate the request
 $request = Request::buildRequest();
-$cacheOn = (Dispatcher::getCacheLength($request) !== false && $_GET["cache"] != "no" && Registry::get("CACHE") == "on");
+$cacheOn = (Dispatcher::getCacheLength($request) !== false && array_key_exists("cache",$_GET) && $_GET["cache"] != "no" && Registry::get("CACHE_ENABLED"));
 $page = false;
 
 //check to see if we can get the cache version
@@ -43,6 +43,7 @@ if ($page === false) {
         //replace the xslt with the standard errors.xsl and display the page
         $page = Page::displayErrors();
     }
+    $cacheMessage = "- not cached";
 }
 else {
     $cacheMessage = "from the cache";
@@ -50,6 +51,6 @@ else {
 
 //output the page
 echo $page;
-echo "<!-- Page executed in: ".number_format(microtime(true) - $GLOBALS["executionTime"], 5)." secs {$cacheMessage}-->";
+echo "<!-- Page executed in: ".number_format(microtime(true) - Page::getExecutionTime(), 5)." secs {$cacheMessage}-->";
 
 ?>

@@ -10,6 +10,7 @@
  */
 class TableGateway {
     const ASC = "ASC", DESC = "DESC";
+
     /**
      * If a Record is constructed with a tableName and id we will try to load the data from the database
      * If not we just create an empty record that can be populated using the setup() method
@@ -17,12 +18,13 @@ class TableGateway {
      * @param $tableName string table name
      * @param $id mixed unique identifier, assumed to be id!!
      * @param $class class to instantiate (will be replaced with __STATIC__ in 5.3)
+     * @param $method function to call to initialize the class
      */
     public static function load($tableName, $id, $class = "Record", $method = "create") {
         $attributes = false;
 
         //if we're not caching or the record is not in the cache
-        if (Registry::get("CACHE") != "on" || false === ($attributes = Cache::mch()->get($tableName.$id))) {
+        if (!Registry::get("CACHE_ENABLED") || false === ($attributes = Cache::mch()->get($tableName.$id))) {
             //lets try to get the data from the db
             try {
                 $stmt = DB::dbh()->prepare('SELECT * FROM `'.addslashes($tableName).'` WHERE `id` = :id');
@@ -45,7 +47,7 @@ class TableGateway {
             $attributes = $stmt->fetch(PDO::FETCH_ASSOC);
 
             //if we're caching, put it in
-            if (Registry::get("CACHE") == "on") {
+            if (Registry::get("CACHE_ENABLED")) {
                 Cache::mch()->set($tableName.$id, $attributes, false, 0);
             }
         }
@@ -66,6 +68,7 @@ class TableGateway {
      *
      * @param $tableName string table to load
      * @param $class string class to instantiate as records
+     * @param $method function to call to initialize the class
      */
     public static function loadAll($tableName,
                                    $class = "Record",
@@ -85,6 +88,7 @@ class TableGateway {
      * @param $criteria array A mapping from column names to values.  The returned records will
      * match all specified columns.
      * @param $class string class to instantiate as records
+     * @param $method function to call to initialize the class
      */
     public static function loadMatching($tableName,
                                         array $criteria = array(),
@@ -97,8 +101,7 @@ class TableGateway {
         $criteriaSQL = self::generateCriteriaSQL($criteria);
         $orderSQL = self::generateOrderSQL($orderBy);
         $limitSQL = self::generateLimitSQL($start, $num);
-        $sql = "SELECT * FROM `".addslashes($tableName)."` WHERE 1".$criteriaSQL.$orderSQL.$limitSQL;
-        $countSQL = "SELECT count(id) as num FROM `".addslashes($tableName)."` WHERE 1".$criteriaSQL;
+        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM `".addslashes($tableName)."` WHERE 1".$criteriaSQL.$orderSQL.$limitSQL;
 
         $stmt = DB::dbh()->prepare($sql);
 
@@ -114,15 +117,7 @@ class TableGateway {
         //check to see if there are more records than we selected
         //if we didn't start 0 there might be more, if the num results we got was there num we asked for there might be more
         if ((ctype_digit("{$num}") && $stmt->rowCount() == $num) || ctype_digit("{$start}")) {
-            $countSTMT = DB::dbh()->prepare($countSQL);
-            //bind values
-            foreach($criteria as $column => $value) {
-                if ($value != null) {
-                    $countSTMT->bindValue(':'.$column, $value);
-                }
-            }
-            $countSTMT->execute();
-            $numResults = current($countSTMT->fetch());
+            $numResults = current(DB::dbh()->query("SELECT FOUND_ROWS()")->fetch());
         }
         else {
             $numResults = $stmt->rowCount();
@@ -133,7 +128,7 @@ class TableGateway {
 
         if ($class == "Record") {
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                if (Registry::get("CACHE") == "on") {
+                if (Registry::get("CACHE_ENABLED")) {
                     Cache::mch()->set($tableName.$row["id"], $row, false, 0);
                 }
                 $records[] = new Record($tableName, $row);
@@ -141,7 +136,7 @@ class TableGateway {
         }
         else {
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                if (Registry::get("CACHE") == "on") {
+                if (Registry::get("CACHE_ENABLED")) {
                     Cache::mch()->set($tableName.$row["id"], $row, false, 0);
                 }
                 //call the given object's create method, this will be replaced with __STATIC__
@@ -167,6 +162,10 @@ class TableGateway {
     }
 
     private static function generateOrderSQL(array $orderBy = array()) {
+        if (count($orderBy) == 0) {
+            return;
+        }
+
         $sql = " ORDER BY ";
 
         foreach ($orderBy as $field => $order) {

@@ -30,15 +30,20 @@ class FrameEx extends Exception {
 	public function output($uncaught = false, $return = false) {
 		$style = ($uncaught) ? "true" : "false";
 
-		$out .= "<exception uncaught='{$style}'>";
+		$out = "<exception uncaught='{$style}'>";
         $out .= "<message>".htmlentities($this->message, ENT_COMPAT, "UTF-8", false)."</message>";
         $out .= "<code>".htmlentities($this->code, ENT_COMPAT, "UTF-8", false)."</code>";
 		$out .= "<backtrace>";
         $i = 1;
 
 		foreach (array_reverse($this->backtrace) as $back) {
-			$back['file'] = basename($back['file']);
-            $out .= "<step number='".$i++."' line='{$back['line']}' file='{$back['file']}' class='{$back['class']}' function='{$back['function']}' />";
+            $back['file'] = (array_key_exists("file", $back)) ? basename($back['file']) : "";
+            $back['class'] = (array_key_exists("class", $back)) ? $back['class'] : "";
+            $back['line'] = (array_key_exists("line", $back)) ? $back['line'] : "";
+
+            if ($back["class"] != "FrameEx") {
+                $out .= "<step number='".$i++."' line='{$back['line']}' file='{$back['file']}' class='{$back['class']}' function='{$back['function']}' />";
+            }
 		}
         $out .= "</backtrace>";
         $out .= "</exception>";
@@ -63,7 +68,6 @@ class FrameEx extends Exception {
      * Handles PHP generated errors
      */
     public function errorHandler($type, $msg, $filename, $line ) {
-
         $errortype = array (
                         E_ERROR              => 'Error',
                         E_WARNING            => 'Warning',
@@ -80,8 +84,8 @@ class FrameEx extends Exception {
                         E_RECOVERABLE_ERROR  => 'Recoverable Error'
                     );
 
-
-        throw new FrameEx($errortype[$type].": ".$msg);
+        $error = (array_key_exists($type, $errortype)) ? $errortype[$type] : $type;
+        throw new FrameEx($error.": ".$msg." (line {$line} of ".basename($filename).")");
     }
 
 
@@ -95,8 +99,10 @@ class FrameEx extends Exception {
         if ($exception instanceof FrameEx) {
             try {
                 $exception->output(true);
+                echo Page::displayErrors();
             }
             catch (Exception $e) {
+                print_r($e);
                 die("Error processing exception");
             }
         }

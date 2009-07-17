@@ -19,7 +19,7 @@ class Index {
             `id` INT(11) UNSIGNED auto_increment,
             `name` VARCHAR(255),
             PRIMARY KEY(id)
-        ); 
+        );
 
         INSERT INTO test_table VALUES (1,"Linus");
         INSERT INTO test_table VALUES (2,"Jason");
@@ -78,6 +78,10 @@ class Index {
         $record = Record::load("test_table", 1);
         $record->fieldThatIsNotInDB = "Ha, this isn't in the database";
         Page::addXML($record->getXML());
+
+        //Example 8: using the TableGateway
+        $xml = TableGateway::loadAll("table", "Record", "create", 0, 5)->getXML();
+        Page::addXML($xml);
         */
         Page::$xsl = ROOT."app/view/index.xsl";
     }
