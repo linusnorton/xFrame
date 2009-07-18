@@ -1,6 +1,7 @@
 <?php
 
 @define('ROOT', '../package/');
+@define('RESOURCE_ROOT', '../resource/');
 require_once(ROOT.'framework/init.php');
 
 /**
