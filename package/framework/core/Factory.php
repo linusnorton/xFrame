@@ -75,7 +75,7 @@
     /**
      * Rebuilds a particular directories class mapping
      */
-    private static function rebuildDirectory($dir, $zendMode = false) {
+    public static function rebuildDirectory($dir, $zendMode = false) {
         $classes = array();
         Factory::getClassesInDirectory($dir, $classes, $zendMode);
         Factory::buildClassFile($dir.".classes.php", $classes);
