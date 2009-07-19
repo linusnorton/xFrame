@@ -371,6 +371,46 @@ class Record implements XML {
     public function hash() {
         return spl_object_hash($this);
     }
+
+    /**
+     * Free getters and setters for everyone
+     */
+    public function __call($method, array $arguments) {
+        $action = substr($method ,0, 3);
+        $property = substr($method, 3);
+
+        //if we are calling a getter
+        if ($action == "get") {
+
+            //loop each attribute
+            foreach ($this->attributes as $key => $value) {
+                // and try to find the right one
+                $key = explode("_",$key);
+                $key = array_map("ucfirst", $key);
+                $key = implode($key);
+
+                if ($key == $property) {
+                    return $value;
+                }
+            }
+        }
+        else if ($action == "set") {
+            //loop each attribute
+            foreach ($this->attributes as $key => &$value) {
+                // and try to find the right one
+                $key = explode("_",$key);
+                $key = array_map("ucfirst", $key);
+                $key = implode($key);
+
+                if ($key == $property) {
+                    return $value = current($arguments);
+                }
+            }
+        }
+
+        throw new FrameEx("Unknown method {$method}");
+    }
+
     /**
      * Make all the attributes public using this getter
      * @param mixed $key
