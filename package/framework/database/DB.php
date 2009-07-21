@@ -61,6 +61,42 @@ class DB {
     }
 
 
+    /**
+     * Executes the specified callback within the context of a database transaction.
+     * If the commit fails (due to data inconsistency) the callback will be tried
+     * again (the number of attempts is controlled by the second parameter, if not
+     * specified it will retry indefinitely).
+     * If the callback throws an exception the transaction will be rolled back and
+     * the exception propagated.
+     *
+     * If you need to change the transaction isolation level, do it before invoking
+     * this method.
+     *
+     * @param callback $callback The transactional logic.
+     * @param integer $attempts The number of times to try before giving up.
+     * @return boolean True if the transaction was (eventually) committed successfully,
+     * false otherwise.
+     */
+    public static function doInTransaction($callback, $attempts = -1) {
+        $transactional = self::dbh()->beginTransaction();
+        if (!$transactional) {
+            throw new FrameEx('Failed initiating database transaction.');
+        }
+
+        $success = false;
+        while (!$success && $attempts != 0) {
+            try {
+                call_user_func($callback);
+                $success = self::dbh()->commit();
+                --$attempts;
+            }
+            catch (Exception $ex) {
+                self::dbh()->rollBack();
+                throw $ex;
+            }
+        }
+        return $success;
+    }
 }
 
 
