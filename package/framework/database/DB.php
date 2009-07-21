@@ -74,8 +74,8 @@ class DB {
      *
      * @param callback $callback The transactional logic.
      * @param integer $attempts The number of times to try before giving up.
-     * @return boolean True if the transaction was (eventually) committed successfully,
-     * false otherwise.
+     * @return mixed The result of the specified function, or false if the transaction
+     * did not succeed.
      */
     public static function doInTransaction($callback, $attempts = -1) {
         $transactional = self::dbh()->beginTransaction();
@@ -83,11 +83,13 @@ class DB {
             throw new FrameEx('Failed initiating database transaction.');
         }
 
-        $success = false;
-        while (!$success && $attempts != 0) {
+        while ($attempts != 0) {
             try {
-                call_user_func($callback);
+                $result = call_user_func($callback);
                 $success = self::dbh()->commit();
+                if ($success) {
+                    return $result;
+                }
                 --$attempts;
             }
             catch (Exception $ex) {
@@ -95,7 +97,7 @@ class DB {
                 throw $ex;
             }
         }
-        return $success;
+        return false;
     }
 }
 
