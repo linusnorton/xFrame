@@ -14,14 +14,17 @@ function __autoload($className) {
         //rebuild the class/file mapping
         Factory::rebuild();
         //try to see if we have it now
-        if (!class_exists($className)) {
+        if (!Factory::includeFile($className)) {
             throw new FrameEx("Could not find class {$className}");
         }
     }
 }
 
-//set up the object factory
-include_once(ROOT."framework/.classes.php");
+if (!file_exists(ROOT."framework/.classes.php")) {
+    Factory::rebuild();
+}
+
+include(ROOT."framework/.classes.php");
 set_exception_handler(array("FrameEx", "exceptionHandler"));
 set_error_handler(array("FrameEx", "errorHandler"), ini_get("error_reporting"));
 ini_set("include_path", ini_get("include_path").":".ROOT);

@@ -26,10 +26,10 @@
                 self::rebuild();
                 return self::includeFile($className);
             }
-
             require_once(ROOT.self::$objects[$className]);
             return true;
         }
+
         return false;
     }
 
@@ -79,6 +79,7 @@
         $classes = array();
         Factory::getClassesInDirectory($dir, $classes, $zendMode);
         Factory::buildClassFile($dir.".classes.php", $classes);
+        
         include($dir.".classes.php");
     }
 

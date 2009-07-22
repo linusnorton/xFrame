@@ -36,7 +36,9 @@ Dispatcher::addListener("home", "Index", "run", 60, $parameterMap);
 // Include class mappings (don't change)                                          //
 ////////////////////////////////////////////////////////////////////////////////////
 
-include(ROOT."app/.classes.php");
+if (file_exists(ROOT."app/.classes.php")) {
+    include(ROOT."app/.classes.php");
+}
 //include(ROOT."Zend/.classes.php");
 
 ?>
