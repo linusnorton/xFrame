@@ -44,18 +44,19 @@ class Results implements ArrayAccess, Countable, SeekableIterator, XML {
         $xml .= "</results>";
         $xml .= "<pagination>";
 
+        if (ctype_digit("{$this->resultsPerPage}")) {
+            for ($i = 0; $i < $this->maxNumResults ; $i += $this->resultsPerPage) {
+                $selected = ($i == $this->currentResultNumber) ? " selected='true'" : "";
+                $end = ($i + $this->resultsPerPage < $this->maxNumResults) ? $i + $this->resultsPerPage : $this->maxNumResults;
 
-        for ($i = 0; $i < $this->maxNumResults ; $i += $this->resultsPerPage) {
-            $selected = ($i == $this->currentResultNumber) ? " selected='true'" : "";
-            $end = ($i + $this->resultsPerPage < $this->maxNumResults) ? $i + $this->resultsPerPage : $this->maxNumResults;
-
-            $xml .= "
-            <page{$selected}>
-                <start>{$i}</start>
-                <end>{$end}</end>
-            </page>";
+                $xml .= "
+                <page{$selected}>
+                    <start>{$i}</start>
+                    <end>{$end}</end>
+                </page>";
+            }
         }
-
+        
         $xml .= "</pagination>";
         $xml .= "<maxNumResults>{$this->maxNumResults}</maxNumResults>" ;
         $xml .= "<numResults>{$this->numResults}</numResults>" ;
