@@ -15,7 +15,7 @@ function __autoload($className) {
         Factory::rebuild();
         //try to see if we have it now
         if (!Factory::includeFile($className)) {
-            throw new FrameEx("Could not find class {$className}");
+            die("Could not find class: {$className}");
         }
     }
 }
