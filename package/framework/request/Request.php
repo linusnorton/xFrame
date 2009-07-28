@@ -7,7 +7,7 @@
  * A request encapsulates a given request
  */
 class Request implements ArrayAccess {
-	private $params = array();
+    private $params = array();
     private $name;
 
     /**
@@ -52,63 +52,64 @@ class Request implements ArrayAccess {
      * @param String $name
      * @param array $argArray
      */
-	public function __construct($name, array $argArray = array()) {
-		$this->name = $name;
-		$this->params = $argArray;
-	}
+    public function __construct($name, array $argArray = array()) {
+        $this->name = $name;
+        $this->params = $argArray;
+    }
 
-	/**
-	 * Magic function overload. If a variable on this object is accessed but
-	 * it doesnt exist try get it from the params array. This means that you
-	 * can now give an array like $_POST or $_GET in the constructor and then
-	 * access the fields like $e->myVar etc. Enjoy.
-	 *
-	 * @param unknown_type $key
-	 * @return unknown
-	 */
-	public function __get($key) {
-		if (array_key_exists($key, $this->params)) {
-			return $this->params[$key];
+    /**
+     * Magic function overload. If a variable on this object is accessed but
+     * it doesnt exist try get it from the params array. This means that you
+     * can now give an array like $_POST or $_GET in the constructor and then
+     * access the fields like $e->myVar etc. Enjoy.
+     *
+     * @param unknown_type $key
+     * @return unknown
+     */
+    public function __get($key) {
+        if (array_key_exists($key, $this->params)) {
+            return $this->params[$key];
         }
+    }
 
-	}
+    /**
+     * Magic function overload. If you try to set a variable that doesnt exist
+     * this function is called. So setting $e->face = "your" when the variable
+     * face doesn't exists sets it in the interal array for later access.
+     *
+     * @param unknown_type $key
+     * @param unknown_type $value
+     */
+    public function __set($key, $value) {
+        $this->params[$key] = $value;
+    }
 
-	/**
-	 * Magic function overload. If you try to set a variable that doesnt exist
-	 * this function is called. So setting $e->face = "your" when the variable
-	 * face doesn't exists sets it in the interal array for later access.
-	 *
-	 * @param unknown_type $key
-	 * @param unknown_type $value
-	 */
-	public function __set($key, $value) {
-		$this->params[$key] = $value;
-	}
+    /**
+     * Returns the name of the request
+     *
+     * @return String
+     */
+    public function getName() {
+        return $this->name;
+    }
 
-	/**
-	 * Returns the name of the request
-	 *
-	 * @return String
-	 */
-	public function getName() {
-		return $this->name;
-	}
-	/**
-	 * Sets the name of the request
-	 *
-	 * @param String $name
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
-	/**
-	 * Returns the params of the request
-	 *
-	 * @return String
-	 */
-	public function getParams() {
-		return $this->params;
-	}
+    /**
+     * Sets the name of the request
+     *
+     * @param String $name
+     */
+    public function setName($name) {
+        $this->name = $name;
+    }
+
+    /**
+     * Returns the params of the request
+     *
+     * @return String
+     */
+    public function getParams() {
+        return $this->params;
+    }
 
     /**
      * Dispatches the request using Dispatcher::dispatch
