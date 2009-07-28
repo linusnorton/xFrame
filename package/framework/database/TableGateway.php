@@ -9,7 +9,7 @@
  * for doing all your SQL
  */
 class TableGateway {
-    const ASC = "ASC", DESC = "DESC";
+    const ASC = "ASC", DESC = "DESC", NOT_NULL = "NOT NULL";
 
     /**
      * If a Record is constructed with a tableName and id we will try to load the data from the database
@@ -107,7 +107,7 @@ class TableGateway {
 
         //bind values
         foreach($criteria as $column => $value) {
-            if ($value != null) {
+            if ($value != null && $value != self::NOT_NULL) {
                 $stmt->bindValue(':'.$column, $value);
             }
         }
@@ -153,6 +153,9 @@ class TableGateway {
         foreach($criteria as $column => $value) {
             if ($value == null) {
                 $sql.= " AND `{$column}` IS NULL";
+            }
+            else if($value == self::NOT_NULL){
+               $sql = " AND`{$column}` IS NOT NULL";
             }
             else {
                 $sql.= " AND `{$column}` = :".$column;

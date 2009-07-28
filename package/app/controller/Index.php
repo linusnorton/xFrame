@@ -8,7 +8,7 @@ class Index {
      *
      * @param Request $r encapsulation of the request variables
      */
-    public static function run(Request $r) {
+    public function run(Request $r) {
         $log = LoggerManager::getLogger("home");
         $log->debug("Entering Index->run() for handling of home event");
 
@@ -80,11 +80,11 @@ class Index {
         Page::addXML($record->getXML());
 
         //Example 8: using the TableGateway
-        $xml = TableGateway::loadAll("table", "Record", "create", 0, 5)->getXML();
-        Page::addXML($xml);
         */
+
         Page::$xsl = ROOT."app/view/index.xsl";
     }
+
 
 }
 ?>

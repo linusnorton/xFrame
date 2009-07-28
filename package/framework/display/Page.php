@@ -167,7 +167,7 @@ class Page {
      */
     public function redirect($location) {
         if (!headers_sent()) {
-            header('Location: {$location}');
+            header("Location: ".$location);
             die();
         }
         else {
