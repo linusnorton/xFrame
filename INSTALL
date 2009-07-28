@@ -1,0 +1,14 @@
+Virtual Host Configuration
+
+- Please set the document route of your virtual host to the www folder
+- Create a subdomain (e.g. resource.yourdomain.com) and put your css/images and javascript here
+
+Secure Database Setup (Optional)
+
+- Modify the credentials/apache.conf file to contain your database credentials
+- Configure your apache virtual host configuration to include the credentials/apache.conf file
+
+Adding Zend Classes (Optional)
+
+- Download the Zend framework
+- Copy the classes you want into package/Zend
