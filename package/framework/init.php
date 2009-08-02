@@ -14,9 +14,7 @@ function __autoload($className) {
         //rebuild the class/file mapping
         Factory::rebuild();
         //try to see if we have it now
-        if (!Factory::includeFile($className)) {
-            die("Could not find class: {$className}");
-        }
+        Factory::includeFile($className);
     }
 }
 

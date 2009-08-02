@@ -30,15 +30,12 @@ class Index {
 
 
         //Example 1: load one record
-        $record = Record::load("test_table", 1);
-        Page::addXML($record->getXML());
+        $record = TableGateway::load("test_table", 1);
+        Page::add($record);
 
         //Example 2: load entire table
-        $records = Record::loadAll("test_table");
-
-        foreach ($records as $record) {
-            Page::addXML($record->getXML());
-        }
+        $records = TableGateway::loadAll("test_table");
+        Page::addXML($records);
 
         //Example 3: custom load condition
         $stmt = DB::dbh()->prepare("SELECT * FROM test_table WHERE id < :maxId");
@@ -50,7 +47,7 @@ class Index {
             //if you were explicitly mapping fields from the array in your overridden
             //create function you wouldnt need PDO::FETCH_ASSOC
             $record = Record::create("test_table", $row);
-            Page::addXML($record->getXML());
+            Page::add($record);
         }
 
         //Example 4: modifying a record
@@ -77,9 +74,24 @@ class Index {
         //this is usually used to format date fields
         $record = Record::load("test_table", 1);
         $record->fieldThatIsNotInDB = "Ha, this isn't in the database";
-        Page::addXML($record->getXML());
+        Page::add($record);
 
         //Example 8: using the TableGateway
+        $records = TableGateway::loadMatching("table",  Restriction::like("name", "Li%"));
+        Page::add($records);
+
+        //Example 9: using the TableGateway with Criteria
+        $criteria = new Criteria( Restriction::is("name", "Linus") );
+        $criteria->addOr( Restriction::is("name", "John") );
+        $criteria->addAnd( Restriction::isNotNull("name") );
+        $records = TableGateway::loadMatching("table",  $criteria);
+        Page::add($records);
+
+        //Example 10: using the TableGateway with Pagination
+        $records = TableGateway::loadMatching("table",  Restriction::like("name", "Li%"), 0, 3);
+        Page::add($records);
+
+
         */
 
         Page::$xsl = ROOT."app/view/index.xsl";

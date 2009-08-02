@@ -91,6 +91,15 @@ class Page {
     }
 
     /**
+     * Gets the XML from the given object and adds it to the page
+     *
+     * @param XML $xml
+     */
+    public static function add(XML $xml) {
+        self::$xml .= $xml->getXML();
+    }
+
+    /**
      * Adds the given XML to the XML for the page
      *
      * @param $xml string xml to add to the page

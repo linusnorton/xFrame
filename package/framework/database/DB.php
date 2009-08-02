@@ -8,13 +8,13 @@
  * This is essentially a singleton for a PDO database
  */
 class DB {
-	private static $instance = false;
+    private static $instance = false;
 
 
-	/**
+    /**
      * Create a PDO instance based on the settings in the registry
      */
-	private static function connect() {
+    private static function connect() {
         $db = Registry::get("DATABASE_ENGINE");
 
         try {
@@ -24,7 +24,7 @@ class DB {
                                           Registry::get("DATABASE_PASSWORD"));
 
                 self::$instance->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-                //self::$instance->setAttribute (PDO::ATTR_STATEMENT_CLASS, array ('LoggedPDOStatement', array())); 
+                //self::$instance->setAttribute (PDO::ATTR_STATEMENT_CLASS, array ('LoggedPDOStatement', array()));
 
             } else if ($db == "MySQLDebug") {
                 self::$instance = new LoggedPDO("mysql:host=".Registry::get("DATABASE_HOST").";dbname=".Registry::get("DATABASE_NAME"),
@@ -34,11 +34,11 @@ class DB {
                 self::$instance->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             }
         }
-		catch (PDOException $ex) {
+        catch (PDOException $ex) {
             throw new FrameEx($ex->getMessage());
         }
 
-	}
+    }
 
     /**
      * Return the current PDO database instance or create one if one does not exist

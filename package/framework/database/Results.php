@@ -30,6 +30,10 @@ class Results implements ArrayAccess, Countable, SeekableIterator, XML {
         $this->customTag = $customTag;
     }
 
+    /**
+     * This method returns the results and pagination in an XML string
+     * @return string $xml
+     */
     public function getXML() {
         $xml = "<{$this->customTag}>";
         $xml .= "<results>";
@@ -56,7 +60,7 @@ class Results implements ArrayAccess, Countable, SeekableIterator, XML {
                 </page>";
             }
         }
-        
+
         $xml .= "</pagination>";
         $xml .= "<maxNumResults>{$this->maxNumResults}</maxNumResults>" ;
         $xml .= "<numResults>{$this->numResults}</numResults>" ;

@@ -66,50 +66,53 @@ class TableGateway {
     /**
      * Load a whole table of results and return an array of objects of type $class
      *
-     * @param $tableName string table to load
-     * @param $class string class to instantiate as records
-     * @param $method function to call to initialize the class
+     * @param string $tableName table to load
+     * @param int $start start number for LIMIT
+     * @param int $num number of results to return
+     * @param array $orderBy
+     * @param string $class class to instantiate as records
+     * @param string $method to call to initialize the class
      */
     public static function loadAll($tableName,
-                                   $class = "Record",
-                                   $method = "create",
                                    $start = null,
-                                   $num = null) {
-        return self::loadMatching($tableName, array(), $class, $method, $start, $num);
+                                   $num = null,
+                                   array $orderBy = array(),
+                                   $class = "Record",
+                                   $method = "create") {
+        return self::loadMatching($tableName, null, $start, $num, $orderBy, $class, $method);
     }
-
 
     /**
      * Loads all records that match the fields specified in the associative array
      * $criteria.  This allows for simple equality matching of fields but not for
      * complex comparisons such as less than, greater than, etc.
      *
-     * @param $tableName string table to load
-     * @param $criteria array A mapping from column names to values.  The returned records will
-     * match all specified columns.
-     * @param $class string class to instantiate as records
-     * @param $method function to call to initialize the class
+     * @param string $tableName table to load
+     * @param Criteria $criteria
+     * @param int $start start number for LIMIT
+     * @param int $num number of results to return
+     * @param array $orderBy
+     * @param string $class class to instantiate as records
+     * @param string $method to call to initialize the class
      */
     public static function loadMatching($tableName,
-                                        array $criteria = array(),
-                                        $class = "Record",
-                                        $method = "create",
+                                        Condition $criteria = null,
                                         $start = null,
                                         $num = null,
-                                        array $orderBy = array()) {
+                                        array $orderBy = array(),
+                                        $class = "Record",
+                                        $method = "create") {
 
-        $criteriaSQL = self::generateCriteriaSQL($criteria);
+        $criteriaSQL = ($criteria != null) ? $criteria->toSQL() : "";
         $orderSQL = self::generateOrderSQL($orderBy);
         $limitSQL = self::generateLimitSQL($start, $num);
-        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM `".addslashes($tableName)."` WHERE 1".$criteriaSQL.$orderSQL.$limitSQL;
+
+        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM `".addslashes($tableName)."` WHERE ".$criteriaSQL.$orderSQL.$limitSQL;
 
         $stmt = DB::dbh()->prepare($sql);
 
-        //bind values
-        foreach($criteria as $column => $value) {
-            if ($value != null && $value != self::NOT_NULL) {
-                $stmt->bindValue(':'.$column, $value);
-            }
+        if ($criteria != null) {
+            $criteria->bind($stmt);
         }
 
         $stmt->execute();
@@ -145,23 +148,6 @@ class TableGateway {
         }
 
         return new Results($records, $numResults, $start, $num, $tableName."-list");
-    }
-
-    private static function generateCriteriaSQL(array $criteria = array()) {
-        $sql = "";
-        //generate the sql string
-        foreach($criteria as $column => $value) {
-            if ($value == null) {
-                $sql.= " AND `{$column}` IS NULL";
-            }
-            else if($value == self::NOT_NULL){
-               $sql = " AND`{$column}` IS NOT NULL";
-            }
-            else {
-                $sql.= " AND `{$column}` = :".$column;
-            }
-        }
-        return $sql;
     }
 
     private static function generateOrderSQL(array $orderBy = array()) {
