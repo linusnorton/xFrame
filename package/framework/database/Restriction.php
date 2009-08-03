@@ -14,7 +14,11 @@ class Restriction implements Condition {
           LIKE = " LIKE ",
           NOT_LIKE = " NOT LIKE ",
           BETWEEN = " BETWEEN ",
-          NOT_BETWEEN = " NOT BETWEEN ";
+          NOT_BETWEEN = " NOT BETWEEN ",
+          LESS = " < ",
+          LESS_OR_EQUAL = " <= ",
+          GREATER = " > ",
+          GREATER_OR_EQUAL = " >= ";
 
     private $type;
     private $field;
@@ -50,6 +54,42 @@ class Restriction implements Condition {
      */
     public static function isNot($field, $value) {
         return new Restriction(Restriction::IS_NOT, $field, $value);
+    }
+
+    /**
+     * @param string $field
+     * @param string $value
+     * @return Restriction
+     */
+    public static function isLess($field, $value) {
+        return new Restriction(Restriction::LESS, $field, $value);
+    }
+
+    /**
+     * @param string $field
+     * @param string $value
+     * @return Restriction
+     */
+    public static function isLessOrEqual($field, $value) {
+        return new Restriction(Restriction::LESS_OR_EQUAL, $field, $value);
+    }
+
+    /**
+     * @param string $field
+     * @param string $value
+     * @return Restriction
+     */
+    public static function isGreater($field, $value) {
+        return new Restriction(Restriction::GREATER, $field, $value);
+    }
+
+    /**
+     * @param string $field
+     * @param string $value
+     * @return Restriction
+     */
+    public static function isGreaterOrEqual($field, $value) {
+        return new Restriction(Restriction::GREATER_OR_EQUAL, $field, $value);
     }
 
     /**
