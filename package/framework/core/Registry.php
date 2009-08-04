@@ -31,6 +31,13 @@ class Registry {
 	public static function set($key, $value) {
 		self::$settings[$key] = $value;
 	}
-   
+
+    /**
+     * @param array $newSettings
+     */
+    public static function setAll(array $newSettings) {
+        self::$settings = $newSettings;
+    }
+
 }
 ?>

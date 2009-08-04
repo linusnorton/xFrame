@@ -93,7 +93,6 @@ class Index {
 
 
         */
-
         Page::$xsl = ROOT."app/view/index.xsl";
     }
 
