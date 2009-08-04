@@ -103,7 +103,7 @@ class TableGateway {
                                         $class = "Record",
                                         $method = "create") {
 
-        $criteriaSQL = ($criteria != null) ? $criteria->toSQL() : "";
+        $criteriaSQL = ($criteria != null) ? $criteria->toSQL() : "1";
         $orderSQL = self::generateOrderSQL($orderBy);
         $limitSQL = self::generateLimitSQL($start, $num);
 
