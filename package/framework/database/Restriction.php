@@ -153,7 +153,11 @@ class Restriction implements Condition {
      * @return string SQL
      */
     public function toSQL(&$count = 1) {
-        $sql = " `{$this->field}` {$this->type} :field".$count++;
+        $sql = " `{$this->field}` {$this->type}";
+
+        if ($this->type !== Restriction::NULL_VALUE && $this->type !== Restriction::NOT_NULL ) {
+            $sql .= " :field".$count++;
+        }
 
         if ($this->type === Restriction::BETWEEN || $this->type === Restriction::NOT_BETWEEN) {
             $sql .= " AND :field".$count++;
