@@ -35,7 +35,7 @@ class InputValidator {
      * @param $input string string to check
      */
     public static function isEmpty($input) {
-        return !isset($input[0]);
+        return empty($input);
     }
 
     /**
