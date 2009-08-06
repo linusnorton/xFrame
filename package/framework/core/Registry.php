@@ -2,7 +2,6 @@
 /**
  * @author Linus Norton <linusnorton@gmail.com>
  *
- * @version 0.1
  * @package core
  *
  * This is an implementation of the registry pattern it globally stores key/value pairs
@@ -15,22 +14,22 @@ class Registry {
      *
      * @param $get mixed key of variable get from the registry
      */
-	public static function get($key) {
-		if (!array_key_exists($key ,self::$settings)) {
-			return null;
+    public static function get($key) {
+        if (!array_key_exists($key ,self::$settings)) {
+            return null;
         }
 
-		return self::$settings[$key];
-	}
+        return self::$settings[$key];
+    }
 
     /**
      * Sets a value in the registry
      *
      * @param key key of the variable to return
      */
-	public static function set($key, $value) {
-		self::$settings[$key] = $value;
-	}
+    public static function set($key, $value) {
+        self::$settings[$key] = $value;
+    }
 
     /**
      * @param array $newSettings
@@ -39,5 +38,11 @@ class Registry {
         self::$settings = $newSettings;
     }
 
+    /**
+     * @param array $newSettings
+     */
+    public static function getAll() {
+        return self::$settings;
+    }
 }
 ?>
