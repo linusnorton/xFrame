@@ -207,11 +207,18 @@ class Page {
         return $xml;
     }
 
-
+    /**
+     * Starts the session and execution time clock
+     */
     public function init() {
+        session_start();
         self::$executionTime = microtime(true); //used for script execution time
     }
 
+    /**
+     * Return the time the page started executing
+     * @return int
+     */
     public function getExecutionTime() {
         return self::$executionTime;
     }

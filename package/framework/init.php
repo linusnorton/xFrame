@@ -28,12 +28,11 @@ if (!file_exists(ROOT."framework/.classes.php")) {
 include(ROOT."framework/.classes.php");
 
 //some ugly settings (needs cleaning)
-Registry::setAll(parse_ini_file(ROOT."../config/xframe.conf"));
 set_exception_handler(array("FrameEx", "exceptionHandler"));
 set_error_handler(array("FrameEx", "errorHandler"), ini_get("error_reporting"));
 ini_set("include_path", ini_get("include_path").":".ROOT);
-session_start();
 Page::init();
+Registry::init();
 
 //setup caching
 if (Registry::get("CACHE_ENABLED")) {

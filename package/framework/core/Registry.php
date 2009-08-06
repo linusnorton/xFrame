@@ -10,6 +10,26 @@ class Registry {
     private static $settings = array();
 
     /**
+     * Load all the settings in the config directory
+     */
+    public static function init() {
+        $configDir = ROOT."../config/";
+        //open the config dir
+        if ($dh = opendir($configDir)) {
+            //loop over the files
+            while (($file = readdir($dh)) !== false) {
+                //if it is a conf file, it must be needed!
+                if (pathinfo($file, PATHINFO_EXTENSION) == "conf") {
+                    self::$settings = array_merge(self::$settings, parse_ini_file($configDir.$file));
+                }
+            }
+            closedir($dh);
+        }
+
+
+    }
+
+    /**
      * This function gets a value from the registry
      *
      * @param $get mixed key of variable get from the registry
