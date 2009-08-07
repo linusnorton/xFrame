@@ -62,11 +62,13 @@ class Dispatcher {
      * @param array $parameterMap
 	 */
     public static function addListener($requestName, $class, $method, $cacheLength = false, array $parameterMap = array(), $authenticator = null) {
-        self::$listeners[$requestName] = array("class" => $class,
+        self::$listeners[$requestName] = array(
+                                           "class" => $class,
                                            "method" => $method,
                                            "cacheLength" => $cacheLength,
                                            "parameterMap" => $parameterMap,
-                                           "authenticator" => $authenticator);
+                                           "authenticator" => $authenticator
+                                         );
     }
 
     /**
@@ -76,7 +78,7 @@ class Dispatcher {
      */
     public static function getCacheLength(Request $r) {
         if (array_key_exists($r->getName(), self::$listeners)) {
-	        return self::$listeners[$r->getName()]["cacheLength"];
+            return self::$listeners[$r->getName()]["cacheLength"];
         }
         else {
            return false;
