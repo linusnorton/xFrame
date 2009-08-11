@@ -71,35 +71,35 @@ class Results implements ArrayAccess, Countable, SeekableIterator, XML {
         return $xml;
     }
 
-	/** grabs you the first item from the array */
-	public function first() {
+    /** grabs you the first item from the array */
+    public function first() {
         reset($this->results);
         return current($this->results);
-	}
+    }
 
-	/** grabs you the last item from the deally*/
-	public function last() {
+    /** grabs you the last item from the deally*/
+    public function last() {
         return end($this->results);
-	}
+    }
 
 
-	/** gets the item at the given key */
-	public function get($key) {
+    /** gets the item at the given key */
+    public function get($key) {
         return $this->results[$key];
-	}
+    }
 
     /** returns true if we're at the end of the internal array */
-	public function done() {
-		return is_null(key($this->results));
-	}
+    public function done() {
+        return is_null(key($this->results));
+    }
 
-	public function __get($key) {
-		return $this->results[$key];
-	}
+    public function __get($key) {
+        return $this->results[$key];
+    }
 
-	public function __set($key, $value) {
-		return $this->results[$key] = $value;
-	}
+    public function __set($key, $value) {
+        return $this->results[$key] = $value;
+    }
 
     /** give the people the power they want, oh yes hand over the array big boy */
     public function getArray() {
@@ -138,25 +138,25 @@ class Results implements ArrayAccess, Countable, SeekableIterator, XML {
 
     /* now for some Iterator SPL */
 
-	/**
-	 * grabs you the current item in the array
-	 *
-	 */
-	public function next() {
+    /**
+     * grabs you the current item in the array
+     *
+     */
+    public function next() {
         $current = current($this->results);
         next($this->results);
-		return $current;
-	}
+        return $current;
+    }
 
-	/** grabs you the next item in the array */
-	public function prev() {
-		return prev($this->results);
-	}
+    /** grabs you the next item in the array */
+    public function prev() {
+        return prev($this->results);
+    }
 
-	/** gets the current item without changing the internal position */
-	public function current() {
+    /** gets the current item without changing the internal position */
+    public function current() {
         return current($this->results);
-	}
+    }
 
     public function rewind() {
         $this->reset();
