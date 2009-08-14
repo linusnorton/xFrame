@@ -76,6 +76,9 @@ class DB {
      * @param integer $attempts The number of times to try before giving up.
      * @return mixed The result of the specified function, or false if the transaction
      * did not succeed.
+     *
+     * Any additional parameters that are passed to this method will be passed to the callback
+     * function.
      */
     public static function doInTransaction($callback, $attempts = -1) {
         $transactional = self::dbh()->beginTransaction();
@@ -85,7 +88,9 @@ class DB {
 
         while ($attempts != 0) {
             try {
-                $result = call_user_func($callback);
+                $args = func_get_args();
+                $args .= array_slice($args, 2);
+                $result = call_user_func($callback, $args);
                 $success = self::dbh()->commit();
                 if ($success) {
                     return $result;
