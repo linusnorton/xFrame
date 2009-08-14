@@ -89,7 +89,7 @@ class DB {
         while ($attempts != 0) {
             try {
                 $args = func_get_args();
-                $args .= array_slice($args, 2);
+                $args = array_slice($args, 2);
                 $result = call_user_func_array($callback, $args);
                 $success = self::dbh()->commit();
                 if ($success) {
