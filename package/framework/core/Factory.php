@@ -116,7 +116,8 @@
                     $class = str_replace($ext, "", $file);
 
                     if ($zendMode) {
-                        $class = str_replace("/", "_", substr($dir.$class,11));
+                        $class = str_replace(ROOT, "", $dir.$class);
+                        $class = str_replace("/", "_", $class);
                     }
                     $classes[$class] = $dir.$file;
                 }
