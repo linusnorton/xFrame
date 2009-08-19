@@ -8,35 +8,35 @@
  * The default behaviour is to add the error to the Page as xml
  */
 class FrameEx extends Exception {
-	public $backtrace;
+    public $backtrace;
     public $message;
 
-	/**
-	 * Creates the exception with a message and an error code that are
-	 * shown when the output method is called.
-	 *
-	 * @param String $message
-	 * @param Integer $code
-	 */
-	public function __construct($message = null, $code = null) {
-		$this->backtrace = debug_backtrace();
-		$this->message = $message;
-		$this->code = $code;
-	}
+    /**
+     * Creates the exception with a message and an error code that are
+     * shown when the output method is called.
+     *
+     * @param String $message
+     * @param Integer $code
+     */
+    public function __construct($message = null, $code = null) {
+        $this->backtrace = debug_backtrace();
+        $this->message = $message;
+        $this->code = $code;
+    }
     /**
      *
      * @param boolean $uncaught
      */
-	public function output($uncaught = false, $return = false) {
-		$style = ($uncaught) ? "true" : "false";
+    public function output($uncaught = false, $return = false) {
+        $style = ($uncaught) ? "true" : "false";
 
-		$out = "<exception uncaught='{$style}'>";
+        $out = "<exception uncaught='{$style}'>";
         $out .= "<message>".htmlentities($this->message, ENT_COMPAT, "UTF-8", false)."</message>";
         $out .= "<code>".htmlentities($this->code, ENT_COMPAT, "UTF-8", false)."</code>";
-		$out .= "<backtrace>";
+        $out .= "<backtrace>";
         $i = 1;
 
-		foreach (array_reverse($this->backtrace) as $back) {
+        foreach (array_reverse($this->backtrace) as $back) {
             $back['file'] = (array_key_exists("file", $back)) ? basename($back['file']) : "";
             $back['class'] = (array_key_exists("class", $back)) ? $back['class'] : "";
             $back['line'] = (array_key_exists("line", $back)) ? $back['line'] : "";
@@ -44,7 +44,7 @@ class FrameEx extends Exception {
             if ($back["class"] != "FrameEx") {
                 $out .= "<step number='".$i++."' line='{$back['line']}' file='{$back['file']}' class='{$back['class']}' function='{$back['function']}' />";
             }
-		}
+        }
         $out .= "</backtrace>";
         $out .= "</exception>";
 
