@@ -23,7 +23,7 @@ CREATE TABLE log (
  *
  */
 class Logger {
-    const OFF = 0, DEBUG = 5, INFO = 4, WARN = 3, ERROR = 2, FATAL = 1;
+    const DEBUG = 6, INFO = 5, WARN = 4, AUDIT = 3, ERROR = 2, FATAL = 1, OFF = 0;
     private $key;
     private $tableName;
     private $logLevel;
@@ -53,38 +53,57 @@ class Logger {
      * Log a debug message (dependant on the level of logging)
      */
     public function debug($message) {
-        if ($this->logLevel >= self::DEBUG){ 
+        if ($this->logLevel >= self::DEBUG){
             $this->log("debug", $message);
         }
     }
 
     public function info($message) {
-        if ($this->logLevel >= self::INFO){ 
+        if ($this->logLevel >= self::INFO){
             $this->log("info", $message);
         }
     }
 
     public function warn($message) {
-        if ($this->logLevel >= self::DEBUG){ 
+        if ($this->logLevel >= self::WARN){
             $this->log("warn", $message);
         }
     }
 
+    public function audit($message) {
+        if ($this->logLevel >= self::AUDIT){
+            $this->log("audit", $message);
+        }
+    }
+
     public function error($message) {
-        if ($this->logLevel >= self::DEBUG){ 
+        if ($this->logLevel >= self::ERROR){
             $this->log("error", $message);
         }
     }
 
     public function fatal($message) {
-        if ($this->logLevel >= self::DEBUG){ 
+        if ($this->logLevel >= self::FATAL){
             $this->log("fetal", $message);
         }
     }
 
     private function log($level, $message) {
         $log = new Record($this->tableName);
-        $log->ip = $_SERVER['REMOTE_ADDR'];;
+
+        //check ip from share internet
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        }
+        //to check ip is pass from proxy
+        else if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+        else {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+
+        $log->ip = $ip;
         $log->key = $this->key;
         $log->level = $level;
         $log->message = $message;

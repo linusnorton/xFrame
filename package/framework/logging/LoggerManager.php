@@ -9,6 +9,7 @@ class LoggerManager {
 
     /**
      * Return the requested logger if one does not exist, create on
+     * @return Logger
      */
     public static function getLogger($key) {
         if (!array_key_exists($key, self::$loggers) || !self::$loggers[$key] instanceof Logger) {
