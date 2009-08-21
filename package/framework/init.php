@@ -36,7 +36,7 @@ Registry::init();
 
 //setup caching
 if (Registry::get("CACHE_ENABLED")) {
-    Memcache::mch()->addServer(Registry::get("MEMCACHE_HOST"), Registry::get("MEMCACHE_PORT"));
+    Cache::mch()->addServer(Registry::get("MEMCACHE_HOST"), Registry::get("MEMCACHE_PORT"));
 }
 
 //boot the app
