@@ -85,6 +85,22 @@ class Request implements ArrayAccess {
     }
 
     /**
+     * Unset the given variable
+     * @param mixed $key
+     */
+    public function __unset($key) {
+        unset($this->params[$key]);
+    }
+
+    /**
+     * @param $key
+     * @return boolean
+     */
+    public function __isset($key) {
+        return isset($this->params[$key]);
+    }
+
+    /**
      * Returns the name of the request
      *
      * @return String
