@@ -1,13 +1,11 @@
 <?php
 /**
  * @author Jason Paige <j@jasonpaige.co.uk>
- *
  * @package util
- *
- * This object encapsulates the field values for a form and the respective rror messages
+ * This object encapsulates the field values for a form and the respective error messages
  */
 
-class Form {
+class Form implements XML {
 
     private $field;
     private $hasErrors;
@@ -16,11 +14,13 @@ class Form {
 	 *
 	 * @param Request $request
 	 */
-	public function __construct(Request $request) {
-        foreach ($request->getParams() as $id => $parameter) {
-            $this->add($id, $parameter);
+	public function __construct(Request $request = null) {
+        if ($request != null) {
+            foreach ($request->getParams() as $id => $parameter) {
+                $this->add($id, $parameter);
+            }
+            $this->hasErrors = false;
         }
-        $this->hasErrors = false;
     }
 
     /**
@@ -51,7 +51,7 @@ class Form {
         foreach ($this->field as $id => $field) {
             $qString .= "field[{$id}]=".urlencode($field['value'])."&";
             if ($field['errorMessage'] != '') {
-                $qString .= "error[{$id}]=".urlencode($field['errorMessage'])."&";                
+                $qString .= "error[{$id}]=".urlencode($field['errorMessage'])."&";
             }
         }
         $ch = curl_init($location);
@@ -64,7 +64,7 @@ class Form {
         die();
     }
 */
-    
+
 
     /**
 	 * Returns to a location complete with field values and errors in the query string
@@ -76,7 +76,7 @@ class Form {
         foreach ($this->field as $id => $field) {
             $qString .= "field[{$id}]=".urlencode($field['value'])."&";
             if ($field['errorMessage'] != '') {
-                $qString .= "error[{$id}]=".urlencode($field['errorMessage'])."&";                
+                $qString .= "error[{$id}]=".urlencode($field['errorMessage'])."&";
             }
         }
         header("Location: {$location}?{$qString}");
@@ -94,12 +94,62 @@ class Form {
         foreach ($this->field as $id => $field) {
             $_SESSION['field'][$id] = $field['value'];
             if ($field['error'] != '') {
-                $_SESSION['error'][$id] = $field['error'];             
+                $_SESSION['error'][$id] = $field['error'];
             }
         }
 
         header("Location: {$location}");
         die();
+    }
+
+    public function getXML($defaultValues = array()) {
+        $xml = "<form>";
+        if (is_array($_SESSION["field"])) {
+            foreach ($_SESSION["field"] as $fieldName => $fieldValue) {
+                $xml .= $this->getFieldXML($fieldName, $fieldValue, $defaultValues[$fieldName]);
+            }
+        } else if (is_array($defaultValues)) {
+            foreach ($defaultValues as $fieldName => $fieldValue) {
+                $xml .= $this->getFieldXML($fieldName, $fieldValue);
+            }
+        }
+        if (is_array($_SESSION["error"])) {
+            foreach ($_SESSION["error"] as $errorId => $errorMessage) {
+                $xml .= $this->getFieldXML($errorId, $errorMessage, null, "e");
+            }
+        }
+        $xml .= "</form>";
+
+        return $xml;
+    }
+
+    /**
+     * @param string $fieldName
+     * @param mixed $fieldValue
+     * @param mixed $defaultValue
+     * @param string $prefix because field names may be invalid (start with a number) we prefix with a valid character
+     */
+    private function getFieldXML($fieldName, $fieldValue, $defaultValue = "", $prefix = "f") {
+        $xml = "<{$prefix}-{$fieldName}>";
+        if (is_array($fieldValue)) {
+            foreach ($fieldValue as $key => $value) {
+                $xml .= $this->getFieldXML($key, $value);
+            }
+        }
+        else if (isset($fieldValue)) {
+            $xml .= htmlentities($fieldValue);
+        }
+        else if (is_array($defaultValue)) {
+            foreach ($defaultValue as $key => $value) {
+                $xml .= $this->getFieldXML($key, $value);
+            }
+        }
+        else if ($defaultValue != "") {
+            $xml .= htmlentities($defaultValue);
+        }
+        $xml .= "</{$prefix}-{$fieldName}>";
+
+        return $xml;
     }
 
     public function __toString() {
