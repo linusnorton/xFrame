@@ -95,8 +95,10 @@ class Page {
      *
      * @param XML $xml
      */
-    public static function add(XML $xml) {
-        self::$xml .= $xml->getXML();
+    public static function add($xml) {
+        if ($xml instanceof XML) {
+            self::$xml .= $xml->getXML();
+        }
     }
 
     /**
