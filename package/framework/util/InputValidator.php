@@ -56,7 +56,17 @@ class InputValidator {
         return preg_match("/^[a-f0-9]{40}$/", strtolower($input));
     }
 
-
+    /**
+     * Returns true if the given string is between the given lengths
+     * @param string $input
+     * @param int $minChars
+     * @param int $maxChars
+     * @return boolean
+     */
+    public static function isBetweenLength($input, $minChars, $maxChars) {
+        $length = strlen($input);
+        return ($length >= $minChars && $length <= $maxChars);
+    }
 }
 
 ?>
