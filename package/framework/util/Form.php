@@ -10,11 +10,11 @@ class Form implements XML {
     private $field;
     private $hasErrors;
     /**
-	 * Populates the fields for the form
-	 *
-	 * @param Request $request
-	 */
-	public function __construct(Request $request = null) {
+     * Populates the fields for the form
+     *
+     * @param Request $request
+     */
+    public function __construct(Request $request = null) {
         if ($request != null) {
             foreach ($request->getParams() as $id => $parameter) {
                 $this->add($id, $parameter);
@@ -24,12 +24,12 @@ class Form implements XML {
     }
 
     /**
-	 * Adds a field to the form with optional error message
-	 *
-	 * @param mixed $request
-	 * @param mixed $value
-	 * @param string $errorMessage
-	 */
+     * Adds a field to the form with optional error message
+     *
+     * @param mixed $request
+     * @param mixed $value
+     * @param string $errorMessage
+     */
     public function add($id, $value, $errorMessage = null) {
         $this->field[$id] = array("value" => $value, "error" => $errorMessage);
         if ($errorMessage != null) {
@@ -38,10 +38,10 @@ class Form implements XML {
     }
 
     /**
-	 * Returns whether this form currently contains any errors
-	 *
-	 * @return boolean
-	 */
+     * Returns whether this form currently contains any errors
+     *
+     * @return boolean
+     */
     public function hasErrors() {
         return $this->hasErrors;
     }
@@ -67,10 +67,10 @@ class Form implements XML {
 
 
     /**
-	 * Returns to a location complete with field values and errors in the query string
-	 *
-	 * @param string $location
-	 */
+     * Returns to a location complete with field values and errors in the query string
+     *
+     * @param string $location
+     */
     public function doGetPostBack($location) {
         $qString = "";
         foreach ($this->field as $id => $field) {
@@ -84,10 +84,10 @@ class Form implements XML {
     }
 
     /**
-	 * Returns to a location complete with field values and errors in the session
-	 *
-	 * @param string $location
-	 */
+     * Returns to a location complete with field values and errors in the session
+     *
+     * @param string $location
+     */
     public function doSessionPostBack($location) {
         $_SESSION['field'] = array();
         $_SESSION['error'] = array();
@@ -156,4 +156,3 @@ class Form implements XML {
         return serialize($this);
     }
 }
-?>
