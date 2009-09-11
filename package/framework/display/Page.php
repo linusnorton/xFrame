@@ -93,11 +93,14 @@ class Page {
     /**
      * Gets the XML from the given object and adds it to the page
      *
-     * @param XML $xml
+     * @param $xml
      */
     public static function add($xml) {
         if ($xml instanceof XML) {
             self::$xml .= $xml->getXML();
+        }
+        else if ($xml instanceof DomDocument) {
+            self::$xml .= $xml->saveXML();
         }
     }
 
