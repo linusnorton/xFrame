@@ -42,6 +42,7 @@ class DB {
 
     /**
      * Return the current PDO database instance or create one if one does not exist
+     * @return PDO
      */
     public static function dbh() {
         if (!self::$instance instanceof PDO) {
