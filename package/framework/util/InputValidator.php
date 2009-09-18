@@ -98,7 +98,12 @@ class InputValidator {
      * @return boolean
      */
     public static function isValidXml ($string) {
-        return (DOMDocument::loadXML($string));
+        try {
+            DOMDocument::loadXML($string);
+            return true;
+        } catch (Exception $ex) {
+            return false;
+        }
     }
 
 }

@@ -22,7 +22,15 @@ class Enviroment implements XML {
         $xml .= "<server>";
         while (list($key, $val) = each($_SERVER)) {
             $xmlKey = str_replace("_", "-", strtolower($key));
-            $xml .= "<{$xmlKey} realKey=\"{$key}\">{$val}</{$xmlKey}>";
+
+            $try = "<{$xmlKey} realKey=\"{$key}\">{$val}</{$xmlKey}>";
+
+            // try the xml and CDATA it if its got stuff that will cause a proble
+            if (InputValidator::isValidXml($try)) {
+                $xml .= $try;
+            } else {
+                $xml .= "<{$xmlKey} realKey=\"{$key}\"><![CDATA[ {$val} ]]></{$xmlKey}>";
+            }
         }
         $xml .= "</server>";
 
@@ -37,7 +45,7 @@ class Enviroment implements XML {
         if (is_array($_SESSION)) {
             $xml .= "<session>";
             while (list($key, $val) = each($_SESSION)) {
-                
+
                 $xmlKey = str_replace("_", "-", strtolower($key));
 
                 if (InputValidator::isSerialized($val)) {
@@ -49,11 +57,19 @@ class Enviroment implements XML {
             $xml .= "</session>";
         }
 
+        
         if (is_array($_COOKIE)) {
             $xml .= "<cookie>";
             while (list($key, $val) = each($_COOKIE)) {
                 $xmlKey = str_replace("_", "-", strtolower($key));
-                $xml .= "<{$xmlKey} realKey=\"{$key}\">{$val}</{$xmlKey}>";
+
+                $try = "<{$xmlKey} realKey=\"{$key}\">{$val}</{$xmlKey}>";
+                // try the xml and CDATA it if its got stuff that will cause a problem
+                if (InputValidator::isValidXml($try)) {
+                    $xml .= $try;
+                } else {
+                    $xml .= "<{$xmlKey} realKey=\"{$key}\"><![CDATA[ {$val} ]]></{$xmlKey}>";
+                }
             }
             $xml .= "</cookie>";
         }
