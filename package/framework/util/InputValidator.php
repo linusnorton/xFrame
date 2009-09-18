@@ -67,6 +67,28 @@ class InputValidator {
         $length = strlen($input);
         return ($length >= $minChars && $length <= $maxChars);
     }
+
+
+     /**
+     * Check if a string is in fact a PHP seralized string or not
+     *
+     * Bit ungracefull in forcing an error and then disabling the output
+     * but PHP doesn't leave you with many options here.
+     *
+     * NOTE: A seralized boolean false will cause this function to fail.
+     *
+     * $data === "b:0;" - this checks for a seralized boolean false; cant
+     * imagine why anyone would seralize this so its not checked for.
+     * If you find you need this, perhaps you should look at why you are
+     * seralizing a boolean value.
+     *
+     * @param string $data
+     * @return boolean
+     */
+    public static function isSerialized($data) {
+        return (@unserialize($data) !== false);
+    }
+
 }
 
 ?>
