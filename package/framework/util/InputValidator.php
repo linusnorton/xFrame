@@ -89,6 +89,18 @@ class InputValidator {
         return (@unserialize($data) !== false);
     }
 
+
+    /**
+     * Check if a $string is valid XML. This does not check against any schema
+     * so it is just seing if it is well formed XML.
+     *
+     * @param string $string
+     * @return boolean
+     */
+    public static function isValidXml ($string) {
+        return (DOMDocument::loadXML($string));
+    }
+
 }
 
 ?>
