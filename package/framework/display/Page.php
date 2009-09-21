@@ -31,7 +31,7 @@ class Page {
             $doc = new DomDocument();
 
             if ($doc->loadXML(self::$xml) === false) {
-                throw new FrameEx("There was an error inside the xml:\n".htmlentities($xml));
+                throw new FrameEx("There was an error inside the xml:\n".htmlentities($xml), 101);
             }
 
             return $doc->saveXML();
