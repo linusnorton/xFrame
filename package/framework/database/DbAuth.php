@@ -27,13 +27,38 @@ class DbAuth implements AuthenticationAdapter {
 
 
     /**
-     * Set the identity to be authenticated
-     * @param string $ident
+     * Set the identity that is to be authenticated
+     * @param string $ident The identity e.g. email, username
      * @return DbAuth
      */
-    public function setIdentity($ident) {
-        $this->identity = $ident;
-        return $this;
+    public function setIdentity($ident, array $validator=null) {
+        
+
+        if (is_array($validator)) {
+
+            if (isset($validator['params'])) {
+                $params[0] = $ident;
+                while (list($k, $v) = each($validator['params'])) {
+                    $params[] = $v;
+                }
+            } else {
+                $params = $ident;
+            }
+
+            try {
+                call_user_func_array(array($validator[0], $validator[1]), $params);
+                $this->identity = $ident;
+                return $this;
+            } catch (FrameEx $ex) {
+                throw new FrameEx("Identity failed validation", 130);
+            }
+
+        } else {
+            $this->identity = $ident;
+            return $this;
+        }
+            
+        
     }
 
 
@@ -48,11 +73,23 @@ class DbAuth implements AuthenticationAdapter {
 
     /**
      * Set the credential to be used in authentications
-     * @param string $cred
+     * @param string $cred The credential e.g. password or token or key code
+     * @param $string $enc Optional encryption scheme. Support md5() and sha1()
      * @return DbAuth
      */
-    public function setCredential($cred) {
-        $this->credential = $cred;
+    public function setCredential($cred, $enc=null) {
+
+        if (empty($cred)) {
+            throw new FrameEx("Credential cannot be an empty string", 131);
+        }
+
+        if ($enc == "SHA1") {
+            $this->credential = sha1($cred);
+        } elseif ($enc == "MD5") {
+            $this->credential = md5($cred);
+        } else {
+            $this->credential = $cred;
+        }
         return $this;
     }
 
@@ -80,11 +117,6 @@ class DbAuth implements AuthenticationAdapter {
 
         try {
             $ident = $this->getIdentity();
-
-            if (empty($ident)) {
-                throw new FrameEx("An identity must be set before you can perform an authorisation request", 121);
-            }
-
         } catch (FrameEx $ex) {
             throw new FrameEx("An identity must be set before you can perform an authorisation request", 121);
         }
