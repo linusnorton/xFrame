@@ -75,13 +75,13 @@ class DbAuth implements AuthenticationAdapter {
         try {
             $cred = $this->getCredential();
         } catch (FrameEx $ex) {
-            throw new FrameEx("A credential must be set before you can perform an authorisation request", 98);
+            throw new FrameEx("A credential must be set before you can perform an authorisation request", 120);
         }
 
         try {
             $ident = $this->getIdentity();
         } catch (FrameEx $ex) {
-            throw new FrameEx("An identity must be set before you can perform an authorisation request", 99);
+            throw new FrameEx("An identity must be set before you can perform an authorisation request", 211);
         }
 
         try {
@@ -100,16 +100,16 @@ class DbAuth implements AuthenticationAdapter {
 
             } elseif (count($res)  > 1) {
 
-                throw new FrameEx("More than one result was returned for the identity and credential provided", 101);
+                throw new FrameEx("More than one result was returned for the identity and credential provided", 122);
 
             } else {
 
-                throw new FrameEx("No match was found for the identity and credential provided", 103);
+                throw new FrameEx("No match was found for the identity and credential provided", 123);
             }
 
             return $this;
         } catch (FrameEx $ex) {
-            throw new FrameEx($ex->getMessage());
+            throw new FrameEx($ex->getMessage(), 124);
         }
     }
 
@@ -130,7 +130,7 @@ class DbAuth implements AuthenticationAdapter {
         if (!array_key_exists($namespace, $_SESSION)) {
             $_SESSION[$namespace] = $this->getAuthIdentity();
         } else {
-            throw new FrameEx("Authenticated Id is already set. Force a manual overwrite to set a new value (bad if you need to do this tho)", 104);
+            throw new FrameEx("Authenticated Id is already set. Force a manual overwrite to set a new value (bad if you need to do this tho)", 125);
         }
     }
 
@@ -146,7 +146,7 @@ class DbAuth implements AuthenticationAdapter {
             $stmt->bindValue(":identityV", $identity['value']);
             $stmt->execute();
         } catch (FrameEx $ex) {
-            throw new FrameEx("CREATE_AUTH_RECORD_FAILED");
+            throw new FrameEx("CREATE_AUTH_RECORD_FAILED", 126);
         }
     }
 }

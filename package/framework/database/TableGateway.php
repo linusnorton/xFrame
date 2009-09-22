@@ -33,15 +33,15 @@ class TableGateway {
 
                 //if we dont get any records or we get multiple throw an exception
                 if ($stmt->rowCount() === 0) {
-                    throw new MissingRecord("Could not find a {$tableName} where id = {$id}");
+                    throw new MissingRecord("Could not find a {$tableName} where id = {$id}", 127);
                 }
                 if ($stmt->rowCount() > 1) {
-                    throw new MultipleRecord("Multiple records were matched");
+                    throw new MultipleRecord("Multiple records were matched", 128);
                 }
             }
             catch (PDOException $ex) {
                 //there was some kind of database error
-                throw new FrameEx($ex->getMessage());
+                throw new FrameEx($ex->getMessage(), 129);
             }
 
             $attributes = $stmt->fetch(PDO::FETCH_ASSOC);

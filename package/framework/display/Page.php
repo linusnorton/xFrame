@@ -41,7 +41,7 @@ class Page {
 
         $dom = new DomDocument();
         if (!$dom->loadXML($xml)) {
-            throw new MalformedPage("There was an error inside the xml:\n". htmlentities($xml));
+            throw new MalformedPage("There was an error inside the xml:\n". htmlentities($xml), 102);
         }
 
         $dom->xinclude();
@@ -50,12 +50,12 @@ class Page {
 
         //if the xsl has not been set or has been set incorrectly
         if (!file_exists(self::$xsl)) {
-            throw new MalformedPage("Could not locate xsl file: ".self::$xsl);
+            throw new MalformedPage("Could not locate xsl file: ".self::$xsl, 103);
         }
 
         //if the xsl contained errors
         if (!$xsl->load(self::$xsl)) {
-            throw new MalformedPage("There are errors in the xsl file: ".self::$xsl);
+            throw new MalformedPage("There are errors in the xsl file: ".self::$xsl, 104);
         }
 
         $xslt = new XSLTProcessor();
@@ -66,7 +66,7 @@ class Page {
         $transformation = $xslt->transformToXml($dom);
 
         if ($transformation === false) {
-            throw new MalformedPage("There was an error tranforming the page");
+            throw new MalformedPage("There was an error tranforming the page", 105);
         }
 
         //later I will make an option to turn this off
@@ -185,7 +185,7 @@ class Page {
             die();
         }
         else {
-            throw new FrameEx("Could not redirect to {$location}, headers already sent");
+            throw new FrameEx("Could not redirect to {$location}, headers already sent", 106);
         }
     }
 

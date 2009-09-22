@@ -71,10 +71,10 @@ class Record implements XML {
 
                 //if we dont get any records or we get multiple throw an exception
                 if ($stmt->rowCount() === 0) {
-                    throw new MissingRecord("Could not find a {$tableName} where id = {$id}");
+                    throw new MissingRecord("Could not find a {$tableName} where id = {$id}", 108);
                 }
                 if ($stmt->rowCount() > 1) {
-                    throw new MultipleRecord("Multiple records were matched");
+                    throw new MultipleRecord("Multiple records were matched", 109);
                 }
             }
             catch (PDOException $ex) {
@@ -189,7 +189,7 @@ class Record implements XML {
                 }
                 //if i dont have an id and im in the save graph we have an unresolvable cycle
                 else if ($value->id == "" && array_key_exists($value->hash(), $saveGraph)) {
-                    throw new CyclicalRelationshipException("Found cyclical reference between {$this->tableName} and {$value->getTableName()}");
+                    throw new CyclicalRelationshipException("Found cyclical reference between {$this->tableName} and {$value->getTableName()}", 110);
                 }
 
                 //and store my id
@@ -203,7 +203,7 @@ class Record implements XML {
                         }
                         //if i dont have an id and im in the save graph we have an unresolvable cycle
                         else if ($item->id == "" && array_key_exists($item->hash(), $saveGraph)) {
-                            throw new CyclicalRelationshipException("Found cyclical reference between {$this->tableName} and {$item->getTableName()}");
+                            throw new CyclicalRelationshipException("Found cyclical reference between {$this->tableName} and {$item->getTableName()}", 111);
                         }
                     }
                 }
@@ -251,13 +251,13 @@ class Record implements XML {
             if ($transactional) {
                 $success = DB::dbh()->commit();
                 if (!$success) {
-                    throw new FrameEx('Failed to commit transaction.');
+                    throw new FrameEx('Failed to commit transaction.', 112);
                 }
             }
 
             // Set the ID assigned for this record.
             if ($this->id == "" && $insertId == "") {
-                throw new FrameEx("Tried to insert a record but didn't get an ID back - usually a constraint error");
+                throw new FrameEx("Tried to insert a record but didn't get an ID back - usually a constraint error", 113);
             }
             else if ($this->id == "") {
                 $this->id = $insertId;
@@ -266,13 +266,13 @@ class Record implements XML {
         catch (CyclicalRelationshipException $ex) {
             //if there were errors rollback the transaction
             DB::dbh()->rollBack();
-            throw new FrameEx($ex->getMessage());
+            throw new FrameEx($ex->getMessage(), 114);
 
         }
         catch (PDOException $ex) {
             //if there were errors rollback the transaction
             DB::dbh()->rollBack();
-            throw new FrameEx("Error saving {$this->tableName} - ".$ex->getMessage());
+            throw new FrameEx("Error saving {$this->tableName} - ".$ex->getMessage(), 115);
         }
 
         if (Registry::get("CACHE_ENABLED")) {
@@ -303,7 +303,7 @@ class Record implements XML {
      */
     public function delete() {
         if ($this->tableName == "" || $this->id == "") {
-            throw new FrameEx("You cannot delete a record that isn't initialised");
+            throw new FrameEx("You cannot delete a record that isn't initialised" , 116);
         }
 
         try {
@@ -312,7 +312,7 @@ class Record implements XML {
             $stmt->execute();
         }
         catch (PDOException $ex) {
-            throw new FrameEx($ex->getMessage());
+            throw new PDOException($ex->getMessage(), 117);
         }
 
         if (Registry::get("CACHE_ENABLED")) {
@@ -408,7 +408,7 @@ class Record implements XML {
             }
         }
 
-        throw new FrameEx("Unknown method {$method}");
+        throw new FrameEx("Unknown method {$method}", 117);
     }
 
     /**

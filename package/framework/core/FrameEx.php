@@ -85,7 +85,7 @@ class FrameEx extends Exception {
                     );
 
         $error = (array_key_exists($type, $errortype)) ? $errortype[$type] : $type;
-        throw new FrameEx($error.": ".$msg." (line {$line} of ".basename($filename).")");
+        throw new FrameEx($error.": ".$msg." (line {$line} of ".basename($filename).")", 107);
     }
 
 

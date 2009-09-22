@@ -35,7 +35,7 @@ class DB {
             }
         }
         catch (PDOException $ex) {
-            throw new FrameEx($ex->getMessage());
+            throw new PDOException($ex->getMessage(), 118);
         }
 
     }
@@ -84,7 +84,7 @@ class DB {
     public static function doInTransaction($callback, $attempts = -1) {
         $transactional = self::dbh()->beginTransaction();
         if (!$transactional) {
-            throw new FrameEx('Failed initiating database transaction.');
+            throw new FrameEx('Failed initiating database transaction.', 119);
         }
 
         while ($attempts != 0) {
