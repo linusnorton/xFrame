@@ -45,12 +45,11 @@ class DbAuth implements AuthenticationAdapter {
                 $params = $ident;
             }
 
-            try {
-                call_user_func_array(array($validator[0], $validator[1]), $params);
+            if (call_user_func_array(array($validator[0], $validator[1]), $params)) {
                 $this->identity = $ident;
                 return $this;
-            } catch (FrameEx $ex) {
-                throw new FrameEx("Identity failed validation", 130);
+            } else {
+                throw new FrameEx("Identity failed validation", IDENTITY_FAILED_VALIDATION);
             }
 
         } else {
@@ -80,7 +79,7 @@ class DbAuth implements AuthenticationAdapter {
     public function setCredential($cred, $enc=null) {
 
         if (empty($cred)) {
-            throw new FrameEx("Credential cannot be an empty string", 131);
+            throw new FrameEx("Credential cannot be an empty string", CREDENTIAL_EMPTY);
         }
 
         if ($enc == "SHA1") {
@@ -112,41 +111,46 @@ class DbAuth implements AuthenticationAdapter {
         try {
             $cred = $this->getCredential();
         } catch (FrameEx $ex) {
-            throw new FrameEx("A credential must be set before you can perform an authorisation request", 120);
+            throw new FrameEx("A credential must be set before you can perform an authorisation request", CREDENTIAL_NOT_SET);
         }
 
         try {
             $ident = $this->getIdentity();
         } catch (FrameEx $ex) {
-            throw new FrameEx("An identity must be set before you can perform an authorisation request", 121);
+            throw new FrameEx("An identity must be set before you can perform an authorisation request", IDENTITY_NOT_SET);
         }
 
         try {
 
-            $sql = "SELECT `".addslashes($this->identityKey)."` FROM `".addslashes($this->authRequestDbTable)."` WHERE `".$this->identityInstanceColumn."` = :ident AND `".$this->credentialInstanceColumn."` = :cred;";
+            $sql = "SELECT `".addslashes($this->identityKey)."`, `".addslashes($this->identityInstanceColumn)."` AS identity, `".addslashes($this->credentialInstanceColumn)."` AS credential FROM `".addslashes($this->authRequestDbTable)."` WHERE `".$this->identityInstanceColumn."` = :ident;";
 
             $stmt = DB::dbh()->prepare($sql);
             $stmt->bindValue(":ident", $this->getIdentity());
-            $stmt->bindValue(":cred", $this->getCredential());
             $stmt->execute();
 
             $res = $stmt->fetchAll();
 
             if (count($res) == 1) {
-                $this->authorisedId = $res[0][$this->identityKey];
+                if ($res[0]["credential"] == $this->getCredential()) {
+                    $this->authorisedId = $res[0][$this->identityKey];
+                } else {
+                    
+                    throw new FrameEx("The credential supplied does not match the credential for the authenticated identity", CREDENTIAL_NOT_MATCH);
+                }
+                
 
             } elseif (count($res)  > 1) {
 
-                throw new FrameEx("More than one result was returned for the identity and credential provided", 122);
+                throw new FrameEx("More than one result was returned for the identity and credential provided", IDENTITY_RESULTS_AMBIGUOUS);
 
             } else {
 
-                throw new FrameEx("No match was found for the identity and credential provided", 123);
+                throw new FrameEx("No match was found for the identity and credential provided", IDENTITY_NO_RESULTS);
             }
 
             return $this;
         } catch (FrameEx $ex) {
-            throw new FrameEx($ex->getMessage(), 124);
+            throw new FrameEx($ex->getMessage(), $ex->getCode());
         }
     }
 
@@ -167,7 +171,7 @@ class DbAuth implements AuthenticationAdapter {
         if (!array_key_exists($namespace, $_SESSION)) {
             $_SESSION[$namespace] = $this->getAuthIdentity();
         } else {
-            throw new FrameEx("Authenticated Id is already set. Force a manual overwrite to set a new value (bad if you need to do this tho)", 125);
+            throw new FrameEx("Authenticated Id is already set. Force a manual overwrite to set a new value (bad if you need to do this tho)", IDENTITY_ALREADY_SET);
         }
     }
 
@@ -183,7 +187,7 @@ class DbAuth implements AuthenticationAdapter {
             $stmt->bindValue(":identityV", $identity['value']);
             $stmt->execute();
         } catch (FrameEx $ex) {
-            throw new FrameEx("CREATE_AUTH_RECORD_FAILED", 126);
+            throw new FrameEx("The authorisation record could not be created: {$ex->getMessage()}", CREATE_AUTH_RECORD_FAILED);
         }
     }
 }
