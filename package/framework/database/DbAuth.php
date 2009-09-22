@@ -81,7 +81,7 @@ class DbAuth implements AuthenticationAdapter {
         try {
             $ident = $this->getIdentity();
         } catch (FrameEx $ex) {
-            throw new FrameEx("An identity must be set before you can perform an authorisation request", 211);
+            throw new FrameEx("An identity must be set before you can perform an authorisation request", 121);
         }
 
         try {
