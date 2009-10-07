@@ -1,8 +1,8 @@
 <?php
 /**
  * Persist errors in XML accross page views
- * 
- * @author Dominic Webb <dominic.webb@assertis.co.uk>
+ *
+ * @author Dominic Webb <dominic.webb@assertis.co.uk>, Jason Paige
  */
 class RedirectError {
 
@@ -11,7 +11,7 @@ class RedirectError {
      * Add an error code
      * @param integer $error
      */
-    public static function add($error) {      
+    public static function add($error) {
         $_SESSION['error_redirect'][] = $error;
     }
 
@@ -32,12 +32,12 @@ class RedirectError {
      */
     public static function buildErrors () {
 
-        while (list($key, $val) = each($_SESSION['error_redirect'])) {
-           
+        foreach ($_SESSION['error_redirect'] as $key => $val) {
+
            $code = ErrorCodes::getDesc($val);
 
            if (empty($code['desc'])) {
-               $code['desc'] = "Unkown error code descrption '{$val}'";
+               $code['desc'] = "Unknown error code description '{$val}'";
            }
 
            $xml .= "<error code=\"{$val}\">{$code['desc']}</error>";

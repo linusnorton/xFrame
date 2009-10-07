@@ -108,9 +108,12 @@ class Form implements XML {
             foreach ($_SESSION["field"] as $fieldName => $fieldValue) {
                 $xml .= $this->getFieldXML($fieldName, $fieldValue, $defaultValues[$fieldName]);
             }
-        } else if (is_array($defaultValues)) {
+        }
+        if (is_array($defaultValues)) {
             foreach ($defaultValues as $fieldName => $fieldValue) {
-                $xml .= $this->getFieldXML($fieldName, $fieldValue);
+                if (!isset($_SESSION['field'][$fieldName])) {
+                    $xml .= $this->getFieldXML($fieldName, $fieldValue);
+                }
             }
         }
         if (is_array($_SESSION["error"])) {
