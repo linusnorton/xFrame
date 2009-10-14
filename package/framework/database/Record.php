@@ -235,7 +235,6 @@ class Record implements XML {
         try {
             //before we save convert objects to ids
             $flatAttributes = $this->flatten($cascade, $saveGraph);
-
             $stmt = DB::dbh()->prepare($this->createSaveSQL($flatAttributes));
 
             foreach($flatAttributes as $key => $value) {
@@ -248,11 +247,8 @@ class Record implements XML {
             // we only want to set it after a successful commit.
             $insertId = DB::dbh()->lastInsertId();
 
-            if ($transactional) {
-                $success = DB::dbh()->commit();
-                if (!$success) {
-                    throw new FrameEx('Failed to commit transaction.', 112);
-                }
+            if ($transactional && !DB::dbh()->commit()) {
+                throw new FrameEx('Failed to commit transaction.', 112);
             }
 
             // Set the ID assigned for this record.
@@ -264,14 +260,16 @@ class Record implements XML {
             }
         }
         catch (CyclicalRelationshipException $ex) {
-            //if there were errors rollback the transaction
-            DB::dbh()->rollBack();
+            if ($transactional) {
+                DB::dbh()->rollBack();
+            }
             throw new FrameEx($ex->getMessage(), 114);
 
         }
         catch (PDOException $ex) {
-            //if there were errors rollback the transaction
-            DB::dbh()->rollBack();
+            if ($transactional) {
+                DB::dbh()->rollBack();
+            }
             throw new FrameEx("Error saving {$this->tableName} - ".$ex->getMessage(), 115);
         }
 
