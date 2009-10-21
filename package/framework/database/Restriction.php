@@ -172,10 +172,10 @@ class Restriction implements Condition {
      * @param PDOStatement $stmt
      */
     public function bind(PDOStatement $stmt, &$count = 1) {
-        if ($this->value1 != null) {
+        if ($this->value1 !== null) {
             $stmt->bindValue(":field".$count++, $this->value1);
         }
-        if ($this->value2 != null) {
+        if ($this->value2 !== null) {
             $stmt->bindValue(":field".$count++, $this->value2);
         }
     }
