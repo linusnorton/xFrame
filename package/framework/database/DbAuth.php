@@ -177,4 +177,18 @@ class DbAuth implements AuthenticationAdapter {
             throw new FrameEx("Authenticated Id is already set. Force a manual overwrite to set a new value (bad if you need to do this tho)", IDENTITY_ALREADY_SET);
         }
     }
+
+    public static function createCustomerAuthRecord(Customer $customer, $table, array $identity, array $credential, $idKey) {
+        try {
+            $stmt  = DB::dbh()->prepare("INSERT INTO `".addslashes($table)."` (:id, :identity, :credential) VALUES (:idV, :identityV, :credentialV)");$stmt->bindValue(":id", $idKey);
+            $stmt->bindValue(":credential", $credential['column']);
+            $stmt->bindValue(":identity", $identity['column']);
+            $stmt->bindValue(":idV", $customer->id);
+            $stmt->bindValue(":credentialV", $credential['value']);
+            $stmt->bindValue(":identityV", $identity['value']);
+            $stmt->execute();
+        } catch (FrameEx $ex) {
+            throw new FrameEx("The authorisation record could not be created: {$ex->getMessage()}", CREATE_AUTH_RECORD_FAILED);
+        }
+    }
 }
