@@ -180,7 +180,8 @@ class DbAuth implements AuthenticationAdapter {
 
     public static function createCustomerAuthRecord(Customer $customer, $table, array $identity, array $credential, $idKey) {
         try {
-            $stmt  = DB::dbh()->prepare("INSERT INTO `".addslashes($table)."` (:id, :identity, :credential) VALUES (:idV, :identityV, :credentialV)");$stmt->bindValue(":id", $idKey);
+            $stmt  = DB::dbh()->prepare("INSERT INTO `".addslashes($table)."` (:id, :identity, :credential) VALUES (:idV, :identityV, :credentialV)");
+            $stmt->bindValue(":id", $idKey);
             $stmt->bindValue(":credential", $credential['column']);
             $stmt->bindValue(":identity", $identity['column']);
             $stmt->bindValue(":idV", $customer->id);
