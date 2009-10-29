@@ -13,6 +13,9 @@ class DbAuth implements AuthenticationAdapter {
     private $credentialInstanceColumn;
     private $identityKey;
 
+    const ENC_SHA1 = "SHA1";
+    const ENC_MD5 = "MD5";
+
     /**
      *
      * @param string $table The table we are going to query form the authorisation
@@ -82,9 +85,9 @@ class DbAuth implements AuthenticationAdapter {
             throw new FrameEx("Credential cannot be an empty string", CREDENTIAL_EMPTY);
         }
 
-        if ($enc == "SHA1") {
+        if ($enc == DbAuth::ENC_SHA1) {
             $this->credential = sha1($cred);
-        } elseif ($enc == "MD5") {
+        } elseif ($enc == DbAuth::ENC_MD5) {
             $this->credential = md5($cred);
         } else {
             $this->credential = $cred;
@@ -156,7 +159,7 @@ class DbAuth implements AuthenticationAdapter {
 
 
     /**
-     * Determines wether the authorisation atempt produced a valid result
+     * Determines whether the authorisation atempt produced a valid result
      * @return true | false
      */
     public function hasIdentity() {
@@ -172,22 +175,6 @@ class DbAuth implements AuthenticationAdapter {
             $_SESSION[$namespace] = $this->getAuthIdentity();
         } else {
             throw new FrameEx("Authenticated Id is already set. Force a manual overwrite to set a new value (bad if you need to do this tho)", IDENTITY_ALREADY_SET);
-        }
-    }
-
-    public static function createCustomerAuthRecord(Customer $customer, $table, array $identity, array $credential, $idKey) {
-        try {
-            $stmt  = DB::dbh()->prepare("INSERT INTO `".addslashes($table)."` (:id, :identity, :credential) VALUES (:idV, :identityV, :credentialV)");
-            $stmt->bindValue(":id", $idKey);
-            $stmt->bindValue(":credential", $credential['column']);
-            $stmt->bindValue(":identity", $identity['column']);
-
-            $stmt->bindValue(":idV", $customer->id);
-            $stmt->bindValue(":credentialV", $credential['value']);
-            $stmt->bindValue(":identityV", $identity['value']);
-            $stmt->execute();
-        } catch (FrameEx $ex) {
-            throw new FrameEx("The authorisation record could not be created: {$ex->getMessage()}", CREATE_AUTH_RECORD_FAILED);
         }
     }
 }
