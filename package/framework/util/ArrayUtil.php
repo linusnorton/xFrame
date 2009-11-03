@@ -14,26 +14,24 @@ class ArrayUtil {
      *
      * @param array $array to convert to array
      */
-	public static function getXML(array $array) {
-		$xml = "";
-		foreach ($array as $key => $value) {
-			if (is_numeric($key)) {
-				$key = "numericIndex".$key;
-			}
+    public static function getXML(array $array) {
+        $xml = "";
+        foreach ($array as $key => $value) {
+            if (is_numeric($key)) {
+                $key = "numericIndex".$key;
+            }
 
-			if ($value instanceof XML) {
-				$xml .= $value->getXML();
-			}
-			else if (is_array($value)) {
-				$xml .= "<{$key}>".self::getXML($value)."</{$key}>";
-			}
-			else {
-				$xml .= "<{$key}>".htmlentities($value, ENT_COMPAT, "UTF-8", false)."</{$key}>";
-			}
-		}
-		return $xml;
-	}
+            if ($value instanceof XML) {
+                $xml .= $value->getXML();
+            }
+            else if (is_array($value)) {
+                $xml .= "<{$key}>".self::getXML($value)."</{$key}>";
+            }
+            else {
+                $xml .= "<{$key}>".htmlentities($value, ENT_COMPAT, "UTF-8", false)."</{$key}>";
+            }
+        }
+        return $xml;
+    }
 
 }
-
-?>
