@@ -72,6 +72,7 @@ class TableGateway {
      * @param array $orderBy
      * @param string $class class to instantiate as records
      * @param string $method to call to initialize the class
+     * @return Results
      */
     public static function loadAll($tableName,
                                    $start = null,
@@ -94,6 +95,7 @@ class TableGateway {
      * @param array $orderBy
      * @param string $class class to instantiate as records
      * @param string $method to call to initialize the class
+     * @return Results
      */
     public static function loadMatching($tableName,
                                         Condition $criteria = null,
