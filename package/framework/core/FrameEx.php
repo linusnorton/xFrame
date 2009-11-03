@@ -23,6 +23,7 @@ class FrameEx extends Exception {
         $this->message = $message;
         $this->code = $code;
     }
+    
     /**
      *
      * @param boolean $uncaught

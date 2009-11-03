@@ -6,9 +6,9 @@
  */
 
 class Form implements XML {
-
     private $field;
     private $hasErrors;
+
     /**
      * Populates the fields for the form
      *

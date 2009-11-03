@@ -8,6 +8,13 @@
  */
 class UnknownRequest extends FrameEx {
 
-}
+    public function output($uncaught = false, $return = false) {
+        $out = parent::output($uncaught, true);
 
-?>
+        if ($return) {
+            $return;
+        }
+
+        Page::addException($out);
+    }
+}

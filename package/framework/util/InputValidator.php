@@ -89,7 +89,6 @@ class InputValidator {
         return (@unserialize($data) !== false);
     }
 
-
     /**
      * Check if a $string is valid XML. This does not check against any schema
      * so it is just seing if it is well formed XML.
@@ -101,7 +100,8 @@ class InputValidator {
         try {
             DOMDocument::loadXML($string);
             return true;
-        } catch (Exception $ex) {
+        } 
+        catch (FrameEx $ex) {
             return false;
         }
     }
@@ -112,10 +112,4 @@ class InputValidator {
      * @param <type> $postCode
      * @return boolean
      */
-
-    public static function isPostCode($postCode) {
-        $pattern = '/^([A-PR-UWYZ0-9][A-HK-Y0-9][AEHMNPRTVXY0-9]?[ABEHMNPRVWXY0-9]? {1,2}[0-9][ABD-HJLN-UW-Z]{2}|GIR 0AA)$/';
-        return (preg_match($postCode, $pattern));
-    }
 }
-?>

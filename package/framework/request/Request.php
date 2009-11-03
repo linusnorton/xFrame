@@ -63,8 +63,8 @@ class Request implements ArrayAccess {
      * can now give an array like $_POST or $_GET in the constructor and then
      * access the fields like $e->myVar etc. Enjoy.
      *
-     * @param unknown_type $key
-     * @return unknown
+     * @param mixed $key
+     * @return mixed
      */
     public function __get($key) {
         if (array_key_exists($key, $this->params)) {
@@ -77,8 +77,8 @@ class Request implements ArrayAccess {
      * this function is called. So setting $e->face = "your" when the variable
      * face doesn't exists sets it in the interal array for later access.
      *
-     * @param unknown_type $key
-     * @param unknown_type $value
+     * @param mixed $key
+     * @param mixed $value
      */
     public function __set($key, $value) {
         $this->params[$key] = $value;
@@ -183,5 +183,3 @@ class Request implements ArrayAccess {
     }
 
 }
-
-?>
