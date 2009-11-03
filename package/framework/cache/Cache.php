@@ -8,13 +8,13 @@
  * This is a singleton for a Memcache database
  */
 class Cache {
-	private static $instance = false;
+    private static $instance = false;
 
 
-	/**
+    /**
      * Create a Memcahe instance based on the settings in the registry
      */
-	private static function connect() {
+    private static function connect() {
         self::$instance = new Memcache();
 	}
 
@@ -40,5 +40,3 @@ class Cache {
 
 
 }
-
-
