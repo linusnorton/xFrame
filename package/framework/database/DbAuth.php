@@ -35,7 +35,7 @@ class DbAuth implements AuthenticationAdapter {
      * @return DbAuth
      */
     public function setIdentity($ident, array $validator=null) {
-        
+
 
         if (is_array($validator)) {
 
@@ -59,8 +59,8 @@ class DbAuth implements AuthenticationAdapter {
             $this->identity = $ident;
             return $this;
         }
-            
-        
+
+
     }
 
 
@@ -137,10 +137,10 @@ class DbAuth implements AuthenticationAdapter {
                 if ($res[0]["credential"] == $this->getCredential()) {
                     $this->authorisedId = $res[0][$this->identityKey];
                 } else {
-                    
+
                     throw new FrameEx("The credential supplied does not match the credential for the authenticated identity", CREDENTIAL_NOT_MATCH);
                 }
-                
+
 
             } elseif (count($res)  > 1) {
 
@@ -160,16 +160,22 @@ class DbAuth implements AuthenticationAdapter {
 
     /**
      * Determines whether the authorisation atempt produced a valid result
-     * @return true | false
+     * @return boolean
      */
     public function hasIdentity() {
         return (!$this->authorisedId) ? false : true;
     }
 
+    /**
+     * @return mixed
+     */
     public function getAuthIdentity() {
         return $this->authorisedId;
     }
 
+    /**
+     * @param string $namespace
+     */
     public function persistAuthIdentity ($namespace) {
         if (!array_key_exists($namespace, $_SESSION)) {
             $_SESSION[$namespace] = $this->getAuthIdentity();
@@ -178,18 +184,4 @@ class DbAuth implements AuthenticationAdapter {
         }
     }
 
-    public static function createCustomerAuthRecord(Customer $customer, $table, array $identity, array $credential, $idKey) {
-        try {
-            $stmt  = DB::dbh()->prepare("INSERT INTO `".addslashes($table)."` (:id, :identity, :credential) VALUES (:idV, :identityV, :credentialV)");
-            $stmt->bindValue(":id", $idKey);
-            $stmt->bindValue(":credential", $credential['column']);
-            $stmt->bindValue(":identity", $identity['column']);
-            $stmt->bindValue(":idV", $customer->id);
-            $stmt->bindValue(":credentialV", $credential['value']);
-            $stmt->bindValue(":identityV", $identity['value']);
-            $stmt->execute();
-        } catch (FrameEx $ex) {
-            throw new FrameEx("The authorisation record could not be created: {$ex->getMessage()}", CREATE_AUTH_RECORD_FAILED);
-        }
-    }
 }
