@@ -216,7 +216,9 @@ class Page {
      * Starts the session and execution time clock
      */
     public function init() {
-        session_start();
+        if (!headers_sent()) {
+            session_start();
+        }
         self::$executionTime = microtime(true); //used for script execution time
     }
 
