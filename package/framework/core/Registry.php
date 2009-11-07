@@ -64,5 +64,17 @@ class Registry {
     public static function getAll() {
         return self::$settings;
     }
+
+    /**
+     * Load settings from a database table
+     * @param string $table
+     */
+    public static function loadFromDB($table) {
+        $records = TableGateway::loadAll($table);
+
+        foreach ($records as $record) {
+            self::$settings[$record->key] = $record->value;
+        }
+    }
 }
-?>
+
