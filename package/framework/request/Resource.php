@@ -25,10 +25,13 @@ class Resource extends Record {
     }
 
     public static function create(array $attributes, $tableName = "resource") {
+        $parameters = unserialize($attributes["parameters"]);
+        $parameters = is_array($parameters) ? $parameters : array();
+
         return new Resource($attributes["name"],
                             $attributes["class"],
                             $attributes["method"],
-                            unserialize($attributes["parameters"]),
+                            $parameters,
                             $attributes["authenticator"],
                             $attributes["cache_length"],
                             $tableName);
@@ -87,5 +90,28 @@ class Resource extends Record {
      */
     public function getName() {
         return $this->name;
+    }
+
+    /**
+     *
+     * @param boolean $cascade
+     * @param array $saveGraph
+     */
+    public function save($cascade = false, array &$saveGraph = array()) {
+        $this->parameters = serialize($this->parameters);
+        parent::save($cascade, $saveGraph);
+        $this->parameters = unserialize($this->parameters);
+    }
+
+    /**
+     * Load resource from the given table name
+     * @param string $tableName
+     */
+    public function loadFromDB($tableName = "resource") {
+        $resources = TableGateway::loadAll($tableName, null, null, array(), "Resource");
+
+        foreach ($resources as $resource) {
+            Dispatcher::addResource($resource);
+        }
     }
 }

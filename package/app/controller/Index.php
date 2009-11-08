@@ -91,7 +91,6 @@ class Index {
         $records = TableGateway::loadMatching("test_table",  Restriction::like("name", "Li%"), 0, 3);
         Page::add($records);
         */
-
         
         Page::$xsl = ROOT."app/view/index.xsl";
     }

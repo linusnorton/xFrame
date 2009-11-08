@@ -62,6 +62,11 @@ class Dispatcher {
         }
     }
 
+    /**
+     * Get the parameter map for the given request
+     * @param array $requestName
+     * @return array
+     */
     public static function getParameterMap($requestName) {
         return self::$listeners[$requestName]->getParameterMap();
     }
@@ -73,5 +78,3 @@ class Dispatcher {
         return self::$listeners;
     }
 }
-
-?>
