@@ -35,7 +35,7 @@ class Index {
 
         //Example 2: load entire table
         $records = TableGateway::loadAll("test_table");
-        Page::addXML($records);
+        Page::add($records);
 
         //Example 3: custom load condition
         $stmt = DB::dbh()->prepare("SELECT * FROM test_table WHERE id < :maxId");
@@ -46,7 +46,7 @@ class Index {
             //the static create method instantiates a record from a associative array
             //if you were explicitly mapping fields from the array in your overridden
             //create function you wouldnt need PDO::FETCH_ASSOC
-            $record = Record::create("test_table", $row);
+            $record = Record::create($row, "test_table");
             Page::add($record);
         }
 
@@ -60,11 +60,11 @@ class Index {
         $record->delete();
 
         //Example 6: creating a record
-        $record = Record::create("test_table", array("id" => 1, "name" => "Linus"));
+        $record = Record::create(array("id" => 1, "name" => "Linus"), "test_table");
         $record->save();
 
         //or without an id (you could pass just name in the constructor array
-        $record = Record::create("test_table", array());
+        $record = new Record("test_table");
         $record->name = "Some other Person";
         $record->save();
         //record->id will now be set
@@ -77,22 +77,22 @@ class Index {
         Page::add($record);
 
         //Example 8: using the TableGateway
-        $records = TableGateway::loadMatching("table",  Restriction::like("name", "Li%"));
+        $records = TableGateway::loadMatching("test_table",  Restriction::like("name", "Li%"));
         Page::add($records);
 
         //Example 9: using the TableGateway with Criteria
         $criteria = new Criteria( Restriction::is("name", "Linus") );
         $criteria->addOr( Restriction::is("name", "John") );
         $criteria->addAnd( Restriction::isNotNull("name") );
-        $records = TableGateway::loadMatching("table",  $criteria);
+        $records = TableGateway::loadMatching("test_table",  $criteria);
         Page::add($records);
 
         //Example 10: using the TableGateway with Pagination
-        $records = TableGateway::loadMatching("table",  Restriction::like("name", "Li%"), 0, 3);
+        $records = TableGateway::loadMatching("test_table",  Restriction::like("name", "Li%"), 0, 3);
         Page::add($records);
-
-
         */
+
+        
         Page::$xsl = ROOT."app/view/index.xsl";
     }
 

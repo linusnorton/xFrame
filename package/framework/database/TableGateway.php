@@ -52,15 +52,8 @@ class TableGateway {
             }
         }
 
-        if ($class == "Record") {
-            return new Record($tableName, $attributes);
-        }
-        else {
-            //call the given object's create method, this will be replaced with __STATIC__
-            return call_user_func(array($class, $method), $attributes);
-        }
-
-
+        //call the given object's create method, this will be replaced with __STATIC__
+        return call_user_func(array($class, $method), $attributes, $tableName);
     }
 
     /**
@@ -131,24 +124,13 @@ class TableGateway {
 
         $records = array();
 
-        if ($class == "Record") {
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                if (Registry::get("CACHE_ENABLED")) {
-                    Cache::mch()->set($tableName.$row["id"], $row, false, 0);
-                }
-                $records[] = new Record($tableName, $row);
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            if (Registry::get("CACHE_ENABLED")) {
+                Cache::mch()->set($tableName.$row["id"], $row, false, 0);
             }
+            //call the given object's create method, this will be replaced with __STATIC__
+            $records[] = call_user_func(array($class, $method), $row, $tableName);
         }
-        else {
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                if (Registry::get("CACHE_ENABLED")) {
-                    Cache::mch()->set($tableName.$row["id"], $row, false, 0);
-                }
-                //call the given object's create method, this will be replaced with __STATIC__
-                $records[] = call_user_func(array($class, $method), $row);
-            }
-        }
-
         return new Results($records, $numResults, $start, $num, $tableName."-list");
     }
 

@@ -36,16 +36,15 @@ class Record implements XML {
      *
      * public static function create(array $attributes) {
      *     $customer = Customer::load($attributes["customer_id"]);
-     *      return new Address($attributes["address1"], $attributes["city"], $attribute["country"], $customer);
-     *
+     *     return new Address($attributes["address1"], $attributes["city"], $attribute["country"], $customer);
      * }
      *
      * This means that you can have a constructor for Address that type checks the Customer input
      *
-     * @param $tableName string name of table
      * @param $attributes array associative array of fields loaded from db
+     * @param $tableName string name of table
      */
-    public static function create($tableName, array $attributes = array()) {
+    public static function create(array $attributes, $tableName = "table") {
         return new Record($tableName, $attributes);
     }
 
@@ -90,15 +89,8 @@ class Record implements XML {
             }
         }
 
-        if ($class == "Record") {
-            return new Record($tableName, $attributes);
-        }
-        else {
-            //call the given object's create method, this will be replaced with __STATIC__
-            return call_user_func(array($class, $method), $attributes);
-        }
-
-
+        //call the given object's create method, this will be replaced with __STATIC__
+        return call_user_func(array($class, $method), $attributes, $tableName);
     }
 
     /**
@@ -148,22 +140,12 @@ class Record implements XML {
 
         $stmt->execute();
 
-        if ($class == "Record") {
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                if (Registry::get("CACHE_ENABLED")) {
-                    Cache::mch()->set($tableName.$row["id"], $row, false, 0);
-                }
-                $records[] = new Record($tableName, $row);
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            if (Registry::get("CACHE_ENABLED")) {
+                Cache::mch()->set($tableName.$row["id"], $row, false, 0);
             }
-        }
-        else {
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                if (Registry::get("CACHE_ENABLED")) {
-                    Cache::mch()->set($tableName.$row["id"], $row, false, 0);
-                }
-                //call the given object's create method, this will be replaced with __STATIC__
-                $records[] = call_user_func(array($class, $method), $row);
-            }
+            //call the given object's create method, this will be replaced with __STATIC__
+            $records[] = call_user_func(array($class, $method), $row, $tableName);
         }
 
         return $records;
