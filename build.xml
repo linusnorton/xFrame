@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : build.xml
+    Created on : 08 November 2009, 19:07
+    Author     : Linus Norton <linusnorton@gmail.com>
+    Description:
+        This file contains the phing scripts to test and deploy an xframe project
+-->
+
+
+<project name="testsite" basedir="." default="deploy">
+    <property file="./config/xframe.conf" />
+
+    <!-- Deploy -->
+    <target name="deploy" description="deploy the project">
+        <!--this is hardcoded to mysql until I find a better way-->
+        <exec command="mysql -h${DATABASE_HOST} -u${DATABASE_USERNAME} -p${DATABASE_PASSWORD} -e'DROP DATABASE IF EXISTS ${DATABASE_NAME}; CREATE DATABASE ${DATABASE_NAME}'"
+              dir="."
+              checkreturn="true" />
+
+        <pdo url="${DATABASE_ENGINE}:host=${DATABASE_HOST};dbname=${DATABASE_NAME}" userid="${DATABASE_USERNAME}" password="${DATABASE_PASSWORD}">
+          <fileset dir="install">
+              <include name="*.sql"/>
+          </fileset>
+        </pdo>
+
+    </target>
+
+    <!-- Test -->
+    <target name="test" description="tests this package">
+
+        <phpunit>
+          <formatter todir="report" type="xml"/>
+          <batchtest>
+            <fileset dir="test">
+              <include name="**/*Test*.php"/>
+              <!--<exclude name="**/Abstract*.php"/>-->
+            </fileset>
+          </batchtest>
+        </phpunit>
+
+        <coverage-report outfile="report/coverage.xml">
+          <report todir="report/coverage" styledir="/home/phing/etc"/>
+        </coverage-report>
+        <phpunitreport infile="report/testsuites.xml" format="frames" todir="reports/tests" styledir="/home/phing/etc"/>
+
+    </target>
+</project>
+
+
+
+

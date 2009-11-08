@@ -28,7 +28,7 @@ class Index {
         INSERT INTO test_table VALUES (5,"Jon");
         INSERT INTO test_table VALUES (6,"Jez");
 
-
+*/
         //Example 1: load one record
         $record = TableGateway::load("test_table", 1);
         Page::add($record);
@@ -90,7 +90,7 @@ class Index {
         //Example 10: using the TableGateway with Pagination
         $records = TableGateway::loadMatching("test_table",  Restriction::like("name", "Li%"), 0, 3);
         Page::add($records);
-        */
+        
         
         Page::$xsl = ROOT."app/view/index.xsl";
     }

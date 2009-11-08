@@ -16,23 +16,14 @@ class DB {
      */
     private static function connect() {
         $db = Registry::get("DATABASE_ENGINE");
+        $class = Registry::get("DATABASE_DEBUG") ? "LoggedPDO" : "PDO";
 
         try {
-            if ($db == "MySQL") {
-                self::$instance = new PDO("mysql:host=".Registry::get("DATABASE_HOST").";dbname=".Registry::get("DATABASE_NAME"),
-                                          Registry::get("DATABASE_USERNAME"),
-                                          Registry::get("DATABASE_PASSWORD"));
+            self::$instance = new PDO($db.":host=".Registry::get("DATABASE_HOST").";dbname=".Registry::get("DATABASE_NAME"),
+                                      Registry::get("DATABASE_USERNAME"),
+                                      Registry::get("DATABASE_PASSWORD"));
 
-                self::$instance->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-                //self::$instance->setAttribute (PDO::ATTR_STATEMENT_CLASS, array ('LoggedPDOStatement', array()));
-
-            } else if ($db == "MySQLDebug") {
-                self::$instance = new LoggedPDO("mysql:host=".Registry::get("DATABASE_HOST").";dbname=".Registry::get("DATABASE_NAME"),
-                                                  Registry::get("DATABASE_USERNAME"),
-                                                  Registry::get("DATABASE_PASSWORD"));
-
-                self::$instance->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            }
+            self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
         catch (PDOException $ex) {
             throw new PDOException($ex->getMessage(), 118);
@@ -106,5 +97,3 @@ class DB {
         return false;
     }
 }
-
-
