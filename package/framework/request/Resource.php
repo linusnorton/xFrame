@@ -46,12 +46,11 @@ class Resource extends Record {
         //if there is an authenticator attached to the request
         if ($this->authenticator != null) {
             //try to authorise
-            $authResult = $this->authenticator->authenticate($r);
+            $authResult = call_user_func(array($this->authenticator,"authenticate"),$r);
 
             //if authorised do the request
             if ($authResult === true) {
-                $object = new $this->class;
-                return $object->{$this->method}($r);
+                return call_user_func(array($this->class,$this->method), $r);
             }
             //if not then forbidden
             else if ($authResult === false) {
@@ -64,8 +63,7 @@ class Resource extends Record {
             }
         }
         //if no authenticator then just do it
-        $object = new $this->class;
-        return $object->{$this->method}($r);
+        return call_user_func(array($this->class,$this->method), $r);
     }
     
     /**
