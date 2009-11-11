@@ -46,9 +46,21 @@ class Results implements ArrayAccess, Countable, SeekableIterator, XML {
         }
 
         $xml .= "</results>";
-        $xml .= "<pagination>";
+        $xml .= $this->getPaginationXML();
+        $xml .= "<maxNumResults>{$this->maxNumResults}</maxNumResults>" ;
+        $xml .= "<numResults>{$this->numResults}</numResults>" ;
+        $xml .= "<currentResultNumber>{$this->currentResultNumber}</currentResultNumber>" ;
+        $xml .= "<resultsPerPage>{$this->resultsPerPage}</resultsPerPage>" ;
+        $xml .= "</{$this->customTag}>";
 
+        return $xml;
+    }
+
+    private function getPaginationXML() {
+        $xml = "";
         if (ctype_digit("{$this->resultsPerPage}")) {
+            $xml .= "<pagination>";
+
             for ($i = 0; $i < $this->maxNumResults ; $i += $this->resultsPerPage) {
                 $selected = ($i == $this->currentResultNumber) ? " selected='true'" : "";
                 $end = ($i + $this->resultsPerPage < $this->maxNumResults) ? $i + $this->resultsPerPage : $this->maxNumResults;
@@ -59,16 +71,59 @@ class Results implements ArrayAccess, Countable, SeekableIterator, XML {
                     <end>{$end}</end>
                 </page>";
             }
+
+            $xml .= "</pagination>";
         }
 
-        $xml .= "</pagination>";
-        $xml .= "<maxNumResults>{$this->maxNumResults}</maxNumResults>" ;
-        $xml .= "<numResults>{$this->numResults}</numResults>" ;
-        $xml .= "<currentResultNumber>{$this->currentResultNumber}</currentResultNumber>" ;
-        $xml .= "<resultsPerPage>{$this->resultsPerPage}</resultsPerPage>" ;
-        $xml .= "</{$this->customTag}>";
-
         return $xml;
+    }
+
+    /**
+     * Return the array of results return from the query
+     * @return array
+     */
+    public function getResults() {
+        return $this->results;
+    }
+
+    /**
+     * Return the number of results
+     * @return int
+     */
+    public function getNumResults() {
+        return $this->numResults;
+    }
+
+    /**
+     * Return the maximum number of results the query could have returned if it didnt have a limit
+     * @return int
+     */
+    public function getMaxNumResults() {
+        return $this->maxNumResults;
+    }
+
+    /**
+     * Get the start value
+     * @return int
+     */
+    public function getCurrentResultNumber() {
+        return $this->currentResultNumber = $currentResultNumber;
+    }
+
+    /**
+     * Get the limit value
+     * @return int
+     */
+    public function getResultsPerPage() {
+        return $this->resultsPerPage;
+    }
+
+    /**
+     * Get the XML tag that will wrap the results and pagination
+     * @return string
+     */
+    public function getCustomTag() {
+        return $this->customTag;
     }
 
     /** grabs you the first item from the array */
@@ -184,4 +239,3 @@ class Results implements ArrayAccess, Countable, SeekableIterator, XML {
 
 }
 
-?>
