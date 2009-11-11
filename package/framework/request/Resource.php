@@ -34,7 +34,8 @@ class Resource extends Record {
                             $parameters,
                             $attributes["authenticator"],
                             $attributes["cache_length"],
-                            $tableName);
+                            $tableName,
+                            $attributes);
     }
 
     /**
@@ -107,11 +108,16 @@ class Resource extends Record {
      * Load resource from the given table name
      * @param string $tableName
      */
-    public function loadFromDB($tableName = "resource") {
+    public static function loadFromDB($tableName = "resource") {
         $resources = TableGateway::loadAll($tableName, null, null, array(), "Resource");
 
         foreach ($resources as $resource) {
             Dispatcher::addResource($resource);
         }
+    }
+
+    public static function getFromRequest(Request $request) {
+        $resources = Dispatcher::getListeners();
+        return $resources[$request->getName()];
     }
 }

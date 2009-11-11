@@ -68,7 +68,7 @@ class Dispatcher {
      * @return array
      */
     public static function getParameterMap($requestName) {
-        return self::$listeners[$requestName]->getParameterMap();
+        return array_key_exists($requestName,self::$listeners) ? self::$listeners[$requestName]->getParameterMap() : array();
     }
 
     /**
