@@ -339,6 +339,14 @@ class Record implements XML {
     }
 
     /**
+     * Set the table name for this record
+     * @param string $tableName
+     */
+    public function setTableName($tableName) {
+        return $this->tableName = $tableName;
+    }
+
+    /**
      * @return An associative array that maps field names to values.
      */
     public function getAttributes() {
