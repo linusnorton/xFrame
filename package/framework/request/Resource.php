@@ -38,7 +38,7 @@ class Resource extends Record {
     }
 
     /**
-     * Execute the page 
+     * Execute the page
      * @param Request $r
      * @return mixed
      */
@@ -46,7 +46,7 @@ class Resource extends Record {
         //if there is an authenticator attached to the request
         if ($this->authenticator != null) {
             //try to authorise
-            $authenticator = new $this->authenicator;
+            $authenticator = new $this->authenticator;
             $authResult = $authenticator->authenticate($r);
 
             //if authorised do the request
@@ -67,7 +67,7 @@ class Resource extends Record {
         $object = new $this->class;
         return $object->{$this->method}($r);
     }
-    
+
     /**
      *
      * @return array
@@ -75,9 +75,9 @@ class Resource extends Record {
     public function getParameterMap() {
         return $this->parameters;
     }
-    
+
     /**
-     * 
+     *
      * @return mixed
      */
     public function getCacheLength() {
