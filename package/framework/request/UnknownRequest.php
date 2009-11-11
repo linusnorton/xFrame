@@ -9,12 +9,7 @@
 class UnknownRequest extends FrameEx {
 
     public function output($uncaught = false, $return = false) {
-        $out = parent::output($uncaught, true);
-
-        if ($return) {
-            $return;
-        }
-
-        Page::addException($out);
+        header("HTTP/1.0 404 Not Found");
+        die();
     }
 }
