@@ -2,8 +2,6 @@
 
 /**
  * @author Linus Norton <linusnorton@gmail.com>
- *
- * @version 0.1
  * @package core
  *
  * The factory class is in charge of creating new objects.
@@ -154,6 +152,33 @@
         fwrite($fp, $contents);
         fclose($fp);
     }
+
+    /**
+     * include the framework files
+     */
+    public static function init() {
+        //if the framework .classes.php hasn't been built, build it
+        if (!file_exists(ROOT."framework/.classes.php")) {
+            Factory::rebuild();
+        }
+
+        //include the paths to the classes for the framework
+        include(ROOT."framework/.classes.php");
+    }
 }
 
-?>
+/**
+ * If new <object> is called this function calls the Factory to include the file
+ *
+ * @param String $className
+ */
+function __autoload($className) {
+    //if the factory does not have the class
+    if (!Factory::includeFile($className)) {
+        //rebuild the class/file mapping
+        Factory::rebuild();
+        //try to see if we have it now
+        Factory::includeFile($className);
+    }
+}
+
