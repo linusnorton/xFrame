@@ -111,4 +111,10 @@ class FrameEx extends Exception {
             echo $exception;
         }
     }
+
+    public function redirect($location) {
+        $this->output();
+        echo Page::displayErrors();
+        die();
+    }
 }
