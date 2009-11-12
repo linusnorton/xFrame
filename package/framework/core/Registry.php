@@ -26,7 +26,6 @@ class Registry {
             closedir($dh);
         }
 
-
     }
 
     /**
@@ -63,6 +62,19 @@ class Registry {
      */
     public static function getAll() {
         return self::$settings;
+    }
+
+    /**
+     * Load settings from tables in the conf file
+     */
+    public static function loadDBSettings() {
+        $databaseSettings = Registry::get("DATABASE_SETTING");
+
+        if (is_array($databaseSettings)) {
+            foreach ($databaseSettings as $table) {
+                Registry::loadFromDB($table);
+            }
+        }
     }
 
     /**
