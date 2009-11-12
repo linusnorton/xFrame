@@ -38,5 +38,13 @@ class Cache {
         self::$instance = $newInstance;
     }
 
-
+    /**
+     * Setup the cache
+     */
+    public static function init() {
+        //setup caching
+        if (Registry::get("CACHE_ENABLED")) {
+            Cache::mch()->addServer(Registry::get("MEMCACHE_HOST"), Registry::get("MEMCACHE_PORT"));
+        }
+    }
 }
