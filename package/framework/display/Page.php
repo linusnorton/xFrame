@@ -184,9 +184,7 @@ class Page {
             header("Location: ".$location);
             die();
         }
-        else {
-            throw new FrameEx("Could not redirect to {$location}, headers already sent", 106);
-        }
+        throw new FrameEx("Could not redirect to {$location}, headers already sent", 106);
     }
 
 
@@ -216,9 +214,12 @@ class Page {
      * Starts the session and execution time clock
      */
     public function init() {
+        ini_set("include_path", ini_get("include_path").":".ROOT);
+
         if (!headers_sent()) {
             session_start();
         }
+
         self::$executionTime = microtime(true); //used for script execution time
     }
 
