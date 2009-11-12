@@ -6,7 +6,7 @@
  *
  * A request encapsulates a given request
  */
-class Request implements ArrayAccess {
+class Request implements ArrayAccess, XML {
     private $params = array();
     private $name;
 
@@ -55,6 +55,7 @@ class Request implements ArrayAccess {
     public function __construct($name, array $argArray = array()) {
         $this->name = $name;
         $this->params = $argArray;
+        unset($this->params["PHPSESSID"]);
     }
 
     /**
@@ -141,6 +142,18 @@ class Request implements ArrayAccess {
         return md5($this->name.implode($this->params).implode(array_keys($this->params)));
     }
 
+    /**
+     * @return string xml
+     */
+    public function getXML() {
+        $xml = "<request name='{$this->name}'>";
+        foreach ($this->params as $key => $value) {
+           $xml .= "<parameter name='{$key}'>{$value}</parameter>";
+        }
+        $xml .= "</request>";
+
+        return $xml;
+    }
     ////////////////////////////////////////////////////////////////////
     // ArrayAccess implementation
     ////////////////////////////////////////////////////////////////////
@@ -181,5 +194,4 @@ class Request implements ArrayAccess {
     public function offsetUnset($key) {
         unset($this->params[$key]);
     }
-
 }
