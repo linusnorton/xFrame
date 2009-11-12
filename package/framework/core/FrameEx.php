@@ -23,7 +23,7 @@ class FrameEx extends Exception {
         $this->message = $message;
         $this->code = $code;
     }
-    
+
     /**
      *
      * @param boolean $uncaught
@@ -48,7 +48,6 @@ class FrameEx extends Exception {
         }
         $out .= "</backtrace>";
         $out .= "</exception>";
-
         //return the error do no more
         if ($return) {
             return $out;
@@ -103,7 +102,7 @@ class FrameEx extends Exception {
                 echo Page::displayErrors();
             }
             catch (Exception $e) {
-                print_r($e);
+                echo $e->getMessage();
                 die("Error processing exception");
             }
         }
@@ -112,9 +111,31 @@ class FrameEx extends Exception {
         }
     }
 
+    /**
+     * Setup the error handling
+     */
+    public static function init() {
+        set_exception_handler(array("FrameEx", "exceptionHandler"));
+        set_error_handler(array("FrameEx", "errorHandler"), ini_get("error_reporting"));
+
+        //deal with any exceptions that were redirected
+        if (array_key_exists("exception",$_SESSION)) {
+            $ex = unserialize($_SESSION["exception"]);
+            $ex->output();
+            unset($_SESSION["exception"]);
+        }
+    }
+
+    /**
+     * Persist the error and redirect to another page
+     * @param string $location
+     */
     public function redirect($location) {
-        $this->output();
-        echo Page::displayErrors();
-        die();
+        $this->persist();
+        Page::redirect($location);
+    }
+
+    protected function persist() {
+        $_SESSION["exception"] = serialize($this);
     }
 }
