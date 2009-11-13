@@ -7,8 +7,8 @@ Factory::init();
 Page::init();
 Registry::init();
 Cache::init();
-FrameEx::init();
 Registry::loadDBSettings();
+FrameEx::init();
 
 //boot the app
 require_once(ROOT."app/init.php");
