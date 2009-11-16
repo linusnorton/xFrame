@@ -85,7 +85,15 @@ class Registry {
         $records = TableGateway::loadAll($table);
 
         foreach ($records as $record) {
-            self::$settings[$record->key] = $record->value;
+            if ($record->value === "true") {
+                self::$settings[$record->key] = true;
+            }
+            else if ($record->value === "false") {
+                self::$settings[$record->key] = false;
+            }
+            else {
+                self::$settings[$record->key] = $record->value;
+            }
         }
     }
 }
