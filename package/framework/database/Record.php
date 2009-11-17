@@ -163,6 +163,7 @@ class Record implements XML {
 
         //foreach attribute
         foreach($this->attributes as $key => $value) {
+            $value = $this->$key;
             //if i am also a record
             if ($value instanceof Record) {
                 //check if I need to cascade the save to get the id
