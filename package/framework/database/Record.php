@@ -163,6 +163,7 @@ class Record implements XML {
 
         //foreach attribute
         foreach($this->attributes as $key => $value) {
+            
             if ($value instanceof MappedField) {
                 continue; //lazy field that is unchanged
             }
@@ -180,16 +181,19 @@ class Record implements XML {
                 //and store my id
                 $flatAttributes[$key] = $value->id;
             }
-            else if (is_array($value) && $cascade) {
-                foreach ($value as $item) {
-                    if ($item instanceof Record && !array_key_exists($item->hash(), $saveGraph)) {
-                        $item->save(true, $saveGraph);
-                    }
-                    //if i dont have an id and im in the save graph we have an unresolvable cycle
-                    else if ($item->id == "" && array_key_exists($item->hash(), $saveGraph)) {
-                        throw new CyclicalRelationshipException("Found cyclical reference between {$this->tableName} and {$item->getTableName()}", 111);
+            else if (is_array($value)) {
+                if ($cascade) {
+                    foreach ($value as $item) {
+                        if ($item instanceof Record && !array_key_exists($item->hash(), $saveGraph)) {
+                            $item->save(true, $saveGraph);
+                        }
+                        //if i dont have an id and im in the save graph we have an unresolvable cycle
+                        else if ($item->id == "" && array_key_exists($item->hash(), $saveGraph)) {
+                            throw new CyclicalRelationshipException("Found cyclical reference between {$this->tableName} and {$item->getTableName()}", 111);
+                        }
                     }
                 }
+                // If they are not full of records to be persisted recursively, arrays are ignored.
             }
             else {
                 $flatAttributes[$key] = $value;
