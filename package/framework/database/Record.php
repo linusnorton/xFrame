@@ -308,6 +308,8 @@ class Record implements XML {
         $xml = "\n<record table='{$this->tableName}' id='{$this->attributes['id']}'>";
 
         foreach ($this->attributes as $key => $value) {
+            // Need this to make sure the magic getter is called for lazy loading
+            $value = $this->$key;
             $xml .= "\n\t<{$key}>";
 
             if ($value instanceof XML) {
@@ -405,6 +407,10 @@ class Record implements XML {
      * @return mixed $value
      */
     public function __get($key) {
+        if ($this->attributes[$key] instanceof MappedField) {
+            $this->attributes[$key] = $this->attributes[$key]->load();
+        }
+
         return $this->attributes[$key];
     }
 
