@@ -54,9 +54,13 @@ class FrameEx extends Exception {
         }
 
         if (Registry::get("EMAIL_ERRORS")) {
+            $xslFile = ROOT."app/view/common/plain-text-error.xsl";
+            $transformation = new Transformation($out, $xslFile);
+            $text = $transformation->execute();
+            
             $headers  = 'MIME-Version: 1.0' . "\r\n";
             $headers .= 'Content-type: text/plain; charset=iso-8859-1' . "\r\n";
-            mail(Registry::get("ADMIN"), "Error from: ".$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"],$out, $headers );
+            mail(Registry::get("ADMIN"), "Error from: ".$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"],$text, $headers );
         }
 
         Page::addException($out);
