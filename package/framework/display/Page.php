@@ -7,7 +7,7 @@
  * This object provides the view transformation. It takes XML and an XSLT file and transforms them
  */
 class Page {
-    const OUTPUT_XSL = 0, OUTPUT_XML = 1, OUTPUT_OFF = 2;
+    const OUTPUT_XSL = 0, OUTPUT_XML = 1, OUTPUT_OFF = 2, OUTPUT_DEBUG = 3;
 
     private static $outputMode = self::OUTPUT_XSL;
     private static $exceptions = array();
@@ -26,68 +26,42 @@ class Page {
         if (self::$outputMode == self::OUTPUT_OFF) {
             return; //nothing to do
         }
-        if (self::$outputMode == self::OUTPUT_XML) {
-            header("content-type: text/xml");
-            $doc = new DomDocument();
-
-            if ($doc->loadXML(self::$xml) === false) {
-                throw new FrameEx("There was an error inside the xml:\n".htmlentities($xml), 101);
-            }
-
-            return $doc->saveXML();
-        }
 
         $xml = Page::generateXML();
 
-        $dom = new DomDocument();
-        if (!$dom->loadXML($xml)) {
-            throw new MalformedPage("There was an error inside the xml:\n". htmlentities($xml), 102);
+        if (self::$outputMode == self::OUTPUT_DEBUG) {
+            return Page::debug($xml);
         }
 
-        $dom->xinclude();
+        $transformation = new Transformation($xml, self::$xsl);
 
-        $xsl = new DomDocument();
-
-        //if the xsl has not been set or has been set incorrectly
-        if (!file_exists(self::$xsl)) {
-            throw new MalformedPage("Could not locate xsl file: ".self::$xsl, 103);
-        }
-
-        //if the xsl contained errors
-        if (!$xsl->load(self::$xsl)) {
-            throw new MalformedPage("There are errors in the xsl file: ".self::$xsl, 104);
-        }
-
-        $xslt = new XSLTProcessor();
-        $xslt->importStylesheet($xsl);
-        $xslt->setParameter(null, self::$parameters);
-
-        //unfortunately this doesn't capture any warnings generated whilst transforming
-        $transformation = $xslt->transformToXml($dom);
-
-        if ($transformation === false) {
-            throw new MalformedPage("There was an error tranforming the page", 105);
-        }
-
-        //later I will make an option to turn this off
-        if (array_key_exists("debug",$_GET) && $_GET["debug"] == "true") {
-            $return = "<strong>Execution Time: ";
-            $return .= number_format(microtime(true) - self::$executionTime, 2);
-            $return .=" secs</strong><br /><strong>Page XML</strong><br /><pre>";
-            $xml = str_replace("<", "&lt;" , $xml);
-            $xml = str_replace(">", "&gt;" , $xml);
-            $return .= $xml;
-            $return .= "</pre>";
-            return $return;
-        }
-        else if (array_key_exists("debug",$_GET) && $_GET["debug"] == "xml") {
+        if (self::$outputMode == self::OUTPUT_XML) {
             header("content-type: text/xml");
-            return $xml;
-        }
-        else {
-            return $transformation;
+            return $transformation->getXML();
         }
 
+        $page = $transformation->execute(self::$parameters);
+        $page .= "<!-- Page executed in: ".number_format(microtime(true) - Page::getExecutionTime(), 5)." secs-->";
+        return $page;
+    }
+
+    /**
+     * Return some debug HTML that includes the XML and execution time.
+     * This method should be used when you cannot generate a valid DomDocument
+     * but still want to see what is inside the XML
+     *
+     * @return string
+     */
+    private function debug($xml) {
+
+        $return = "<strong>Execution Time: ";
+        $return .= number_format(microtime(true) - self::$executionTime, 2);
+        $return .=" secs</strong><br /><strong>Page XML</strong><br /><pre>";
+        $xml = str_replace("<", "&lt;" , $xml);
+        $xml = str_replace(">", "&gt;" , $xml);
+        $return .= $xml;
+        $return .= "</pre>";
+        return $return;
     }
 
     /**

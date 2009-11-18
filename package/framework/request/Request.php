@@ -11,9 +11,77 @@ class Request implements ArrayAccess, XML {
     private $name;
 
     /**
+     * The request to be passed to the dispatcher. The $name is used to get the
+     * type of request and the argArray is all the properties you want the request
+     * to have so if your updating a product for example this could be the
+     * $_POST variable containing all the new lovely product values.
+     *
+     * @param String $name
+     * @param array $argArray
+     */
+    public function __construct($name, array $argArray = array()) {
+        $this->name = $name;
+        $this->params = $argArray;
+        unset($this->params["PHPSESSID"]);
+    }
+
+    /**
+     * Process the current page request
+     */
+    public static function process() {
+        //generate the request
+        $request = self::buildRequest();
+        $page = false;
+
+        //setup options
+        $debugMode = array_key_exists("debug",$_GET) && $_GET["debug"] == "true";
+        $xmlOutput = array_key_exists("debug",$_GET) && $_GET["debug"] == "xml";
+        $cacheOn = array_key_exists("cache",$_GET) && $_GET["cache"] != "no";
+        $cacheOn = Dispatcher::getCacheLength($request) != false && $cacheOn && Registry::get("CACHE_ENABLED");
+        $debugEnabled = Registry::get("DEBUG_ENABLED");
+
+        //check to see if we can get the cache version
+        if ($cacheOn) {
+            $page = Cache::mch()->get($request->hash());
+        }
+
+        //if the page wasnt in the cache or the cache is off
+        if ($page === false) {
+            //set page options
+            if ($debugMode && $debugEnabled) {
+                Page::setOutputMode(Page::OUTPUT_DEBUG);
+            }
+            else if ($xmlOutput && $debugEnabled) {
+                Page::setOutputMode(Page::OUTPUT_XML);
+            }
+
+            try {
+                //dispatch the request and build the page
+                $request->dispatch();
+                //transform the page and get the html
+                $page = Page::build();
+
+                //store the request response if possible
+                if ($cacheOn) {
+                    Cache::mch()->set($request->hash(), $page, false, $cacheLength);
+                }
+            }
+            catch (FrameEx $ex) {
+                //this exception can be UnknownRequest MalformedPage or just an uncaught FrameEx
+                $ex->output();
+                //replace the xslt with the standard errors.xsl and display the page
+                $page = Page::displayErrors();
+            }
+        }
+
+        //output the page
+        echo $page;
+    }
+
+    /**
      * Create a request from the current page request
      */
-    public static function buildRequest() {
+    private static function buildRequest() {
         //take of the index.php so we can work out the sub folder
         $path = substr($_SERVER["PHP_SELF"], 0, -9);
         //remove the subfolders and query from the request
@@ -41,21 +109,6 @@ class Request implements ArrayAccess, XML {
         $request = array_merge($_REQUEST, $mappedRequest);
 
         return new Request($requestResource, $request);
-    }
-
-    /**
-     * The request to be passed to the dispatcher. The $name is used to get the
-     * type of request and the argArray is all the properties you want the request
-     * to have so if your updating a product for example this could be the
-     * $_POST variable containing all the new lovely product values.
-     *
-     * @param String $name
-     * @param array $argArray
-     */
-    public function __construct($name, array $argArray = array()) {
-        $this->name = $name;
-        $this->params = $argArray;
-        unset($this->params["PHPSESSID"]);
     }
 
     /**
