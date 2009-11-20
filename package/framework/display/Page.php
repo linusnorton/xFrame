@@ -7,7 +7,7 @@
  * This object provides the view transformation. It takes XML and an XSLT file and transforms them
  */
 class Page {
-    const OUTPUT_XSL = 0, OUTPUT_XML = 1, OUTPUT_OFF = 2, OUTPUT_DEBUG = 3;
+    const OUTPUT_XSL = 0, OUTPUT_XML = 1, OUTPUT_OFF = 2, OUTPUT_DEBUG = 3, OUTPUT_XML_RAW = 4;
 
     private static $outputMode = self::OUTPUT_XSL;
     private static $exceptions = array();
@@ -25,6 +25,11 @@ class Page {
     public static function build() {
         if (self::$outputMode == self::OUTPUT_OFF) {
             return; //nothing to do
+        }
+
+        if (self::$outputMode == self::OUTPUT_XML_RAW) {
+            header("content-type: text/xml");
+            return self::$xml;
         }
 
         $xml = Page::generateXML();
