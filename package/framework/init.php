@@ -1,7 +1,7 @@
 <?php
 
 //Object Factory
-require_once(ROOT."framework/core/Factory.php");
+require_once(ROOT."framework/model/core/Factory.php");
 
 Factory::init();
 Page::init();
