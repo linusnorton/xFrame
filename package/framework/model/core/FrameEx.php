@@ -54,7 +54,7 @@ class FrameEx extends Exception {
         }
 
         if (Registry::get("EMAIL_ERRORS")) {
-            $xslFile = ROOT."app/view/common/plain-text-error.xsl";
+            $xslFile = ROOT.Registry::get("PLAIN_TEXT_ERROR");
             $transformation = new Transformation("<root><exceptions>".$out."</exceptions></root>", $xslFile);
             $text = $transformation->execute();
             
