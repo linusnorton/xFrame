@@ -10,22 +10,26 @@ class Registry {
     private static $settings = array();
 
     /**
-     * Load all the settings in the config directory
+     * Load the settings in the config directory for the current
      */
     public static function init() {
         $configDir = ROOT."../config/";
-        //open the config dir
-        if ($dh = opendir($configDir)) {
-            //loop over the files
-            while (($file = readdir($dh)) !== false) {
-                //if it is a conf file, it must be needed!
-                if (pathinfo($file, PATHINFO_EXTENSION) == "conf") {
-                    self::$settings = array_merge(self::$settings, parse_ini_file($configDir.$file));
-                }
-            }
-            closedir($dh);
+        $site = $_SERVER["SERVER_NAME"] == "" ? $_SERVER["argv"][0] : $_SERVER["SERVER_NAME"];
+        $file = $configDir.$site."conf";
+
+        if (!file_exists($file)) {
+            $file = $configDir."default.conf";
         }
 
+        self::$settings = parse_ini_file($file);
+        //setup the app dir
+        $appDir = self::$settings["APP_DIR"];
+
+        if ($appDir == null) {
+            die("Unable to find APP_DIR setting in {$file}");
+        }
+        
+        define("APP_DIR", ROOT.$appDir);
     }
 
     /**

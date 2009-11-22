@@ -5,21 +5,7 @@
  *
  * This class logs to a database record
  *
- * SQL Required for logger:
-
-
-CREATE TABLE log (
-    `id` INT(11) UNSIGNED auto_increment,
-    `ip` VARCHAR(255),
-    `key` VARCHAR(255),
-    `level` VARCHAR(5),
-    `message` TEXT,
-    `date_time` DATETIME,
-    `session_id` VARCHAR(255),
-    `execution_time` VARCHAR(11),
-    PRIMARY KEY(id)
-);
-
+ * SQL Required for logger is in install/logger.sql
  *
  */
 class Logger {

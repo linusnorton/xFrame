@@ -11,4 +11,4 @@ Registry::loadDBSettings();
 FrameEx::init();
 
 //boot the app
-require_once(ROOT."app/init.php");
+require_once(APP_DIR."init.php");
