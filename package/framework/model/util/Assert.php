@@ -212,4 +212,32 @@ class Assert {
         throw new FrameEx($message);
     }
 
+    /**
+     * Check the given parameter is true
+     * @param mixed $value
+     * @return boolean
+     * @throws FrameEx
+     */
+    public static function isTrue($value, $message = null) {
+        if ($value === true) {
+            return true;
+        }
+        $message = is_null($message) ? "Failed to assert {$value} is true" : $message;
+        throw new FrameEx($message);
+    }
+
+    /**
+     * Check the given parameter is false
+     * @param mixed $value
+     * @return boolean
+     * @throws FrameEx
+     */
+    public static function isFalse($value, $message = null) {
+        if ($value === false) {
+            return true;
+        }
+        $message = is_null($message) ? "Failed to assert {$value} is false" : $message;
+        throw new FrameEx($message);
+    }
+
 }
