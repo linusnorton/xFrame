@@ -15,7 +15,7 @@ class Registry {
     public static function init() {
         $configDir = ROOT."../config/";
         $site = $_SERVER["SERVER_NAME"] == "" ? $_SERVER["argv"][0] : $_SERVER["SERVER_NAME"];
-        $file = $configDir.$site."conf";
+        $file = $configDir.$site.".conf";
 
         if (!file_exists($file)) {
             $file = $configDir."default.conf";
