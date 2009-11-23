@@ -14,7 +14,7 @@ class Registry {
      */
     public static function init() {
         $configDir = ROOT."../config/";
-        $site = $_SERVER["SERVER_NAME"] == "" ? $_SERVER["argv"][0] : $_SERVER["SERVER_NAME"];
+        $site = $_SERVER["SERVER_NAME"] == "" ? $_SERVER["argv"][1] : $_SERVER["SERVER_NAME"];
         $file = $configDir.$site.".conf";
 
         if (!file_exists($file)) {
@@ -28,7 +28,7 @@ class Registry {
         if ($appDir == null) {
             die("Unable to find APP_DIR setting in {$file}");
         }
-        
+
         define("APP_DIR", ROOT.$appDir);
     }
 
