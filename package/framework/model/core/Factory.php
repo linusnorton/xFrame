@@ -18,7 +18,7 @@
     /** include the class do not create the object */
     public static function includeFile($className) {
         //if we have a mapping for the object
-        if (array_key_exists($className, self::$objects)) {
+        if (isset(self::$objects[$className])) {
             //but it doesn't exist, we need to rebuild
             if (!file_exists(ROOT.self::$objects[$className])) {
                 self::rebuild();

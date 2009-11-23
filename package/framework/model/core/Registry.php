@@ -38,7 +38,7 @@ class Registry {
      * @param $get mixed key of variable get from the registry
      */
     public static function get($key) {
-        if (!array_key_exists($key ,self::$settings)) {
+        if (!isset(self::$settings[$key])) {
             return null;
         }
 
