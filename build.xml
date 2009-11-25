@@ -28,22 +28,27 @@
     </target>
 
     <!-- Test -->
-    <target name="test" description="tests this package">
+    <target depends="deploy" name="test" description="tests this package">
 
-        <phpunit>
-          <formatter todir="report" type="xml"/>
+        <phpunit printsummary="true" codecoverage="true">          
           <batchtest>
             <fileset dir="test">
               <include name="**/*Test*.php"/>
-              <!--<exclude name="**/Abstract*.php"/>-->
             </fileset>
           </batchtest>
+          <!--<formatter type="xml" todir="report" outfile="logfile.xml"/>-->
         </phpunit>
 
-        <coverage-report outfile="report/coverage.xml">
-          <report todir="report/coverage" styledir="/home/phing/etc"/>
+        <phpunitreport infile="report/logfile.xml"
+                       styledir="/usr/lib/php/data/phing/etc"
+                       format="frames"
+                       todir="report"/>
+
+
+        <coverage-report outfile="coverage-report/coverage.xml">
+            <report styledir="/usr/lib/php/data/phing/etc"
+                    todir="coverage-report"/>
         </coverage-report>
-        <phpunitreport infile="report/testsuites.xml" format="frames" todir="reports/tests" styledir="/home/phing/etc"/>
 
     </target>
 </project>
