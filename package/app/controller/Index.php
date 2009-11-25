@@ -90,8 +90,15 @@ class Index {
         //Example 10: using the TableGateway with Pagination
         $records = TableGateway::loadMatching("test_table",  Restriction::like("name", "Li%"), 0, 3);
         Page::add($records);
+
+        // Example 11: update
+        TableGateway::update("test_table", array("name" => "Linus"), Restriction::is("name", "John"), 3);
+
+        // Example 12: delete
+        TableGateway::delete("test_table", Restriction::is("name", "Linus"), 3);
+
         */
-        
+
         Page::$xsl = ROOT."app/view/index.xsl";
     }
 
