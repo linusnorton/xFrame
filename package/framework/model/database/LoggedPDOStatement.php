@@ -13,7 +13,6 @@ class LoggedPDOStatement {
         $this->postBindingStatement = $statement->queryString;
     }
 
-
     public function execute() {  
         $start = microtime(true);  
         $result = $this->statement->execute(); 
@@ -29,6 +28,10 @@ class LoggedPDOStatement {
     public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR) {        
         $this->postBindingStatement = str_replace("{$parameter}", "'{$value}'", $this->postBindingStatement);
         return $this->statement->bindValue($parameter, $value, $dataType);
+    }
+
+    public function getPostBindingStatement() {
+        return $this->postBindingStatement;
     }
 
     function __call ($method, $params) {
