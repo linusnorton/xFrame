@@ -12,48 +12,72 @@ class TableGateway {
     const ASC = "ASC", DESC = "DESC", NOT_NULL = "NOT NULL";
 
     /**
-     * If a Record is constructed with a tableName and id we will try to load the data from the database
-     * If not we just create an empty record that can be populated using the setup() method
-     *
-     * @param $tableName string table name
-     * @param $id mixed unique identifier, assumed to be id!!
-     * @param $class class to instantiate (will be replaced with __STATIC__ in 5.3)
-     * @param $method function to call to initialize the class
+     * Delete all rows from the given table that match the given condition
+     * @param string $tableName
+     * @param Condition $condition
+     * @param int $limit
+     * @return int number of rows affected
      */
-    public static function load($tableName, $id, $class = "Record", $method = "create") {
-        $attributes = false;
+    public static function delete($tableName,
+                                  Condition $condition = null,
+                                  $limit = null) {
 
-        //if we're not caching or the record is not in the cache
-        if (!Registry::get("CACHE_ENABLED") || false === ($attributes = Cache::mch()->get($tableName.$id))) {
-            //lets try to get the data from the db
-            try {
-                $stmt = DB::dbh()->prepare('SELECT * FROM `'.addslashes($tableName).'` WHERE `id` = :id');
-                $stmt->bindValue(':id', $id);
-                $stmt->execute();
+        $limitSQL = ctype_digit($limit."") ? " LIMIT {$limit}" : "";
+        $whereSQL = $condition != null ? " WHERE ".$condition->toSQL() : "";
 
-                //if we dont get any records or we get multiple throw an exception
-                if ($stmt->rowCount() === 0) {
-                    throw new MissingRecord("Could not find a {$tableName} where id = {$id}", 127);
-                }
-                if ($stmt->rowCount() > 1) {
-                    throw new MultipleRecord("Multiple records were matched", 128);
-                }
-            }
-            catch (PDOException $ex) {
-                //there was some kind of database error
-                throw new FrameEx($ex->getMessage(), 129);
-            }
+        $sql = "DELETE FROM `".addslashes($tableName)."` ".$whereSQL.$limitSQL;
+        $stmt = DB::dbh()->prepare($sql);
 
-            $attributes = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            //if we're caching, put it in
-            if (Registry::get("CACHE_ENABLED")) {
-                Cache::mch()->set($tableName.$id, $attributes, false, 0);
-            }
+        if ($condition != null) {
+            $condition->bind($stmt);
         }
 
-        //call the given object's create method, this will be replaced with __STATIC__
-        return call_user_func(array($class, $method), $attributes, $tableName);
+        $stmt->execute();
+        return $stmt->rowCount(); //mysql returns number of rows deleted
+    }
+
+    /**
+     * Update the given table with the given key value pairs
+     * @param string $tableName
+     * @param array $values
+     * @param Condition $condition
+     * @param int $limit
+     * @return int affected rows
+     */
+    public static function update($tableName,
+                                  array $values,
+                                  Condition $condition = null,
+                                  $limit = null) {
+
+        $limitSQL = ctype_digit($limit."") ? " LIMIT {$limit}" : "";
+        $whereSQL = $condition != null ? " WHERE ".$condition->toSQL() : "";
+        $setSQL = self::getSetSQL($values);
+
+        $sql = "UPDATE  `".addslashes($tableName)."` SET ".$setSQL.$whereSQL.$limitSQL;
+        $stmt = DB::dbh()->prepare($sql);
+
+        if ($condition != null) {
+            $condition->bind($stmt);
+        }
+
+        $stmt->execute();
+        return $stmt->rowCount(); //mysql returns number of rows deleted
+    }
+
+    /**
+     * Convert the key value pairs to SQL
+     * @param array $values
+     * @return string
+     */
+    private static function getSetSQL(array $values) {
+        $sql = "";
+
+        foreach ($values as $key => $value) {
+            //@todo something better than addslashes here, at least prepare the insert value
+            $sql .= "`".addslashes($key)."` = '".addslashes($value)."',";
+        }
+
+        return substr($sql, 0, -1);
     }
 
     /**
