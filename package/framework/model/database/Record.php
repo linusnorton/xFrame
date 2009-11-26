@@ -146,6 +146,21 @@ class Record implements XML {
         return $flatAttributes;
      }
 
+     /**
+      * Attempt to start a database transaction
+      * @return boolean
+      */
+     private function startTransaction() {
+         try {
+             $transactional = DB::dbh()->beginTransaction();
+         }
+         catch (PDOException $ex) { // Thrown if there is already a transaction in progress.
+             $transactional = false;
+         }
+
+         return $transactional;
+     }
+
     /**
      * Commit this record to the db.
      *
@@ -153,13 +168,7 @@ class Record implements XML {
      */
     public function save($cascade = false, array &$saveGraph = array()) {
         $saveGraph[$this->hash()] = true;
-
-        try {
-            $transactional = DB::dbh()->beginTransaction();
-        }
-        catch (PDOException $ex) { // Thrown if there is already a transaction in progress.
-            $transactional = false;
-        }
+        $transactional = $this->startTransaction();
 
         try {
             //before we save convert objects to ids
@@ -175,10 +184,7 @@ class Record implements XML {
             // Have to read the insert ID before committing the transaction, even though
             // we only want to set it after a successful commit.
             $insertId = DB::dbh()->lastInsertId();
-
-            if ($transactional && !DB::dbh()->commit()) {
-                throw new FrameEx('Failed to commit transaction.', 112);
-            }
+            Assert::isFalse($transactional && !DB::dbh()->commit(), 'Failed to commit transaction.');
 
             // Set the ID assigned for this record.
             if ($this->id == "" && $insertId == "") {
@@ -188,14 +194,7 @@ class Record implements XML {
                 $this->id = $insertId;
             }
         }
-        catch (CyclicalRelationshipException $ex) {
-            if ($transactional) {
-                DB::dbh()->rollBack();
-            }
-            throw new FrameEx($ex->getMessage(), 114);
-
-        }
-        catch (PDOException $ex) {
+        catch (Exception $ex) {
             if ($transactional) {
                 DB::dbh()->rollBack();
             }
