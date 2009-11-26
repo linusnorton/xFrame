@@ -93,63 +93,6 @@ class Record implements XML {
         return call_user_func(array($class, $method), $attributes, $tableName);
     }
 
-    /**
-     * Load a whole table of results and return an array of objects of type $class
-     *
-     * @param $tableName string table to load
-     * @param $class string class to instantiate as records
-     */
-    public static function loadAll($tableName, $class = "Record", $method = "create") {
-        return self::loadMatching($tableName, array(), $class, $method);
-    }
-
-
-    /**
-     * Loads all records that match the fields specified in the associative array
-     * $criteria.  This allows for simple equality matching of fields but not for
-     * complex comparisons such as less than, greater than, etc.
-     *
-     * @param $tableName string table to load
-     * @param $criteria array A mapping from column names to values.  The returned records will
-     * match all specified columns.
-     * @param $class string class to instantiate as records
-     * @param $method function to call to initialize the class
-     */
-    public static function loadMatching($tableName, array $criteria = array(), $class = "Record", $method = "create") {
-        $records = array();
-        $sql = "SELECT * FROM `".addslashes($tableName)."` WHERE 1";
-
-        //generate the sql string
-        foreach($criteria as $column => $value) {
-            if ($value == null) {
-                $sql.= " AND `{$column}` IS NULL";
-            }
-            else {
-                $sql.= " AND `{$column}` = :".$column;
-            }
-        }
-
-        $stmt = DB::dbh()->prepare($sql);
-
-        //bind values
-        foreach($criteria as $column => $value) {
-            if ($value != null) {
-                $stmt->bindValue(':'.$column, $value);
-            }
-        }
-
-        $stmt->execute();
-
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            if (Registry::get("CACHE_ENABLED")) {
-                Cache::mch()->set($tableName.$row["id"], $row, false, 0);
-            }
-            //call the given object's create method, this will be replaced with __STATIC__
-            $records[] = call_user_func(array($class, $method), $row, $tableName);
-        }
-
-        return $records;
-    }
 
     /**
      * This function is called before a save, it flattens the record so it
@@ -163,12 +106,12 @@ class Record implements XML {
 
         //foreach attribute
         foreach($this->attributes as $key => $value) {
-            
-            if ($value instanceof MappedField) {
-                continue; //lazy field that is unchanged
-            }
+            $value = $this->$key;
+            //if ($value instanceof MappedField) {
+            //    continue; //lazy field that is unchanged
+            //}
             //if i am also a record
-            else if ($value instanceof Record) {
+            if ($value instanceof Record) {
                 //check if I need to cascade the save to get the id
                 if ($cascade && !array_key_exists($value->hash(), $saveGraph)) {
                     $value->save($cascade, $saveGraph); //this could throw an error
@@ -290,14 +233,9 @@ class Record implements XML {
             throw new FrameEx("You cannot delete a record that isn't initialised" , 116);
         }
 
-        try {
-            $stmt = DB::dbh()->prepare("DELETE FROM `".$this->tableName."` WHERE id = :id");
-            $stmt->bindValue(':id', $this->attributes["id"]);
-            $stmt->execute();
-        }
-        catch (PDOException $ex) {
-            throw new PDOException($ex->getMessage(), 117);
-        }
+        $stmt = DB::dbh()->prepare("DELETE FROM `".$this->tableName."` WHERE id = :id");
+        $stmt->bindValue(':id', $this->attributes["id"]);
+        $stmt->execute();
 
         if (Registry::get("CACHE_ENABLED")) {
             Cache::mch()->delete($this->tableName.$this->id);

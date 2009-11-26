@@ -181,5 +181,3 @@ class Restriction implements Condition {
     }
 
 }
-
-?>

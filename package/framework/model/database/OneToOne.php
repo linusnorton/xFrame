@@ -24,6 +24,9 @@ class OneToOne implements MappedField {
      * @return Object of type $className
      */
     public function load() {
+        if ($this->id == null) {
+            return null;
+        }
         return call_user_func(array($this->className, $this->methodName), $this->id);
     }
 
