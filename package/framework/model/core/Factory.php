@@ -48,7 +48,9 @@
     public static function rebuild() {
         // Open the root
         if (!is_dir(ROOT)) {
-            return; //something is quite wrong
+            //the only place I've ever had this happen is when this method is
+            //called as part of a destruct method.
+            die("ROOT is not a directory!");
         }
 
         //open the root
