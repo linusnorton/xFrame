@@ -8,7 +8,7 @@
  *
  * @author dominic.webb@assertis.co.uk
  */
-class Enviroment implements XML {
+class Environment implements XML {
 
     /**
      * XML representation
@@ -19,7 +19,7 @@ class Enviroment implements XML {
         $xml .= ArrayUtil::getXML($_REQUEST);
         $xml .= ArrayUtil::getXML($_COOKIE);
         $xml .= ArrayUtil::getXML($_FILES);
-        return "<enviroment>{$xml}</enviroment>";
+        return "<environment>{$xml}</environment>";
     }
 }
 ?>
