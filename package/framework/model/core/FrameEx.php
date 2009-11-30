@@ -57,7 +57,7 @@ class FrameEx extends Exception {
             $xslFile = ROOT.Registry::get("PLAIN_TEXT_ERROR");
             $transformation = new Transformation("<root><exceptions>".$out."</exceptions></root>", $xslFile);
             $text = $transformation->execute();
-            
+
             $headers  = 'MIME-Version: 1.0' . "\r\n";
             $headers .= 'Content-type: text/plain; charset=iso-8859-1' . "\r\n";
             mail(Registry::get("ADMIN"), "Error from: ".$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"],$text, $headers );
@@ -142,4 +142,21 @@ class FrameEx extends Exception {
     protected function persist() {
         $_SESSION["exception"] = serialize($this);
     }
+
+    /**
+     * Set the error code
+     * @param int $code
+     */
+    public function setCode($code) {
+        $this->code = $code;
+    }
+
+    /**
+     * Set the message
+     * @param string $message
+     */
+    public function setMessage($message) {
+        $this->message = $message;
+    }
+
 }
