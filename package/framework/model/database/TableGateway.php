@@ -158,6 +158,29 @@ class TableGateway {
         return new Results($records, $numResults, $start, $num, $tableName."-list");
     }
 
+    /**
+     * @param string $tableName
+     * @param Condition $criteria
+     * @return int
+     */
+    public static function countMatching($tableName, Condition $criteria = null) {
+        $criteriaSQL = ($criteria != null) ? $criteria->toSQL() : "1";
+
+        // we assume id because Record always has id
+        $sql = "SELECT count(`id`) AS 'count' FROM `".addslashes($tableName)."` WHERE ".$criteriaSQL;
+
+        $stmt = DB::dbh()->prepare($sql);
+
+        if ($criteria != null) {
+            $criteria->bind($stmt);
+        }
+
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['count'];
+    }
+
     private static function generateOrderSQL(array $orderBy = array()) {
         if (count($orderBy) == 0) {
             return;
