@@ -59,7 +59,7 @@
                        format="frames"
                        todir="${report}"/><!--styledir="/usr/lib/php/data/phing/etc"-->
 
-        <coverage-report outfile="${report}/coverage.xml">
+        <coverage-report outfile="${report}/clover.xml">
             <report todir="${report}"/>
         </coverage-report>
 
