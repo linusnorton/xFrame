@@ -10,7 +10,16 @@
 
 
 <project name="testsite" basedir="." default="deploy">
-    <property file="./config/xframe.conf" />
+    <property file="./config/default.conf" />
+    <property name="project" value="./package/${APP_DIR}" />
+    <property name="report" value="${project}report" />
+    <property name="install" value="${project}install" />
+    <property name="test" value="${project}test" />
+
+    <!-- Clean -->
+    <target name="clean" description="clean the reports etc">
+        <delete dir="${report}" includeemptydirs="true" verbose="true" failonerror="true" />
+    </target>
 
     <!-- Deploy -->
     <target name="deploy" description="deploy the project">
@@ -18,36 +27,40 @@
         <exec command="mysql -h${DATABASE_HOST} -u${DATABASE_USERNAME} -p${DATABASE_PASSWORD} -e'DROP DATABASE IF EXISTS ${DATABASE_NAME}; CREATE DATABASE ${DATABASE_NAME}'"
               dir="."
               checkreturn="true" />
-
+        
         <pdo url="${DATABASE_ENGINE}:host=${DATABASE_HOST};dbname=${DATABASE_NAME}" userid="${DATABASE_USERNAME}" password="${DATABASE_PASSWORD}">
-          <fileset dir="install">
+          <fileset dir="${install}">
               <include name="*.sql"/>
           </fileset>
+          <transaction /> <!--don't know why 2.4 needs this-->
         </pdo>
 
     </target>
 
     <!-- Test -->
-    <target depends="deploy" name="test" description="tests this package">
+    <target depends="clean,deploy" name="test" description="tests this package">
+        <mkdir dir="${report}" />
+        <coverage-setup database="${report}/coverage.db">
+          <fileset dir="${project}">
+            <include name="**/*.php"/>
+          </fileset>
+        </coverage-setup>
 
-        <phpunit printsummary="true" codecoverage="true">          
+        <phpunit bootstrap="${test}/bootstrap.php" printsummary="true" codecoverage="true">
           <batchtest>
-            <fileset dir="test">
+            <fileset dir="${test}">
               <include name="**/*Test*.php"/>
             </fileset>
           </batchtest>
-          <!--<formatter type="xml" todir="report" outfile="logfile.xml"/>-->
+          <formatter type="xml" todir="${report}" outfile="logfile.xml"/>
         </phpunit>
 
-        <phpunitreport infile="report/logfile.xml"
-                       styledir="/usr/lib/php/data/phing/etc"
+        <phpunitreport infile="${report}/logfile.xml"
                        format="frames"
-                       todir="report"/>
+                       todir="${report}"/><!--styledir="/usr/lib/php/data/phing/etc"-->
 
-
-        <coverage-report outfile="coverage-report/coverage.xml">
-            <report styledir="/usr/lib/php/data/phing/etc"
-                    todir="coverage-report"/>
+        <coverage-report outfile="${report}/coverage.xml">
+            <report todir="${report}"/>
         </coverage-report>
 
     </target>
