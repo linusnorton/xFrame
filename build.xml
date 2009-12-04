@@ -40,6 +40,11 @@
     <!-- Test -->
     <target depends="clean,deploy" name="test" description="tests this package">
         <mkdir dir="${report}" />
+        <mkdir dir="${report}/coverage-html" />
+        <mkdir dir="${report}/coverage" />
+
+        <exec command="phpunit --bootstrap=${project}/test/bootstrap.php --log-junit ${report}/logfile.xml --coverage-clover ${report}/coverage/clover.xml --coverage-source ${report}/coverage --coverage-html ${report}/coverage-html/ ${project}test/*"/>
+        <!--
         <coverage-setup database="${report}/coverage.db">
           <fileset dir="${project}">
             <include name="**/*.php"/>
@@ -57,12 +62,13 @@
 
         <phpunitreport infile="${report}/logfile.xml"
                        format="frames"
-                       todir="${report}"/><!--styledir="/usr/lib/php/data/phing/etc"-->
+                       todir="${report}"/>
 
-        <coverage-report outfile="${report}/clover.xml">
-            <report todir="${report}"/>
+
+        <coverage-report outfile="${report}/coverage.xml">
+            <report todir="${report}/coverage"/>
         </coverage-report>
-
+ -->
     </target>
 </project>
 
