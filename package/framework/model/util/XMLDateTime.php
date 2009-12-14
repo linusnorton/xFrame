@@ -153,5 +153,13 @@ class XMLDateTime extends DateTime implements XML {
         return $this->format("Y-m-d H:i:s");
     }
 
+    /**
+     * Return the timestamp
+     * @return int $timestamp
+     */
+    public function getTimestamp() {
+        return $this->format('U');
+    }
+
 }
 ?>
