@@ -134,9 +134,6 @@ class Page {
      * a simple XHTML page with all the warnings, errors and exceptions on it
      */
     public static function displayErrors() {
-        self::$xml = "";
-        self::$staticIncludes = array();
-        self::$parameters = array();
         self::$xsl = ROOT.Registry::get("ERROR_XSL");
         self::$outputMode = self::OUTPUT_XSL;
 
