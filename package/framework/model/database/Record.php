@@ -7,9 +7,10 @@
  * This is the implementation of an Active Record pattern, it provides the ability to load, save, delete
  * and display as xml to any record.
  */
-class Record implements XML {
+class Record implements XML, Transformable {
     protected $attributes;
     private $tableName;
+    private $transformer;
 
     /**
      * Manually setup a record. Please remember that there is no sanity checking here
@@ -246,32 +247,7 @@ class Record implements XML {
      * @return string $xml
      */
     public function getXML() {
-        $xml = "\n<record table='{$this->tableName}' id='{$this->attributes['id']}'>";
-
-        foreach ($this->attributes as $key => $value) {
-            // Need this to make sure the magic getter is called for lazy loading
-            $value = $this->$key;
-            $xml .= "\n\t<{$key}>";
-
-            if ($value instanceof XML) {
-                $xml .= $value->getXML();
-            }
-            else if (is_bool($value)) {
-                $xml .= ($value) ? "true" : "false";
-            }
-            else if (is_array($value)) {
-                $xml .= ArrayUtil::getXML($value);
-            }
-            else {
-                $xml .= htmlentities($value, ENT_COMPAT, "UTF-8", false);
-            }
-
-            $xml .= "</{$key}>";
-        }
-
-        $xml .= "\n</record>";
-
-        return $xml;
+        return $this->getTransformer()->getXML($this);
     }
 
     /**
@@ -294,6 +270,25 @@ class Record implements XML {
      */
     public function getAttributes() {
         return $this->attributes;
+    }
+
+    /**
+     * Return the transformer for this object
+     * @return XMLTransformer
+     */
+    public function getTransformer() {
+        if ($this->transformer == null) {
+            $this->transformer = new DefaultRecordTransformer();
+        }
+        return $this->transformer;
+    }
+
+    /**
+     * Set the current transformer
+     * @param XMLTransformer $transformer
+     */
+    public function setTransformer(XMLTransformer $transformer) {
+        $this->transformer = $transformer;
     }
 
     /**

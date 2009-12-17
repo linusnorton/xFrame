@@ -6,13 +6,14 @@
  *
  * Encapsulates an array of results that implement the XML interface. Allows easy pagination and XML access
  */
-class Results implements ArrayAccess, Countable, SeekableIterator, XML {
+class Results implements ArrayAccess, Countable, SeekableIterator, XML, Transformable {
     private $results;
     private $maxNumResults;
     private $numResults;
     private $currentResultNumber;
     private $resultsPerPage;
     private $customTag;
+    private $transformer;
 
     /**
      * @param array $results array of {@link XML} results of a database query
@@ -31,51 +32,30 @@ class Results implements ArrayAccess, Countable, SeekableIterator, XML {
     }
 
     /**
-     * This method returns the results and pagination in an XML string
+     * Return an XML string representation of the record
      * @return string $xml
      */
     public function getXML() {
-        $xml = "<{$this->customTag}>";
-        $xml .= "<results>";
-
-        //add the xml of the results
-        foreach ($this->results as $record) {
-            if ($record instanceof XML) {
-                $xml .= $record->getXML();
-            }
-        }
-
-        $xml .= "</results>";
-        $xml .= $this->getPaginationXML();
-        $xml .= "<maxNumResults>{$this->maxNumResults}</maxNumResults>" ;
-        $xml .= "<numResults>{$this->numResults}</numResults>" ;
-        $xml .= "<currentResultNumber>{$this->currentResultNumber}</currentResultNumber>" ;
-        $xml .= "<resultsPerPage>{$this->resultsPerPage}</resultsPerPage>" ;
-        $xml .= "</{$this->customTag}>";
-
-        return $xml;
+        return $this->getTransformer()->getXML($this);
     }
 
-    private function getPaginationXML() {
-        $xml = "";
-        if (ctype_digit("{$this->resultsPerPage}")) {
-            $xml .= "<pagination>";
-
-            for ($i = 0; $i < $this->maxNumResults ; $i += $this->resultsPerPage) {
-                $selected = ($i == $this->currentResultNumber) ? " selected='true'" : "";
-                $end = ($i + $this->resultsPerPage < $this->maxNumResults) ? $i + $this->resultsPerPage : $this->maxNumResults;
-
-                $xml .= "
-                <page{$selected}>
-                    <start>{$i}</start>
-                    <end>{$end}</end>
-                </page>";
-            }
-
-            $xml .= "</pagination>";
+    /**
+     * Return the transformer for this object
+     * @return XMLTransformer
+     */
+    public function getTransformer() {
+        if ($this->transformer == null) {
+            $this->transformer = new DefaultResultsTransformer();
         }
+        return $this->transformer;
+    }
 
-        return $xml;
+    /**
+     * Set the current transformer
+     * @param XMLTransformer $transformer
+     */
+    public function setTransformer(XMLTransformer $transformer) {
+        $this->transformer = $transformer;
     }
 
     /**
@@ -107,7 +87,7 @@ class Results implements ArrayAccess, Countable, SeekableIterator, XML {
      * @return int
      */
     public function getCurrentResultNumber() {
-        return $this->currentResultNumber = $currentResultNumber;
+        return $this->currentResultNumber;
     }
 
     /**
