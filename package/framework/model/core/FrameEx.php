@@ -28,7 +28,7 @@ class FrameEx extends Exception {
      *
      * @param boolean $uncaught
      */
-    public function output($uncaught = false, $return = false) {
+    public function output($uncaught = false, $return = false, $email = true) {
         $style = ($uncaught) ? "true" : "false";
 
         $out = "<exception uncaught='{$style}'>";
@@ -53,7 +53,7 @@ class FrameEx extends Exception {
             return $out;
         }
 
-        if (Registry::get("EMAIL_ERRORS")) {
+        if (Registry::get("EMAIL_ERRORS") && $email) {
             $xslFile = ROOT.Registry::get("PLAIN_TEXT_ERROR");
             $transformation = new Transformation("<root><exceptions>".$out."</exceptions></root>", $xslFile);
             $text = $transformation->execute();
