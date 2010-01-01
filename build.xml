@@ -14,7 +14,6 @@
     <property name="project" value="./package/${APP_DIR}" />
     <property name="report" value="${project}report" />
     <property name="install" value="${project}install" />
-    <property name="test" value="${project}test" />
 
     <!-- Clean -->
     <target name="clean" description="clean the reports etc">
@@ -43,7 +42,7 @@
         <mkdir dir="${report}/coverage-html" />
         <mkdir dir="${report}/coverage" />
 
-        <exec command="phpunit --bootstrap=${project}/test/bootstrap.php --log-junit ${report}/logfile.xml --coverage-clover ${report}/coverage/clover.xml --coverage-source ${report}/coverage --coverage-html ${report}/coverage-html/ ${project}test/*"/>
+        <exec command="phpunit --bootstrap=bootstrap.php --log-junit ${report}/logfile.xml --coverage-clover ${report}/coverage/clover.xml --coverage-source ${report}/coverage --coverage-html ${report}/coverage-html/ ${project}test/*"/>
         <!--
         <coverage-setup database="${report}/coverage.db">
           <fileset dir="${project}">
@@ -51,9 +50,9 @@
           </fileset>
         </coverage-setup>
 
-        <phpunit bootstrap="${test}/bootstrap.php" printsummary="true" codecoverage="true">
+        <phpunit bootstrap="./bootstrap.php" printsummary="true" codecoverage="true">
           <batchtest>
-            <fileset dir="${test}">
+            <fileset dir="./package/">
               <include name="**/*Test*.php"/>
             </fileset>
           </batchtest>
