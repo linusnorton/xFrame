@@ -29,10 +29,11 @@ class Form implements XML {
      * @param mixed $request
      * @param mixed $value
      * @param string $errorMessage
+     * @param int $errorCode
      */
-    public function add($id, $value, $errorMessage = null) {
-        $this->field[$id] = array("value" => $value, "error" => $errorMessage);
-        if ($errorMessage != null) {
+    public function add($id, $value, $errorMessage = null, $errorCode = null) {
+        $this->field[$id] = array("value" => $value, "error" => $errorMessage, "code" => $errorCode);
+        if ($errorMessage != null || $errorCode != null) {
             $this->hasErrors = true;
         }
     }
@@ -45,43 +46,6 @@ class Form implements XML {
     public function hasErrors() {
         return $this->hasErrors;
     }
-/*
-    public function doCurlPostBack($location) {
-        $qString = "";
-        foreach ($this->field as $id => $field) {
-            $qString .= "field[{$id}]=".urlencode($field['value'])."&";
-            if ($field['errorMessage'] != '') {
-                $qString .= "error[{$id}]=".urlencode($field['errorMessage'])."&";
-            }
-        }
-        $ch = curl_init($location);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $qString);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_MAXREDIRS, 1);
-        curl_exec($ch);
-        curl_close($ch);
-        die();
-    }
-*/
-
-
-    /**
-     * Returns to a location complete with field values and errors in the query string
-     *
-     * @param string $location
-     */
-    public function doGetPostBack($location) {
-        $qString = "";
-        foreach ($this->field as $id => $field) {
-            $qString .= "field[{$id}]=".urlencode($field['value'])."&";
-            if ($field['errorMessage'] != '') {
-                $qString .= "error[{$id}]=".urlencode($field['errorMessage'])."&";
-            }
-        }
-        header("Location: {$location}?{$qString}");
-        die();
-    }
 
     /**
      * Returns to a location complete with field values and errors in the session
@@ -93,8 +57,9 @@ class Form implements XML {
         $_SESSION['error'] = array();
         foreach ($this->field as $id => $field) {
             $_SESSION['field'][$id] = $field['value'];
-            if ($field['error'] != '') {
-                $_SESSION['error'][$id] = $field['error'];
+            if ($field['error'] != '' || $field['code'] != '') {
+                $_SESSION['error'][$id]['code'] = $field['code'];
+                $_SESSION['error'][$id]['message'] = $field['error'];
             }
         }
 
@@ -102,7 +67,12 @@ class Form implements XML {
         die();
     }
 
-    public function getXML($defaultValues = array()) {
+    /**
+     * @param array $defaultValues
+     * @param boolean $clearErrorsAndFields
+     * @return String
+     */
+    public function getXML($defaultValues = array(), $clearErrors = true) {
         $xml = "<form>";
         if (is_array($_SESSION["field"])) {
             foreach ($_SESSION["field"] as $fieldName => $fieldValue) {
@@ -117,11 +87,15 @@ class Form implements XML {
             }
         }
         if (is_array($_SESSION["error"])) {
-            foreach ($_SESSION["error"] as $errorId => $errorMessage) {
-                $xml .= $this->getFieldXML($errorId, $errorMessage, null, "e");
+            foreach ($_SESSION["error"] as $errorId => $error) {
+                $xml .= $this->getErrorXML($errorId, $error['message'], $error['code']);
             }
         }
         $xml .= "</form>";
+
+        if ($clearErrors) {
+            $this->clearErrors();
+        }
 
         return $xml;
     }
@@ -130,10 +104,9 @@ class Form implements XML {
      * @param string $fieldName
      * @param mixed $fieldValue
      * @param mixed $defaultValue
-     * @param string $prefix because field names may be invalid (start with a number) we prefix with a valid character
      */
-    private function getFieldXML($fieldName, $fieldValue, $defaultValue = "", $prefix = "f") {
-        $xml = "<{$prefix}-{$fieldName}>";
+    private function getFieldXML($fieldName, $fieldValue, $defaultValue = "") {
+        $xml = "<f-{$fieldName}>";
         if (is_array($fieldValue)) {
             foreach ($fieldValue as $key => $value) {
                 $xml .= $this->getFieldXML($key, $value);
@@ -150,9 +123,33 @@ class Form implements XML {
         else if ($defaultValue != "") {
             $xml .= htmlentities($defaultValue);
         }
-        $xml .= "</{$prefix}-{$fieldName}>";
+        $xml .= "</f-{$fieldName}>";
 
         return $xml;
+    }
+
+    /**
+     * @param string $errorId
+     * @param mixed $errorMessage
+     * @param mixed $errorCode
+     */
+    private function getErrorXML($errorId, $errorMessage = "", $errorCode = "") {
+        $xml = "<e-{$errorId} code=\"{$errorCode}\">";
+        if (isset($errorMessage)) {
+            $xml .= htmlentities($errorMessage);
+        }
+        $xml .= "</e-{$errorId}>";
+
+        return $xml;
+    }
+
+    public function clearErrorsAndFields() {
+        unset($_SESSION['error']);
+        unset($_SESSION['field']);
+    }
+
+    private function clearErrors() {
+        unset($_SESSION['error']);
     }
 
     public function __toString() {
