@@ -71,10 +71,10 @@ class Record implements XML, Transformable {
 
                 //if we dont get any records or we get multiple throw an exception
                 if ($stmt->rowCount() === 0) {
-                    throw new MissingRecord("Could not find a {$tableName} where id = {$id}", 108);
+                    throw new MissingRecord("Could not find a {$tableName} where id = {$id}");
                 }
                 if ($stmt->rowCount() > 1) {
-                    throw new MultipleRecord("Multiple records were matched", 109);
+                    throw new MultipleRecord("Multiple records were matched");
                 }
             }
             catch (PDOException $ex) {
