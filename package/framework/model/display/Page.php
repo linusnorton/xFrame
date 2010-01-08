@@ -160,7 +160,7 @@ class Page {
             header("Location: ".$location);
             die();
         }
-        throw new FrameEx("Could not redirect to {$location}, headers already sent", 106);
+        throw new FrameEx("Could not redirect to {$location}, headers already sent");
     }
 
 
