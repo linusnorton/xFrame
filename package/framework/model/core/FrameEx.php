@@ -139,7 +139,7 @@ class FrameEx extends Exception {
         Page::redirect($location);
     }
 
-    protected function persist() {
+    public function persist() {
         $_SESSION["exception"] = serialize($this);
     }
 
