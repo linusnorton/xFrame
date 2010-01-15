@@ -5,22 +5,55 @@ require_once 'PHPUnit/Framework.php';
 
 class RecordTest extends PHPUnit_Framework_TestCase {
 
-    public function testNewArrayIsEmpty() {
-        // Create the Array fixture.
-        $fixture = array();
+    public function testConstructAndSettersAndGetters() {
+        $record = new Record();
+        $record->field = "test";
 
-        // Assert that the size of the Array fixture is 0.
-        $this->assertEquals(0, sizeof($fixture));
+        $this->assertEquals("test", $record->field);
     }
 
-    public function testArrayContainsAnElement() {
-        // Create the Array fixture.
-        $fixture = array();
+    /**
+     * @expectedException FrameEx
+     */
+    public function testDelete() {
+        $record = self::getTestRecord();
 
-        // Add an element to the Array fixture.
-        $fixture[] = 'Element';
+        $record->save();
+        $record->delete();
 
-        // Assert that the size of the Array fixture is 1.
-        $this->assertEquals(1, sizeof($fixture));
+        $loaded = Record::load($record->getTableName(), $record->getId());
+    }
+
+    public function testSaveAndLoad() {
+        $this->saveAndLoad(self::getTestRecord());
+    }
+
+    public function saveAndLoad(Record $record) {
+        $record->save();
+        $loadedRecord = Record::load($record->getTableName(),
+                                     $record->getId(),
+                                     get_class($record));
+
+        foreach ($record->getAttributes() as $key => $value) {
+            $this->assertEquals($value, $loadedRecord->$key);
+        }
+
+        $record->delete();
+    }
+
+    /**
+     *
+     * @return Record
+     */
+    public static function getTestRecord() {
+        $log = new Record("log");
+        $log->ip = "127.0.0.1";
+        $log->key = "key";
+        $log->level = "debug";
+        $log->message = "testing";
+        $log->date_time = "2010-01-15 18:56:00";
+        $log->session_id = null;
+        $log->execution_time = null;
+        return $log;
     }
 }
