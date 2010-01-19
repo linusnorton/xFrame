@@ -197,6 +197,7 @@ class Record implements XML, Transformable {
         }
         catch (Exception $ex) {
             if ($transactional) {
+                echo $ex->getMessage();
                 DB::dbh()->rollBack();
             }
             throw new FrameEx("Error saving {$this->tableName} - ".$ex->getMessage(), 115);
@@ -214,6 +215,7 @@ class Record implements XML, Transformable {
         else {
             $sql = "INSERT INTO `".$this->tableName."` SET ";
             $updateSql = " ON DUPLICATE KEY UPDATE ";
+            $fields = "";
 
             foreach($flatAttributes as $key => $value) {
                 $fields .= " `{$key}` = :".$key.",";
