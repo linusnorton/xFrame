@@ -182,7 +182,7 @@ class BitString {
         $bitString = new BitString($bitCount);
         $index = $bitCount - 1;
         foreach (str_split($string) as $char) {
-            $bitString->setBitsHighToLow($index, decbin(ord($char)));
+            $bitString->setBitsHighToLow($index, str_pad(decbin(ord($char)), 8, '0', STR_PAD_LEFT));
             $index -= 8;
         }
         return $bitString;
