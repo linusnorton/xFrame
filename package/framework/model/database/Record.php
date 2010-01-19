@@ -197,7 +197,6 @@ class Record implements XML, Transformable {
         }
         catch (Exception $ex) {
             if ($transactional) {
-                echo $ex->getMessage();
                 DB::dbh()->rollBack();
             }
             throw new FrameEx("Error saving {$this->tableName} - ".$ex->getMessage(), 115);
