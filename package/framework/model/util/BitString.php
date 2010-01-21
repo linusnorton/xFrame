@@ -85,6 +85,21 @@ class BitString {
 
 
     /**
+     * Sets the values of multiple bits, starting at the specified index.
+     * @param integer $startIndex The index of the first bit to be set.
+     * @param string $bits A string of ones and zeros.
+     */
+    public function setBitsLowToHigh($startIndex, $bits) {
+        $chars = str_split($bits);
+        $index = $startIndex;
+        foreach ($chars as $char) {
+            $this->setBit($index, $char == '1');
+            $index++;
+        }
+    }
+
+
+    /**
      * Returned an unsigned 8-bit value (0-255) formed by taking eight
      * bits starting at the specified most significant bit.
      */
@@ -129,6 +144,10 @@ class BitString {
     }
 
 
+    /**
+     * The data in the bit string is treated as big-endian.  The first character of the hex
+     * string represents the four most significant bits.
+     */
     public function toHexString() {
         $wordCount = sizeof($this->data);
         $length = $this->length;
@@ -162,6 +181,8 @@ class BitString {
     /**
      * Converts this bit string into a packed character string (each character
      * stores 8 bits of data).
+     * The data in the bit string is treated as big-endian.  The first character of the returned
+     * string represents the eight most significant bits. 
      */
     public function __toString() {
         $wordCount = sizeof($this->data);
@@ -177,6 +198,10 @@ class BitString {
     }
 
 
+    /**
+     * The data is treated as big-endian.  The first (left-most) character of the string
+     * argument is converted into the most significant bits of the resultant bit string.
+     */
     public static function fromString($string) {
         $bitCount = strlen($string) * 8;
         $bitString = new BitString($bitCount);
