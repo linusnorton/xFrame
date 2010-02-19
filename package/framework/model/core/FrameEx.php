@@ -10,7 +10,7 @@
 class FrameEx extends Exception {
     public $backtrace;
     public $message;
-
+    private $email;
     /**
      * Creates the exception with a message and an error code that are
      * shown when the output method is called.
@@ -18,10 +18,11 @@ class FrameEx extends Exception {
      * @param String $message
      * @param Integer $code
      */
-    public function __construct($message = null, $code = null) {
+    public function __construct($message = null, $code = null, $email = true) {
         $this->backtrace = debug_backtrace();
         $this->message = $message;
         $this->code = $code;
+        $this->email = $email;
     }
 
     /**
@@ -53,7 +54,8 @@ class FrameEx extends Exception {
             return $out;
         }
 
-        if (Registry::get("EMAIL_ERRORS") && $email) {
+        //if email sending is enabled in the registry, this exception and the output method
+        if (Registry::get("EMAIL_ERRORS") && $email && $this->email) {
             $xslFile = ROOT.Registry::get("PLAIN_TEXT_ERROR");
             $transformation = new Transformation("<root><exceptions>".$out."</exceptions></root>", $xslFile);
             $text = $transformation->execute();
