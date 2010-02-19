@@ -54,7 +54,8 @@
         <mkdir dir="${report}/coverage-html" />
         <mkdir dir="${report}/coverage" />
 
-        <exec command="phpunit --bootstrap=${project}test/bootstrap.php --log-junit ${report}/logfile.xml --coverage-clover ${report}/coverage/clover.xml --coverage-source ${report}/coverage --coverage-html ${report}/coverage-html/ ${project}test"/>
+        <exec outputProperty="result" command="phpunit --bootstrap=${project}test/bootstrap.php --log-junit ${report}/logfile.xml --coverage-clover ${report}/coverage/clover.xml --coverage-source ${report}/coverage --coverage-html ${report}/coverage-html/ ${project}test"/>
+        <echo message="${result}" />
         <!--
         <coverage-setup database="${report}/coverage.db">
           <fileset dir="${project}">
