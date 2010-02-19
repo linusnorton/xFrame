@@ -102,12 +102,26 @@ class Page {
     }
 
     /**
+     * Clears the exceptions on the page
+     */
+    public static function clearExceptions() {
+        self::$exceptions = array();
+    }
+
+    /**
      * Adds the given XML to the error XML for the page
      *
      * @param $xml string xml to add to the errors
      */
     public static function addError($xml) {
         self::$errors[] = $xml;
+    }
+
+    /**
+     * Clears the errors on the page
+     */
+    public static function clearErrors() {
+        self::$errors = array();
     }
 
     /**
@@ -118,6 +132,13 @@ class Page {
      */
     public static function addParameter($key, $value) {
         self::$parameters[$key] = $value;
+    }
+
+    /**
+     * Clears the page parameters
+     */
+    public static function clearParameters() {
+        self::$parameters = array();
     }
 
     /**
