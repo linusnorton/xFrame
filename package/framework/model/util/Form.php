@@ -113,7 +113,7 @@ class Form implements XML {
             }
         }
         else if (isset($fieldValue)) {
-            $xml .= htmlentities($fieldValue);
+            $xml .= htmlspecialchars($fieldValue);
         }
         else if (is_array($defaultValue)) {
             foreach ($defaultValue as $key => $value) {
@@ -121,7 +121,7 @@ class Form implements XML {
             }
         }
         else if ($defaultValue != "") {
-            $xml .= htmlentities($defaultValue);
+            $xml .= htmlspecialchars($defaultValue);
         }
         $xml .= "</f-{$fieldName}>";
 
@@ -136,7 +136,7 @@ class Form implements XML {
     private function getErrorXML($errorId, $errorMessage = "", $errorCode = "") {
         $xml = "<e-{$errorId} code=\"{$errorCode}\">";
         if (isset($errorMessage)) {
-            $xml .= htmlentities($errorMessage);
+            $xml .= htmlspecialchars($errorMessage);
         }
         $xml .= "</e-{$errorId}>";
 

@@ -29,7 +29,7 @@ class DefaultRecordTransformer implements XMLTransformer {
                 $xml .= ArrayUtil::getXML($value);
             }
             else {
-                $xml .= htmlentities($value, ENT_COMPAT, "UTF-8", false);
+                $xml .= htmlspecialchars($value, ENT_COMPAT, "UTF-8", false);
             }
 
             $xml .= "</{$key}>";
