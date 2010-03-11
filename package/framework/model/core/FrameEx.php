@@ -61,8 +61,9 @@ class FrameEx extends Exception {
             $text = $transformation->execute();
 
             $headers  = 'MIME-Version: 1.0' . "\r\n";
+            $headers .= 'From: "'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"].'" <xframe@'.$_SERVER["SERVER_NAME"].'>' . "\r\n";
             $headers .= 'Content-type: text/plain; charset=iso-8859-1' . "\r\n";
-            mail(Registry::get("ADMIN"), "Error from: ".$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"],$text, $headers );
+            mail(Registry::get("ADMIN"), $this->message, $text, $headers );
         }
 
         Page::addException($out);
