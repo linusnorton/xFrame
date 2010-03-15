@@ -34,9 +34,49 @@ class CSV {
     /**
      * Add a single value to the csv
      * @param string $value
+     * @param int $minLength
+     * @param int $maxLength
+     * @param boolean $truncate is true do not throw exception for max length problems, truncate instead
      */
-    public function add($value) {
+    public function add($value, $minLength = null, $maxLength = null, $truncate = false) {
+        //validate the minimum length
+        if ($minLength > 0 && strlen($value) < $minLength) {
+            throw new FrameEx($value." is not less than ".$minLength);
+        }
+        //validate the maximum length
+        if ($maxLength > 0 && strlen($value) > $maxLength) {
+            //see if we just want to truncate the data rather than throw an exception
+            if ($truncate) {
+                $value = substr($value, 0, $maxLength);
+            }
+            else {
+                throw new FrameEx($value." is not less than ".$minLength);
+            }
+        }
+        //add the value
         $this->fields[$this->lineNumber][] = $this->quote.addslashes($value).$this->quote;
+    }
+
+    /**
+     *
+     * @param string $value
+     * @param int $length
+     * @param int $pad
+     * @param int $direction
+     */
+    public function addPadded($value, $length, $pad = " ", $direction = STR_PAD_LEFT) {
+        $this->add(str_pad($value, $length, $pad, $direction), $length, $length);
+    }
+
+    /**
+     *
+     * @param string $value
+     * @param int $length
+     * @param int $pad
+     * @param int $direction
+     */
+    public function addNumericPadded($value, $length, $pad = "0", $direction = STR_PAD_RIGHT) {
+        $this->add(str_pad($value, $length, $pad, $direction), $length, $length);
     }
 
     /**
