@@ -64,7 +64,7 @@ class CSV {
      * @param int $pad
      * @param int $direction
      */
-    public function addPadded($value, $length, $pad = " ", $direction = STR_PAD_LEFT) {
+    public function addPadded($value, $length, $pad = " ", $direction = STR_PAD_RIGHT) {
         $this->add(str_pad($value, $length, $pad, $direction), $length, $length);
     }
 
@@ -75,7 +75,7 @@ class CSV {
      * @param int $pad
      * @param int $direction
      */
-    public function addNumericPadded($value, $length, $pad = "0", $direction = STR_PAD_RIGHT) {
+    public function addNumericPadded($value, $length, $pad = "0", $direction = STR_PAD_LEFT) {
         $this->add(str_pad($value, $length, $pad, $direction), $length, $length);
     }
 
