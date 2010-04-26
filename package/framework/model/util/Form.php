@@ -16,7 +16,7 @@ class Form implements XML {
      */
     public function __construct(Request $request = null) {
         if ($request != null) {
-            foreach ($request->getParams() as $id => $parameter) {
+            foreach ($request->getParameters() as $id => $parameter) {
                 $this->add($id, $parameter);
             }
             $this->hasErrors = false;

@@ -2,7 +2,6 @@
 
 /**
  * @author Linus Norton <linusnorton@gmail.com>
- *
  * @package request
  *
  * This dispatcher stores a mapping of requests to handlers and dispatches requests to their correct handler
@@ -11,23 +10,22 @@ class Dispatcher {
     private static $listeners = array();
 
     /**
-     * This method takes the given request finds the request handler and passes the request to the handler
+     * This method takes the given request finds the resource and gets the response from the
+     * resources controller.
      *
-     * @param Event $e
-     * @return unknown
+     * @param Request $r
+     * @return string
      */
-    public static function dispatch(Request $r) {
+    public static function dispatch(Request $r) {        
+        if (array_key_exists($r->getRequestedResource(), self::$listeners)) {
+            return self::$listeners[$r->getRequestedResource()]->getController($r)->getResponse();
+        }
 
-        if (array_key_exists($r->getName(), self::$listeners)) {
-            self::$listeners[$r->getName()]->execute($r);
-        }
-        else {
-            throw new UnknownRequest("No handler for ".$r->getName());
-        }
+        header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
     }
 
     /**
-     * Ok this registers a method to call for a given a request
+     * This registers a method to call for a given a request
      *
      * @param String $request
      * @param String $class
@@ -44,6 +42,11 @@ class Dispatcher {
                                                       $cacheLength);
     }
 
+    /**
+     * Adds a resource to the list
+     * 
+     * @param Resource $resource
+     */
     public static function addResource(Resource $resource) {
         self::$listeners[$resource->getName()] = $resource;
     }
@@ -72,7 +75,7 @@ class Dispatcher {
     }
 
     /**
-     * return array
+     * @return array
      */
     public static function getListeners() {
         return self::$listeners;

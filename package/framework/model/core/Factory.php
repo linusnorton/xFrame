@@ -90,7 +90,7 @@
      * @param $dir string directory to look in
      * @param &$classes array stores the classes that are found
      */
-    private static function getClassesInDirectory($dir, &$classes, $zendMode = false) {
+    private static function getClassesInDirectory($dir, &$classes, $zendMode = false) {        
         if (!is_dir($dir)) {
             return;
         }
@@ -99,7 +99,7 @@
         if ($dh = opendir($dir)) {
             //for each file
             while (($file = readdir($dh)) !== false) {
-                if ($file == "." || $file == ".."  || $file == ".svn") {
+                if ($file == "." || $file == ".."  || $file == ".svn" || $file == "PHPTAL") {
                     continue;
                 }
 
@@ -159,6 +159,8 @@
      * include the framework files
      */
     public static function init() {
+        ini_set("include_path", ini_get("include_path").":".ROOT);
+        
         //if the framework .classes.php hasn't been built, build it
         if (!file_exists(ROOT."framework/.classes.php")) {
             Factory::rebuild();

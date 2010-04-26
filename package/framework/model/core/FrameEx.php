@@ -5,40 +5,85 @@
  *
  * This class encapsulates the default behaviour for framework exceptions.
  *
- * The default behaviour is to add the error to the Page as xml
  */
 class FrameEx extends Exception {
-    public $backtrace;
-    public $message;
-    private $email;
+    protected $severity;
+
+    const OFF = 0,
+          CRITICAL = 1,
+          HIGH = 2,
+          MEDIUM = 3,
+          LOW = 4,
+          LOWEST = 5;
+
     /**
      * Creates the exception with a message and an error code that are
      * shown when the output method is called.
      *
      * @param String $message
-     * @param Integer $code
+     * @param int $code
+     * @param int $severity
      */
-    public function __construct($message = null, $code = null, $email = true) {
-        $this->backtrace = debug_backtrace();
-        $this->message = $message;
-        $this->code = $code;
-        $this->email = $email;
+    public function __construct($message, $code = 0, $severity = self::HIGH) {
+        parent::__construct($message, $code);
+        $this->severity = $severity;
     }
 
     /**
-     *
-     * @param boolean $uncaught
+     * Use the current registry settings to determine whether this error needs
+     * to be logged or emailed (or both)
      */
-    public function output($uncaught = false, $return = false, $email = true) {
-        $style = ($uncaught) ? "true" : "false";
+    public function process() {
+        if (Registry::get("ERROR_LOG_LEVEL") >= $this->severity ){
+            $this->log();
+        }
+        if (Registry::get("ERROR_EMAIL_LEVEL") >= $this->severity ){
+            $this->email();
+        }
+    }
 
-        $out = "<exception uncaught='{$style}'>";
+    /**
+     * Log using the error_log and LoggerManager
+     */
+    private function log() {
+        LoggerManager::getLogger("Exception")->error($this->message);
+        error_log($this->message);
+    }
+
+    /**
+     * Email the error to the ADMIN
+     */
+    private function email() {
+        $subject = "Error from: ".$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+        $headers  = 'MIME-Version: 1.0' . "\r\n";
+        $headers .= 'Content-type: text/plain; charset=iso-8859-1' . "\r\n";
+
+        mail(Registry::get("ADMIN"),
+             $subject,
+             $this->getContent(),
+             $headers);
+    }
+
+    /**
+     * Get the readable content for this exception
+     */
+    private function getContent() {
+        $xslFile = ROOT.Registry::get("PLAIN_TEXT_ERROR");
+        $transformation = new Transformation("<root><exceptions>".$this->getXML()."</exceptions></root>", $xslFile);
+        return $transformation->execute();
+    }
+
+    /**
+     * Get the XML for this exception
+     */
+    public function getXML() {
+        $out = "<exception>";
         $out .= "<message>".htmlspecialchars($this->message, ENT_COMPAT, "UTF-8", false)."</message>";
         $out .= "<code>".htmlspecialchars($this->code, ENT_COMPAT, "UTF-8", false)."</code>";
         $out .= "<backtrace>";
         $i = 1;
 
-        foreach (array_reverse($this->backtrace) as $back) {
+        foreach (array_reverse($this->getTrace()) as $back) {
             $back['file'] = (array_key_exists("file", $back)) ? basename($back['file']) : "";
             $back['class'] = (array_key_exists("class", $back)) ? $back['class'] : "";
             $back['line'] = (array_key_exists("line", $back)) ? $back['line'] : "";
@@ -49,26 +94,55 @@ class FrameEx extends Exception {
         }
         $out .= "</backtrace>";
         $out .= "</exception>";
-        //return the error do no more
-        if ($return) {
-            return $out;
+        return $out;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString() {
+        try {
+            return $this->getContent();
         }
-
-        //if email sending is enabled in the registry, this exception and the output method
-        if (Registry::get("EMAIL_ERRORS") && $email && $this->email) {
-            $xslFile = ROOT.Registry::get("PLAIN_TEXT_ERROR");
-            $transformation = new Transformation("<root><exceptions>".$out."</exceptions></root>", $xslFile);
-            $text = $transformation->execute();
-
-            $headers  = 'MIME-Version: 1.0' . "\r\n";
-            $headers .= 'From: "'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"].'" <xframe@'.$_SERVER["SERVER_NAME"].'>' . "\r\n";
-            $headers .= 'Content-type: text/plain; charset=iso-8859-1' . "\r\n";
-            mail(Registry::get("ADMIN"), $this->message, $text, $headers );
+        catch (Exception $e) {
+            return "Error generating exception content. Original message: ".$this->message;
         }
+    }
 
-        Page::addException($out);
-        LoggerManager::getLogger("Exception")->error($this->message);
-        error_log($this->message);
+    /**
+     * Save the exception for the next page
+     */
+    public function persist() {
+        $_SESSION["exception"] = serialize($this);
+    }
+
+    /**
+     * Return the last exception that was persisted
+     * @return FrameEx
+     */
+    public function getPersistedException() {
+        //deal with any exceptions that were redirected
+        if (array_key_exists("exception",$_SESSION)) {
+            $ex = unserialize($_SESSION["exception"]);
+            unset($_SESSION["exception"]);
+            return $ex;
+        }
+    }
+
+    /**
+     * Set the error code
+     * @param int $code
+     */
+    public function setCode($code) {
+        $this->code = $code;
+    }
+
+    /**
+     * Set the message
+     * @param string $message
+     */
+    public function setMessage($message) {
+        $this->message = $message;
     }
 
     /**
@@ -105,17 +179,16 @@ class FrameEx extends Exception {
     public function exceptionHandler($exception) {
         if ($exception instanceof FrameEx) {
             try {
-                $exception->output(true);
-                echo Page::displayErrors();
+                $exception->log();
             }
             catch (Exception $e) {
                 echo $e->getMessage();
-                die("Error processing exception");
+                die("Error logging exception");
             }
         }
-        else {
-            echo $exception;
-        }
+
+        //finally echo it out
+        echo $exception;
     }
 
     /**
@@ -124,42 +197,6 @@ class FrameEx extends Exception {
     public static function init() {
         set_exception_handler(array("FrameEx", "exceptionHandler"));
         set_error_handler(array("FrameEx", "errorHandler"), ini_get("error_reporting"));
-
-        //deal with any exceptions that were redirected
-        if (array_key_exists("exception",$_SESSION)) {
-            $ex = unserialize($_SESSION["exception"]);
-            $ex->output();
-            unset($_SESSION["exception"]);
-        }
-    }
-
-    /**
-     * Persist the error and redirect to another page
-     * @param string $location
-     */
-    public function redirect($location) {
-        $this->persist();
-        Page::redirect($location);
-    }
-
-    public function persist() {
-        $_SESSION["exception"] = serialize($this);
-    }
-
-    /**
-     * Set the error code
-     * @param int $code
-     */
-    public function setCode($code) {
-        $this->code = $code;
-    }
-
-    /**
-     * Set the message
-     * @param string $message
-     */
-    public function setMessage($message) {
-        $this->message = $message;
     }
 
 }

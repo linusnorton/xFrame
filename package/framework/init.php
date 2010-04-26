@@ -4,7 +4,7 @@
 require_once(ROOT."framework/model/core/Factory.php");
 
 Factory::init();
-Page::init();
+Controller::boot();
 Registry::init();
 Cache::init();
 Registry::loadDBSettings();

@@ -95,12 +95,9 @@ class Logger {
         $log->message = $message;
         $log->date_time = date("Y-m-d H:i:s");
         $log->session_id = session_id();
-        $log->execution_time = number_format(microtime(true) - Page::getExecutionTime(), 5);
+        $log->execution_time = number_format(microtime(true) - Controller::getExecutionTime(), 5);
 
         $log->save();
     }
 
 }
-
-
-?>

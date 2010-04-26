@@ -1,14 +1,17 @@
 <?php
 
-class Index {
+/**
+ * This class is the controller for the index resource
+ *
+ * @author Linus Norton <linusnorton@gmail.com>
+ */
+class Index extends Controller {
 
     /**
      * This class provides the implementation for the home request as specified
      * in the app/init.php file
-     *
-     * @param Request $r encapsulation of the request variables
      */
-    public function run(Request $r) {
+    public function run() {
         $log = LoggerManager::getLogger("home");
         $log->debug("Entering Index->run() for handling of home event");
 
@@ -31,11 +34,11 @@ class Index {
 
         //Example 1: load one record
         $record = TableGateway::load("test_table", 1);
-        Page::add($record);
+        $this->view->add($record);
 
         //Example 2: load entire table
         $records = TableGateway::loadAll("test_table");
-        Page::add($records);
+        $this->view->add($records);
 
         //Example 3: custom load condition
         $stmt = DB::dbh()->prepare("SELECT * FROM test_table WHERE id < :maxId");
@@ -47,7 +50,7 @@ class Index {
             //if you were explicitly mapping fields from the array in your overridden
             //create function you wouldnt need PDO::FETCH_ASSOC
             $record = Record::create($row, "test_table");
-            Page::add($record);
+            $this->view->add($record);
         }
 
         //Example 4: modifying a record
@@ -74,22 +77,22 @@ class Index {
         //this is usually used to format date fields
         $record = Record::load("test_table", 1);
         $record->fieldThatIsNotInDB = "Ha, this isn't in the database";
-        Page::add($record);
+        $this->view->add($record);
 
         //Example 8: using the TableGateway
         $records = TableGateway::loadMatching("test_table",  Restriction::like("name", "Li%"));
-        Page::add($records);
+        $this->view->add($records);
 
         //Example 9: using the TableGateway with Criteria
         $criteria = new Criteria( Restriction::is("name", "Linus") );
         $criteria->addOr( Restriction::is("name", "John") );
         $criteria->addAnd( Restriction::isNotNull("name") );
         $records = TableGateway::loadMatching("test_table",  $criteria);
-        Page::add($records);
+        $this->view->add($records);
 
         //Example 10: using the TableGateway with Pagination
         $records = TableGateway::loadMatching("test_table",  Restriction::like("name", "Li%"), 0, 3);
-        Page::add($records);
+        $this->view->add($records);
 
         // Example 11: update
         TableGateway::update("test_table", array("name" => "Linus"), Restriction::is("name", "John"), 3);
@@ -98,10 +101,6 @@ class Index {
         TableGateway::delete("test_table", Restriction::is("name", "Linus"), 3);
 
         */
-
-        Page::$xsl = ROOT."app/view/index.xsl";
+        $this->view->setTemplate("index");
     }
-
-
 }
-?>

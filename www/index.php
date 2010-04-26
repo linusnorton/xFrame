@@ -5,14 +5,16 @@ require(ROOT.'framework/init.php');
 
 /**
  * @author Linus Norton <linusnorton@gmail.com>
- * @package core
  *
- * Welcome to xFrame, if you are just starting out don't look at this file.
+ * Welcome to xFrame. This file dispatches the request to be handled.
  *
- * app/init.php contains the mapping between page requests and PHP classes the default request is
+ * app/init.php contains the mapping between requests and controllers. The default request is
  * already mapped for you to the app/controller/Index.php controller with the default view being
  * app/view/index.xsl to get started just edit those files.
  *
  */
 
-Request::process();
+//pass the request URI, parameters and path of this file to the request
+$request = new Request($_SERVER["REQUEST_URI"], $_REQUEST, $_SERVER["PHP_SELF"]);
+//pass request to the dispatcher which maps it to a resource and controller 
+echo Dispatcher::dispatch($request);

@@ -17,7 +17,3 @@ if (file_exists(ROOT."app/.classes.php")) {
     include(ROOT."app/.classes.php");
 }
 
-//if (file_exists(ROOT."Zend/.classes.php")) {
-//    include(ROOT."Zend/.classes.php");
-//}
-

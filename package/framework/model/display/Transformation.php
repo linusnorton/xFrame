@@ -38,7 +38,7 @@ class Transformation implements XML {
         $transformation = $xslt->transformToXml($this->xml);
 
         if ($transformation === false) {
-            throw new MalformedPage("There was an error tranforming the page");
+            throw new MalformedPage("There was an error tranforming the page", 105);
         }
 
         return $transformation;
@@ -74,16 +74,15 @@ class Transformation implements XML {
 
         //if the xsl has not been set or has been set incorrectly
         if (!file_exists($xslFile)) {
-            throw new MalformedPage("Could not locate xsl file: ".$xslFile);
+            throw new MalformedPage("Could not locate xsl file: ".$xslFile, 103);
         }
 
         //if the xsl contained errors
         if (!$xsl->load($xslFile)) {
-            throw new MalformedPage("There are errors in the xsl file: ".$xslFile);
+            throw new MalformedPage("There are errors in the xsl file: ".$xslFile, 104);
         }
 
         return $xsl;
     }
 
 }
-

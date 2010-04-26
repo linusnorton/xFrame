@@ -39,36 +39,14 @@ class Resource extends Record {
     }
 
     /**
-     * Execute the page
-     * @param Request $r
-     * @return mixed
+     * Return the controller for this resource
+     * @return Controller
      */
-    public function execute(Request $r) {
-        //if there is an authenticator attached to the request
-        if ($this->authenticator != null) {
-            //try to authorise
-            $authenticator = new $this->authenticator;
-            $authResult = $authenticator->authenticate($r);
-
-            //if authorised do the request
-            if ($authResult === true) {
-                $object = new $this->class;
-                return $object->{$this->method}($r);
-            }
-            //if not then forbidden
-            else if ($authResult === false) {
-                header('HTTP/1.1 403 Forbidden');
-                die();
-            }
-            //else url to redirect to?
-            else {
-                Page::redirect($authResult);
-            }
-        }
-        $object = new $this->class;
-        return $object->{$this->method}($r);
+    public function getController(Request $request) {
+        $request->applyParameterMap($this->parameters);
+        return new $this->class($this, $request);
     }
-
+    
     /**
      *
      * @return array
