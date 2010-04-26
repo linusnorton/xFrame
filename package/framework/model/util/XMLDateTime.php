@@ -162,4 +162,3 @@ class XMLDateTime extends DateTime implements XML {
     }
 
 }
-?>

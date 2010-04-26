@@ -14,4 +14,3 @@ class CyclicalRelationshipException extends FrameEx {
 
 }
 
-?>

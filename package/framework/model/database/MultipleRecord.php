@@ -10,4 +10,3 @@ class MultipleRecord extends FrameEx {
 
 }
 
-?>

@@ -1,18 +1,30 @@
 <?php
 /** 
- * author Jason Paige
+ * author Jason Paige <j@jasonpaige.co.uk>
  * Decorator class for PDOStatement to allow logging of queries and their bound values
  */  
 class LoggedPDOStatement {  
-  
+    /**
+     * @var string
+     */
     private $postBindingStatement;
+
+    /**
+     * @var PDOStatement
+     */
     private $statement;
 
+    /**
+     * @param PDOStatement $statement
+     */
     public function __construct(PDOStatement $statement) {
         $this->statement = $statement;
         $this->postBindingStatement = $statement->queryString;
     }
 
+    /**
+     * Execute the statement
+     */
     public function execute() {  
         $start = microtime(true);  
         $result = $this->statement->execute(); 
@@ -34,8 +46,8 @@ class LoggedPDOStatement {
         return $this->postBindingStatement;
     }
 
-    function __call ($method, $params) {
+    public function __call ($method, $params) {
         return call_user_func_array (array ($this->statement, $method), $params); 
     }
 }  
-?>
+

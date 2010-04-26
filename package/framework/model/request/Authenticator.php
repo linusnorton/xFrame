@@ -16,4 +16,3 @@ interface Authenticator {
     public function authenticate(Request $request);
 
 }
-?>

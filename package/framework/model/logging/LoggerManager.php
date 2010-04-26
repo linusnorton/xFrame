@@ -18,6 +18,3 @@ class LoggerManager {
         return self::$loggers[$key];
     }
 }
-
-
-?>

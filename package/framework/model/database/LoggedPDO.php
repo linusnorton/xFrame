@@ -33,4 +33,3 @@ class LoggedPDO extends PDO {
         return print_r($this->log, $toString);
     }
 }
-?>

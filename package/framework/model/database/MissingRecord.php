@@ -10,4 +10,3 @@ class MissingRecord extends FrameEx {
 
 }
 
-?>

@@ -6,7 +6,7 @@
  * and the underscore character replaced with a hyphon. An un-altered string of
  * the key is set as the 'realKey' attribute.
  *
- * @author dominic.webb@assertis.co.uk
+ * @author Dominic Webb <dominic.webb@assertis.co.uk>, Linus Norton <linusnorton@gmail.com>
  */
 class Environment implements XML {
 
@@ -22,4 +22,3 @@ class Environment implements XML {
         return "<environment>{$xml}</environment>";
     }
 }
-?>
