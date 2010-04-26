@@ -46,7 +46,7 @@ class Resource extends Record {
         $request->applyParameterMap($this->parameters);
         return new $this->class($this, $request);
     }
-    
+
     /**
      *
      * @return array
@@ -94,8 +94,13 @@ class Resource extends Record {
         }
     }
 
+    /**
+     * Get the Resource for the given Request
+     * @param Request $request
+     * @return Resource
+     */
     public static function getFromRequest(Request $request) {
         $resources = Dispatcher::getListeners();
-        return $resources[$request->getName()];
+        return $resources[$request->getRequestedResource()];
     }
 }
