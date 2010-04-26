@@ -89,7 +89,8 @@ class Controller {
             $this->cacheResponse($response);
         }
         catch (FrameEx $ex) {
-            $response = $this->processException($ex);
+            $this->processException($ex);
+            $response = $this->view->getErrorPage(); 
         }
 
         return $response;
@@ -106,14 +107,11 @@ class Controller {
     }
 
     /**
-     * Use the View to get the error page
-     * @return string
+     * Process the exception and add it to the current page
      */
     protected function processException(FrameEx $ex) {
         $ex->process();
         $this->view->addException($ex);
-
-        return $this->view->getErrorPage();
     }
 
     /**
@@ -132,6 +130,8 @@ class Controller {
         if ($response === false) {
             //preform the init
             $this->init();
+            //add any existing exceptions
+            $this->addPersistedExceptions();
             //get the controller method
             $method = $this->resource->getMethod();
             //execute controller method
@@ -141,6 +141,15 @@ class Controller {
         }
 
         return $response;
+    }
+
+    /**
+     * Add all the exceptions that have been persisted to the current page
+     */
+    protected function addPersistedExceptions() {
+        foreach (FrameEx::getPersistedExceptions() as $ex) {
+            $this->processException($ex);
+        }
     }
 
     /**
