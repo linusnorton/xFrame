@@ -23,9 +23,13 @@ class FrameEx extends Exception {
      * @param String $message
      * @param int $code
      * @param int $severity
+     * @param Exception $previous
      */
-    public function __construct($message, $code = 0, $severity = self::HIGH) {
-        parent::__construct($message, $code);
+    public function __construct($message = null,
+                                $code = 0,
+                                $severity = self::HIGH,
+                                Exception $previous = null) {
+        parent::__construct($message, $code, $previous);
         $this->severity = $severity;
     }
 
@@ -134,7 +138,7 @@ class FrameEx extends Exception {
             //return
             return $execptions;
         }
-        
+
         return array();
     }
 
