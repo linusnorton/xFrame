@@ -32,7 +32,12 @@ class TableGateway {
             $condition->bind($stmt);
         }
 
-        $stmt->execute();
+        try {
+            $stmt->execute();
+        }
+        catch (PDOException $ex) {
+            throw new TableGatewayException($ex, FrameEx::HIGH);
+        }
         return $stmt->rowCount(); //mysql returns number of rows deleted
     }
 
@@ -60,7 +65,12 @@ class TableGateway {
             $condition->bind($stmt);
         }
 
-        $stmt->execute();
+        try {
+            $stmt->execute();
+        }
+        catch (PDOException $ex) {
+            throw new TableGatewayException($ex, FrameEx::HIGH);
+        }
         return $stmt->rowCount(); //mysql returns number of rows deleted
     }
 
@@ -134,7 +144,12 @@ class TableGateway {
             $criteria->bind($stmt);
         }
 
-        $stmt->execute();
+        try {
+            $stmt->execute();
+        }
+        catch (PDOException $ex) {
+            throw new TableGatewayException($ex, FrameEx::HIGH);
+        }
 
         //check to see if there are more records than we selected
         //if we didn't start 0 there might be more, if the num results we got was there num we asked for there might be more
@@ -175,7 +190,12 @@ class TableGateway {
             $criteria->bind($stmt);
         }
 
-        $stmt->execute();
+        try {
+            $stmt->execute();
+        }
+        catch (PDOException $ex) {
+            throw new TableGatewayException($ex, FrameEx::HIGH);
+        }
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row['count'];
