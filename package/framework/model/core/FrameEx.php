@@ -188,7 +188,7 @@ class FrameEx extends Exception {
     public function exceptionHandler($exception) {
         if ($exception instanceof FrameEx) {
             try {
-                $exception->log();
+                $exception->process();
             }
             catch (Exception $e) {
                 echo $e->getMessage();
