@@ -113,20 +113,29 @@ class FrameEx extends Exception {
      * Save the exception for the next page
      */
     public function persist() {
-        $_SESSION["exception"] = serialize($this);
+        if (!is_array($_SESSION["exceptions"])) {
+            $_SESSION["exceptions"] = array();
+        }
+
+        $_SESSION["exceptions"][] = $this;
     }
 
     /**
-     * Return the last exception that was persisted
-     * @return FrameEx
+     * Return an array of exceptions that were persisted
+     * @return array
      */
-    public function getPersistedException() {
+    public static function getPersistedExceptions() {
         //deal with any exceptions that were redirected
-        if (array_key_exists("exception",$_SESSION)) {
-            $ex = unserialize($_SESSION["exception"]);
-            unset($_SESSION["exception"]);
-            return $ex;
+        if (array_key_exists("exceptions",$_SESSION) && is_array($_SESSION["exceptions"])) {
+            //store in temp var
+            $execptions = $_SESSION["exceptions"];
+            //clear from session
+            $_SESSION["exceptions"] = array();
+            //return
+            return $execptions;
         }
+        
+        return array();
     }
 
     /**
