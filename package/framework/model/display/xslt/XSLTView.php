@@ -73,7 +73,9 @@ class XSLTView extends View {
         }
 
         if ($this->outputMode == self::OUTPUT_XML_RAW) {
-            header("content-type: text/xml");
+            if (!headers_sent()) {
+                header("content-type: text/xml");
+            }
             return $this->data;
         }
 
@@ -81,7 +83,9 @@ class XSLTView extends View {
         $transformation = new Transformation($xml, $this->template);
 
         if ($this->outputMode == self::OUTPUT_XML) {
-            header("content-type: text/xml");
+            if (!headers_sent()) {
+                header("content-type: text/xml");
+            }
             return $transformation->getXML();
         }
 
