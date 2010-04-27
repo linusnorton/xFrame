@@ -7,7 +7,7 @@
  *
  * A request encapsulates a given request
  */
-class Request implements XML {
+class Request {
     private $requestedResource;
     private $parameters;
     private $mappedParameters;
@@ -127,16 +127,4 @@ class Request implements XML {
         return md5($this->requestedResource.implode($this->mappedParameters).implode(array_keys($this->mappedParameters)));
     }
 
-    /**
-     * @return string xml
-     */
-    public function getXML() {
-        $xml = "<request name='{$this->requestedResource}'>";
-        foreach ($this->mappedParameters as $key => $value) {
-           $xml .= "<parameter name='{$key}'>{$value}</parameter>";
-        }
-        $xml .= "</request>";
-
-        return $xml;
-    }
 }

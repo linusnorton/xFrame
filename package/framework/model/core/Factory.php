@@ -169,6 +169,24 @@
         //include the paths to the classes for the framework
         include(ROOT."framework/.classes.php");
     }
+
+    /**
+     * Include the class mapping and run the init script of the given package
+     * @param string $package
+     */
+    public static function boot($package) {
+        //check package exists
+        if (!file_exists(ROOT.$package."/init.php")) {
+            throw new FrameEx("Unable to boot package: {$package}, {$package}/init.php does not exist.");
+        }
+        //load the class mapping
+        if (file_exists(ROOT.$package."/.classes.php")) {
+            include(ROOT.$package."/.classes.php");
+        }
+        //boot
+        include(ROOT.$package."/init.php");
+    }
+
 }
 
 /**

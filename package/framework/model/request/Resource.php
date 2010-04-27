@@ -46,7 +46,7 @@ class Resource extends Record {
         $request->applyParameterMap($this->parameters);
         return new $this->class($this, $request);
     }
-
+    
     /**
      *
      * @return array
