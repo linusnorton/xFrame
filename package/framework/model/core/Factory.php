@@ -90,7 +90,7 @@
      * @param $dir string directory to look in
      * @param &$classes array stores the classes that are found
      */
-    private static function getClassesInDirectory($dir, &$classes, $zendMode = false) {        
+    private static function getClassesInDirectory($dir, &$classes, $zendMode = false) {
         if (!is_dir($dir)) {
             return;
         }
@@ -160,7 +160,7 @@
      */
     public static function init() {
         ini_set("include_path", ini_get("include_path").":".ROOT);
-        
+
         //if the framework .classes.php hasn't been built, build it
         if (!file_exists(ROOT."framework/.classes.php")) {
             Factory::rebuild();
@@ -171,20 +171,28 @@
     }
 
     /**
-     * Include the class mapping and run the init script of the given package
+     * Convience method that adds the ROOT constant to the $package before booting
      * @param string $package
      */
     public static function boot($package) {
+        self::bootRaw(ROOT.$package);
+    }
+
+    /**
+     * Include the class mapping and run the init script of the given package
+     * @param string $package
+     */
+    public static function bootRaw($package) {
         //check package exists
-        if (!file_exists(ROOT.$package."/init.php")) {
-            throw new FrameEx("Unable to boot package: {$package}, {$package}/init.php does not exist.");
+        if (!file_exists($package."/init.php")) {
+            throw new FrameEx("Unable to boot package: {$package}, ".$package."/init.php does not exist.");
         }
         //load the class mapping
-        if (file_exists(ROOT.$package."/.classes.php")) {
-            include(ROOT.$package."/.classes.php");
+        if (file_exists($package."/.classes.php")) {
+            include($package."/.classes.php");
         }
         //boot
-        include(ROOT.$package."/init.php");
+        include($package."/init.php");
     }
 
 }

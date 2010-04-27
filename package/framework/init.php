@@ -11,4 +11,4 @@ Registry::loadDBSettings();
 FrameEx::init();
 
 //boot the app
-Factory::boot(APP_DIR);
+Factory::bootRaw(APP_DIR);
