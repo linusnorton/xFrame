@@ -29,7 +29,7 @@ class FrameEx extends Exception {
                                 $code = 0,
                                 $severity = self::HIGH,
                                 Exception $previous = null) {
-        parent::__construct($message, $code, $previous);
+        parent::__construct($message, (int) $code, $previous);
         $this->severity = $severity;
     }
 
