@@ -58,12 +58,13 @@ class FrameEx extends Exception {
      * Email the error to the ADMIN
      */
     private function email() {
-        $subject = "Error from: ".$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
         $headers  = 'MIME-Version: 1.0' . "\r\n";
+        $headers .= 'From: "'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"].'" <xframe@'.$_SERVER["SERVER_NAME"].'>' . "\r\n";
         $headers .= 'Content-type: text/plain; charset=iso-8859-1' . "\r\n";
 
+
         mail(Registry::get("ADMIN"),
-             $subject,
+             $this->message,
              $this->getContent(),
              $headers);
     }
