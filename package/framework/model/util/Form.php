@@ -55,11 +55,13 @@ class Form implements XML {
     public function doSessionPostBack($location) {
         $_SESSION['field'] = array();
         $_SESSION['error'] = array();
-        foreach ($this->field as $id => $field) {
-            $_SESSION['field'][$id] = $field['value'];
-            if ($field['error'] != '' || $field['code'] != '') {
-                $_SESSION['error'][$id]['code'] = $field['code'];
-                $_SESSION['error'][$id]['message'] = $field['error'];
+        if (is_array($this->field)) {
+            foreach ($this->field as $id => $field) {
+                $_SESSION['field'][$id] = $field['value'];
+                if ($field['error'] != '' || $field['code'] != '') {
+                    $_SESSION['error'][$id]['code'] = $field['code'];
+                    $_SESSION['error'][$id]['message'] = $field['error'];
+                }
             }
         }
 
