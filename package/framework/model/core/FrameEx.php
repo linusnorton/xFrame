@@ -34,6 +34,14 @@ class FrameEx extends Exception {
     }
 
     /**
+     * Reset the severity level
+     * @param int $severity
+     */
+    public function setSeverity($severity) {
+        $this->severity = $severity;
+    }
+
+    /**
      * Use the current registry settings to determine whether this error needs
      * to be logged or emailed (or both)
      */
@@ -49,7 +57,7 @@ class FrameEx extends Exception {
     /**
      * Log using the error_log and LoggerManager
      */
-    private function log() {
+    protected function log() {
         LoggerManager::getLogger("Exception")->error($this->message);
         error_log($this->message);
     }
@@ -57,7 +65,7 @@ class FrameEx extends Exception {
     /**
      * Email the error to the ADMIN
      */
-    private function email() {
+    protected function email() {
         $headers  = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'From: "'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"].'" <xframe@'.$_SERVER["SERVER_NAME"].'>' . "\r\n";
         $headers .= 'Content-type: text/plain; charset=iso-8859-1' . "\r\n";
