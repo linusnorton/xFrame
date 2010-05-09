@@ -21,7 +21,7 @@ class Dispatcher {
             return self::$listeners[$r->getRequestedResource()]->getController($r)->getResponse();
         }
 
-        header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
+        throw new UnknownRequest($r);
     }
 
     /**

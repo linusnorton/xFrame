@@ -8,8 +8,22 @@
  */
 class UnknownRequest extends FrameEx {
 
-    public function output($uncaught = false, $return = false) {
-        header("HTTP/1.0 404 Not Found");
-        die();
+    /**
+     * This exception just takes the request that could not be processed
+     * @param Request $request
+     */
+    public function __construct(Request $request) {
+        parent::__construct("The requested resource: {$request->getRequestedResource()} could not be found.", 404, FrameEx::LOWEST);
+    }
+
+    /**
+     * Most of the time the user will not see this error (the browser will)
+     * so it does not need to be as verbose.
+     */
+    public function __toString() {
+        if (!headers_sent()) {
+            header("HTTP/1.0 404 Not Found");
+        }
+        die($this->message);
     }
 }
