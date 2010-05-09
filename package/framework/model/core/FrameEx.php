@@ -96,11 +96,7 @@ class FrameEx extends Exception {
         $out .= "<backtrace>";
         $i = 1;
 
-        foreach (array_reverse($this->getTrace()) as $back) {
-            $back['file'] = (array_key_exists("file", $back)) ? basename($back['file']) : "";
-            $back['class'] = (array_key_exists("class", $back)) ? $back['class'] : "";
-            $back['line'] = (array_key_exists("line", $back)) ? $back['line'] : "";
-
+        foreach ($this->getReversedTrace() as $back) {
             if ($back["class"] != "FrameEx") {
                 $out .= "<step number='".$i++."' line='{$back['line']}' file='{$back['file']}' class='{$back['class']}' function='{$back['function']}' />";
             }
@@ -108,6 +104,23 @@ class FrameEx extends Exception {
         $out .= "</backtrace>";
         $out .= "</exception>";
         return $out;
+    }
+
+    /**
+     * Return the array reversed back trace
+     * @return array
+     */
+    public function getReversedTrace() {
+        $trace = array();
+
+        foreach (array_reverse($this->getTrace()) as $back) {
+            $back['file'] = (array_key_exists("file", $back)) ? basename($back['file']) : "";
+            $back['class'] = (array_key_exists("class", $back)) ? $back['class'] : "";
+            $back['line'] = (array_key_exists("line", $back)) ? $back['line'] : "";
+            $trace[] = $back;
+        }
+
+        return $trace;
     }
 
     /**
