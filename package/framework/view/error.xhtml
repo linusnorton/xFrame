@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Error generating page</title>
+  </head>
+
+  <body>
+    <h1>I'm sorry there was an error generating this page</h1>
+    <h2>The following exceptions occured:</h2>
+    <div tal:repeat="exception exceptions" style="margin:5px;padding: 5px; border: 1px solid black;">
+        <strong>Exception</strong>:
+        <span tal:replace="exception/getMessage"/><br />
+        <strong>Backtrace:</strong>
+        <p>
+            <tal:block tal:repeat="backtrace exception/getReversedTrace">
+                [<span tal:replace="repeat/backtrace/index"/>] line <span tal:replace="backtrace/line"/> of <span tal:replace="backtrace/file"/>
+                called <span tal:replace="backtrace/class"/><span tal:condition="backtrace/class" tal:replace="string:->"/><span tal:replace="backtrace/function"/>()
+                <br />
+            </tal:block>
+        </p>
+    </div>
+
+  </body>
+</html>
+
+        
