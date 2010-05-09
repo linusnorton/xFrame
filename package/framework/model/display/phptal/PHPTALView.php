@@ -26,9 +26,10 @@ class PHPTALView extends View {
      * @param mixed $key
      */
     public function add($data, $key = null) {
-        if ($key != null) {
-            $this->phptal->$key = $data;
+        if ($key == null) {
+            throw new FrameEx("You cannot add data to a PHPTAL view without a key");
         }
+        $this->phptal->$key = $data;
     }
 
     /**
@@ -37,13 +38,12 @@ class PHPTALView extends View {
      */
     public function execute() {
         try {
+            $this->phptal->exceptions = $this->exceptions;
             $this->phptal->setTemplate($this->template);
             return $this->phptal->execute();
         }
         catch (Exception $e) {
-            $ex = new FrameEx($e->getMessage());
-            $ex->backtrace = $e->getTrace();
-            throw $ex;
+            throw new FrameEx($e->getMessage(), $e->getCode, FrameEx::HIGH, $e);             
         }
 
     }
