@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author Linus Norton <linus.norton@assertis.co.uk>
+ * @author Linus Norton <linus.norton@assertis.co.uk>, Jason Paige <jason.paige@assertis.co.uk>
  *
  * This class logs to a database record
  *
@@ -13,6 +13,7 @@ class Logger {
     private $key;
     private $tableName;
     private $logLevel;
+    private $logFile;
 
     public function __construct($key) {
         $this->key = $key;
@@ -28,12 +29,18 @@ class Logger {
     }
 
     /**
-     * Override the level of logging set in the Registry
+     * @param string $tableName
      */
     public function setLogTable($tableName) {
         $this->tableName = $tableName;
     }
 
+    /**
+     * @param string $fileName
+     */
+    public function setLogFile($fileName) {
+        $this->logFile = $fileName;
+    }
 
     /**
      * Log a debug message (dependant on the level of logging)
@@ -70,11 +77,29 @@ class Logger {
 
     public function fatal($message) {
         if ($this->logLevel >= self::FATAL){
-            $this->log("fetal", $message);
+            $this->log("fatal", $message);
         }
     }
 
     private function log($level, $message) {
+        if ($this->logFile != null) {
+            $this->logTofile($message);
+        }
+        else {
+            $this->logToDatabase($level, $message);
+        }
+    }
+
+    private function logToFile($message) {
+        $fp = fopen($this->logFile, 'a');
+        if ($fp) {
+            fwrite($fp, $message."\n");
+            fclose($fp);
+        }
+    }
+
+    private function logToDatabase($level, $message) {
+
         $log = new Record($this->tableName);
 
         //check ip from share internet
