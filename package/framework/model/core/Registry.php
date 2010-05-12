@@ -86,19 +86,20 @@ class Registry {
      * @param string $table
      */
     public static function loadFromDB($table) {
-        $records = TableGateway::loadAll($table);
+        $results = DB::dbh()->query("SELECT `key`,`value` FROM `{$table}`");
 
-        foreach ($records as $record) {
-            if ($record->value === "true") {
-                self::$settings[$record->key] = true;
+        while ($row = $results->fetch(PDO::FETCH_ASSOC)) {
+            if ($row['value'] === "true") {
+                self::$settings[$row['key']] = true;
             }
-            else if ($record->value === "false") {
-                self::$settings[$record->key] = false;
+            else if ($row['value'] === "false") {
+                self::$settings[$row['key']] = false;
             }
             else {
-                self::$settings[$record->key] = $record->value;
+                self::$settings[$row['key']] = $row['value'];
             }
         }
+
     }
 }
 
