@@ -24,7 +24,7 @@
                 self::rebuild();
                 return self::includeFile($className);
             }
-            require_once(ROOT.self::$objects[$className]);
+            require(ROOT.self::$objects[$className]);
             return true;
         }
 
