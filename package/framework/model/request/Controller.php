@@ -40,6 +40,10 @@ class Controller {
         $this->request = $request;
         $viewClass = Registry::get("DEFAULT_VIEW");
         $this->view = new $viewClass($request->debug == "xml");
+
+        if (!headers_sent()) {
+            session_start();
+        }
     }
 
     /**
@@ -191,12 +195,8 @@ class Controller {
     /**
      * initialize the page
      */
-    public static function boot() {
+    public static function boot() {        
         self::$executionTime = microtime(true); //used for script execution time
-
-        if (!headers_sent()) {
-            session_start();
-        }
     }
 
     /**
