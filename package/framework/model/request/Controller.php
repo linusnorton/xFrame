@@ -105,7 +105,7 @@ class Controller {
      * @param string $response
      */
     protected function cacheResponse($response) {
-        if (Registry::get("CACHE_ENABLED")) {
+        if (Registry::get("CACHE_ENABLED") && $this->resource->getCacheLength() !== false) {
             Cache::mch()->set($this->request->hash(), $response, false, $this->resource->getCacheLength());
         }
     }
