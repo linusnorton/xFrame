@@ -1,7 +1,7 @@
 <?php
 
 //Object Factory
-require_once(ROOT."framework/model/core/Factory.php");
+require_once("framework/model/core/Factory.php");
 
 Factory::init();
 Controller::boot();
@@ -11,4 +11,4 @@ Registry::loadDBSettings();
 FrameEx::init();
 
 //boot the app
-Factory::bootRaw(APP_DIR);
+Factory::boot(APP_DIR);

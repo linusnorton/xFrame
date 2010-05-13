@@ -6,10 +6,11 @@
  *
  * The factory class is in charge of creating new objects.
  *
- * It dynamically includes the files only when they are needed and makes
- * version control easier. Please see factory.txt in the notes folder
- * or read a book on design patterns or see php.net's section on patterns
- * (although their object factory is lame)
+ * It dynamically includes the files only when they are needed to instanciate
+ * an object.
+ *
+ * The file name must be the same as the class name (plus .php) as you can see
+ * this class is called Factory and the file is Factory.php
  */
  class Factory {
     private static $objects = array();
@@ -19,13 +20,10 @@
     public static function includeFile($className) {
         //if we have a mapping for the object
         if (isset(self::$objects[$className])) {
-            //but it doesn't exist, we need to rebuild
-            if (!file_exists(ROOT.self::$objects[$className])) {
-                self::rebuild();
-                return self::includeFile($className);
+            try {
+                return include(self::$objects[$className]);
             }
-            require(ROOT.self::$objects[$className]);
-            return true;
+            catch (FrameEx $ex) { /*drop below and return false */ }
         }
 
         return false;
@@ -45,7 +43,7 @@
      * Goes through every directory in the root looks for a init.php
      * if so it scans subdirectories for .php files with classes inside
      */
-    public static function rebuild() {
+    public static function rebuild() { 
         // Open the root
         if (!is_dir(ROOT)) {
             //the only place I've ever had this happen is when this method is
@@ -105,7 +103,6 @@
 
                 $ext = ".".pathinfo($dir.$file , PATHINFO_EXTENSION);
 
-
                 //if im a directory
                 if (is_dir($dir.$file)) {
                     //lets get recursive and add all the classes in this dir
@@ -159,40 +156,33 @@
      * include the framework files
      */
     public static function init() {
-        ini_set("include_path", ini_get("include_path").":".ROOT);
-
-        //if the framework .classes.php hasn't been built, build it
-        if (!file_exists(ROOT."framework/.classes.php")) {
+        //include the paths to the classes for the framework
+        try {
+            include("framework/.classes.php");
+        }
+        catch (FrameEx $ex) {            
             Factory::rebuild();
         }
-
-        //include the paths to the classes for the framework
-        include(ROOT."framework/.classes.php");
-    }
-
-    /**
-     * Convience method that adds the ROOT constant to the $package before booting
-     * @param string $package
-     */
-    public static function boot($package) {
-        self::bootRaw(ROOT.$package);
     }
 
     /**
      * Include the class mapping and run the init script of the given package
      * @param string $package
      */
-    public static function bootRaw($package) {
-        //check package exists
-        if (!file_exists($package."/init.php")) {
-            throw new FrameEx("Unable to boot package: {$package}, ".$package."/init.php does not exist.");
-        }
+    public static function boot($package) {
         //load the class mapping
-        if (file_exists($package."/.classes.php")) {
+        try {
             include($package."/.classes.php");
         }
+        catch (FrameEx  $ex) { /*file does not exist*/ }
+            
         //boot
-        include($package."/init.php");
+        try {
+            include($package."/init.php");
+        }
+        catch (FrameEx $ex) {
+            throw new FrameEx("Unable to boot package: {$package}, ".$package."/init.php does not exist.");
+        }
     }
 
 }
@@ -202,13 +192,15 @@
  *
  * @param String $className
  */
-function __autoload($className) {
+function __autoload($className) {    
     //if the factory does not have the class
-    if (!Factory::includeFile($className)) {
+    if (!Factory::includeFile($className)) {        
         //rebuild the class/file mapping
         Factory::rebuild();
         //try to see if we have it now
-        Factory::includeFile($className);
+        if (!Factory::includeFile($className)) {
+            throw new FrameEx("Class ".$className." not found.");
+        }
     }
 }
 

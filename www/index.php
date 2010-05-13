@@ -1,7 +1,8 @@
 <?php
 
 @define('ROOT', '../package/');
-require(ROOT.'framework/init.php');
+ini_set("include_path", ini_get("include_path").":".ROOT);
+require('framework/init.php');
 
 /**
  * @author Linus Norton <linusnorton@gmail.com>
