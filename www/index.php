@@ -1,7 +1,7 @@
 <?php
 
 @define('ROOT', '../package/');
-ini_set("include_path", ini_get("include_path").":".ROOT);
+set_include_path(get_include_path().PATH_SEPARATOR.ROOT);
 require('framework/init.php');
 
 /**
