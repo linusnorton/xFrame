@@ -198,9 +198,7 @@ function __autoload($className) {
         //rebuild the class/file mapping
         Factory::rebuild();
         //try to see if we have it now
-        if (!Factory::includeFile($className)) {
-            throw new FrameEx("Class ".$className." not found.");
-        }
+        Factory::includeFile($className);
     }
 }
 
