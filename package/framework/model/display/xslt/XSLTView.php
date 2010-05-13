@@ -152,6 +152,9 @@ class XSLTView extends View {
     public function getErrorPage() {
         $this->template = ROOT.Registry::get("ERROR_VIEW");
         $this->outputMode = self::OUTPUT_XSL;
+        $this->data = "";
+        $this->staticIncludes = array();
+
         return $this->execute();
     }
 
