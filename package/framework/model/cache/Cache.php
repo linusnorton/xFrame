@@ -20,6 +20,7 @@ class Cache {
 
     /**
      * Return the current Memcache instance or create one if one does not exist
+     * @return Memcache
      */
     public static function mch() {
         if (!self::$instance instanceof Memcache) {
