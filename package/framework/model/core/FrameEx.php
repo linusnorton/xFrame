@@ -212,18 +212,23 @@ class FrameEx extends Exception {
      * @param Exception $exception
      */
     public function exceptionHandler($exception) {
-        if ($exception instanceof FrameEx) {
-            try {
-                $exception->process();
-            }
-            catch (Exception $e) {
-                echo $e->getMessage();
-                die("Error logging exception");
-            }
+        //if it's not a FrameEx make it one
+        if (!($exception instanceof FrameEx)) {
+            $exception = new FrameEx($exception->getMessage(),
+                                     $exception->getCode(),
+                                     FrameEx::HIGH,
+                                     $exception);
+        }
+
+        try {
+            $exception->process();
+        }
+        catch (Exception $e) {
+            die("Error logging exception: ".$e->getMessage());
         }
 
         //finally echo it out
-        echo $exception;
+        die($exception->__toString());
     }
 
     /**
