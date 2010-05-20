@@ -41,6 +41,10 @@ class Controller {
         $viewClass = Registry::get("DEFAULT_VIEW");
         $this->view = new $viewClass($request->debug == "xml");
 
+        if (Registry::get("COMPRESS_OUTPUT")) {
+            ob_start("ob_gzhandler");
+        }
+        
         if (!headers_sent()) {
             session_start();
         }
