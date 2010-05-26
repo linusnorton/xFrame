@@ -18,11 +18,16 @@ class DB {
         $db = Registry::get("DATABASE_ENGINE");
         $class = Registry::get("DATABASE_DEBUG") ? "LoggedPDO" : "PDO";
 
-        self::$instance = new $class($db.":host=".Registry::get("DATABASE_HOST").";dbname=".Registry::get("DATABASE_NAME"),
-                                     Registry::get("DATABASE_USERNAME"),
-                                     Registry::get("DATABASE_PASSWORD"));
+        try {
+            self::$instance = new $class($db.":host=".Registry::get("DATABASE_HOST").";dbname=".Registry::get("DATABASE_NAME"),
+                                         Registry::get("DATABASE_USERNAME"),
+                                         Registry::get("DATABASE_PASSWORD"));
 
-        self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        }
+        catch (PDOException $ex) {
+            throw new FrameEx("Could not connect to database", 0, FrameEx::HIGH, $ex);
+        }
     }
 
     /**
