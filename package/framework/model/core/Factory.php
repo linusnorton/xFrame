@@ -181,7 +181,8 @@
             include($package."/init.php");
         }
         catch (FrameEx $ex) {
-            throw new FrameEx("Unable to boot package: {$package}, ".$package."/init.php does not exist.");
+            $ex->setMessage("Unable to boot package: {$package}: ".$ex->getMessage());
+            throw $ex;
         }
     }
 
