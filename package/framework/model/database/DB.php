@@ -82,17 +82,23 @@ class DB {
                 $args = func_get_args();
                 $args = array_slice($args, 2);
                 $result = call_user_func_array($callback, $args);
-                $success = self::dbh()->commit();
-                if ($success) {
-                    return $result;
-                }
-                --$attempts;
+                self::dbh()->commit();
+                
+                return $result;
             }
             catch (Exception $ex) {
-                self::dbh()->rollBack();
-                throw $ex;
+                //if its a deadlock, try again
+                if ($ex->getCode() == "40001") {
+                    --$attempts;
+                }
+                //otherwise pass on the exception
+                else {
+                    self::dbh()->rollBack();
+                    throw $ex;
+                }
             }
         }
-        return false;
+
+        throw new FrameEx("Could not commit the transaction in the given number of retries.");
     }
 }
