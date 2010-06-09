@@ -59,5 +59,55 @@ class Encryption {
         return str_replace("\x0", '', $decryptedText);
     }
 
+    /**
+     * Encrypt the given file. If $outFile is set it will write the encrypted 
+     * contents to $outFile otherwise it will delete the $inFile and re-create
+     * it with the encrypted contents
+     * 
+     * @param string $inFile
+     * @param string $key
+     * @param string $iv
+     * @param string $outFile
+     * @param bool $deleteOldFile 
+     */
+    public function encryptFile($inFile, $key, $iv, $outFile = null, $deleteOldFile = true) {
+        $content = file_get_contents($inFile);
+        $encrypted = $this->encrypt($content, $key, $iv);
+
+        //delete the old file if requested.
+        if ($deleteOldFile) {
+            unlink($inFile);
+        }
+
+        //if the outfile is not set, it is assumed to be the same as the in file
+        $outFile = $outFile == null ? $inFile : $outFile;
+        file_put_contents($outFile, $encrypted);
+    }
+
+    /**
+     * Decrypt the given file. If $outFile is set it will write the decrypted
+     * contents to $outFile otherwise it will delete the $inFile and re-create
+     * it with the encrypted contents
+     *
+     * @param string $inFile
+     * @param string $key
+     * @param string $iv
+     * @param string $outFile
+     * @param bool $deleteOldFile
+     */
+    public function decryptFile($inFile, $key, $iv, $outFile = null, $deleteOldFile = true) {
+        $content = file_get_contents($inFile);
+        $decrypted = $this->decrypt($content, $key, $iv);
+
+        //delete the old file if requested.
+        if ($deleteOldFile) {
+            unlink($inFile);
+        }
+                
+        //if the outfile is not set, it is assumed to be the same as the in file
+        $outFile = $outFile == null ? $inFile : $outFile;
+        file_put_contents($outFile, $decrypted);
+    }
+
 }
 
