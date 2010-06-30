@@ -59,7 +59,12 @@ class Transformation implements XML {
      */
     private function generateXMLDom($xml) {
         $dom = new DomDocument();
-        $dom->loadXML($xml);
+        try {
+            $dom->loadXML($xml);
+        }
+        catch (FrameEx $ex) {
+            throw new FrameEx("Could not create DOM with xml\n\n: ".$xml);
+        }
         $dom->xinclude();
         return $dom;
     }
