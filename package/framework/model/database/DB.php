@@ -87,8 +87,9 @@ class DB {
                 return $result;
             }
             catch (Exception $ex) {
+                error_log($ex->getCode()." ".$ex->getMessage());
                 //if its a deadlock, try again
-                if ($ex->getCode() == "40001") {
+                if ($ex->getCode() == "40001" || $ex->getCode() == "1213"   || $ex->getCode() == "1205") {
                     --$attempts;
                 }
                 //otherwise pass on the exception
