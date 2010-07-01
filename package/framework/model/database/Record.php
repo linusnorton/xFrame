@@ -199,7 +199,10 @@ class Record implements XML, Transformable {
             if ($transactional) {
                 DB::dbh()->rollBack();
             }
-            throw new FrameEx("Error saving {$this->tableName} - ".$ex->getMessage(), 115);
+            
+            //many PDO errors are not integers, even though Exception requires them to be
+            $code = ((int) $ex->getCode() == 0) ? 115 : $ex->getCode();
+            throw new FrameEx("Error saving {$this->tableName} - ".$ex->getMessage(), $code, FrameEx::HIGH, $ex);
         }
 
         if (Registry::get("CACHE_ENABLED")) {
