@@ -54,7 +54,10 @@ class CSV {
             }
         }
         //add the value
-        $this->fields[$this->lineNumber][] = $this->quote.addslashes($value).$this->quote;
+        if ($this->escape) {
+            $value = addslashes($value);
+        }
+        $this->fields[$this->lineNumber][] = $this->quote.$value.$this->quote;
     }
 
     /**
