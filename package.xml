@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0     http://pear.php.net/dtd/tasks-1.0.xsd     http://pear.php.net/dtd/package-2.0     http://pear.php.net/dtd/package-2.0.xsd">
+ <name>xframe</name>
+ <uri>http://php-xframe.googlecode.com/</uri>
+ <summary>PHP/XSLT framework</summary>
+ <description>PHP/XSLT web application framework</description>
+ <lead>
+  <name>Linus Norton</name>
+  <user>linusnorton</user>
+  <email>linusnorton@gmail.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2010-09-03</date>
+ <time>11:15:33</time>
+ <version>
+  <release>0.8.0</release>
+  <api>0.8.0</api>
+ </version>
+ <stability>
+  <release>beta</release>
+  <api>beta</api>
+ </stability>
+ <license uri="http://www.apache.org/licenses/">Apache</license>
+ <notes>
+First release
+ </notes>
+ <contents>
+  <dir baseinstalldir="xframe" name="/">
+   <file baseinstalldir="xframe" md5sum="2b155b9058e403548af1fc8d9ab93a60" name="app/build.xml" role="php" />
+   <file baseinstalldir="xframe" md5sum="c6257801072aa03de604e845ce00909a" name="app/init.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="9aefec94d42f4539f66fb5264db63117" name="app/controller/Index.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="3aa819fefa984df27d7ae657480dfc43" name="app/install/example.sql" role="php" />
+   <file baseinstalldir="xframe" md5sum="d41d8cd98f00b204e9800998ecf8427e" name="app/resource/css/main.css" role="php" />
+   <file baseinstalldir="xframe" md5sum="d41d8cd98f00b204e9800998ecf8427e" name="app/resource/js/main.js" role="php" />
+   <file baseinstalldir="xframe" md5sum="e051a6169b3c1f53458e9177a8c5bae1" name="app/test/bootstrap.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="550c68f8b926f263e63183b070ab17c7" name="app/test/model/TestMyClass.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="f60eb065a680c486e95031acd18c7132" name="app/view/index.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="eff9b34d7f53846cb4305fca2675b7de" name="app/view/index.xhtml" role="php" />
+   <file baseinstalldir="xframe" md5sum="49feb1b681444febc74fafcaaad2179d" name="app/view/index.xsl" role="php" />
+   <file baseinstalldir="xframe" md5sum="799bae5b306c7b106496cbea52321906" name="app/view/common/error.xhtml" role="php" />
+   <file baseinstalldir="xframe" md5sum="6c47956572f75830c994b542f91b8c3f" name="app/view/common/error.xsl" role="php" />
+   <file baseinstalldir="xframe" md5sum="16fd7e88d6d53045911a75235be5218e" name="app/view/common/plain-text-error.xsl" role="php" />
+   <file baseinstalldir="xframe" md5sum="b12b81536132abe3c9e124235fd72cc1" name="config/default.conf" role="data" />
+   <file baseinstalldir="xframe" md5sum="4e17cdf0651bc41b943b60cf81399ae7" name="config/framework.conf" role="data" />
+   <file baseinstalldir="xframe" md5sum="15d0f36fe53c71cd12fea1553d6e3af9" name="install/logger.sql" role="php" />
+   <file baseinstalldir="xframe" md5sum="ed3fc812af94c0d4ed487613845bc4ad" name="install/resource.sql" role="php" />
+   <file baseinstalldir="xframe" md5sum="c2ac95add4e51a8574cfc7ad7ec73093" name="model/cache/Cache.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="518b112d0ad575342737431ba7a7a609" name="model/core/Factory.php" role="php">
+    <tasks:replace from="@php_dir@" to="php_dir" type="pear-config" />
+   </file>
+   <file baseinstalldir="xframe" md5sum="bf8af628a210896b30536430e179c80d" name="model/core/FrameEx.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="4cc5a168c0d16661862f569d958400ea" name="model/core/Registry.php" role="php">
+    <tasks:replace from="@data_dir@" to="data_dir" type="pear-config" />
+   </file>
+   <file baseinstalldir="xframe" md5sum="dacaf42c5a2414c485f05e56c66b402b" name="model/database/AuthenticationAdapter.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="019dc822cdedc6dd162937454e720b0b" name="model/database/Condition.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="4f55a22c5b2a291b7e56635763843b3e" name="model/database/Criteria.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="79d95f4251e52e4abf5dad139353a607" name="model/database/CyclicalRelationshipException.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="77e0f3cce35505c00c3828fbb79a514a" name="model/database/DB.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="8234e71260e9934a11fedab62863116b" name="model/database/DbAuth.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="fec681c94300d743b08d66aec0afcdd6" name="model/database/LoggedPDO.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="e6b03c04f7997ec541b36305d9d508e0" name="model/database/LoggedPDOStatement.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="5ec08cdf8ca84f4fe25906971d0a2d92" name="model/database/MappedField.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="6cd0cdb8d326007e3e6a6a8dc2a9213d" name="model/database/MissingRecord.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="a4d303d87fc4f4e31ebfcb04c62bbbf4" name="model/database/MultipleRecord.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="4a5c60c1189768b9ac928b7a4a665d97" name="model/database/OneToMany.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="6004e529e5be773c1f4d95effdba35c8" name="model/database/OneToOne.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="f9e4cdba55fe3b8d5da58c712d1c7f6d" name="model/database/Record.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="e27aad27f1ad010100829c69cc15ed30" name="model/database/Restriction.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="5348e8cd32c237cf44a209eb47cc376f" name="model/database/Results.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="bea1134563d5d49e4efc5535bffc228d" name="model/database/TableGateway.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="5ac6ea2515de72a9cd62c14e0687f62d" name="model/database/TableGatewayException.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="3bdea5d741cac0952109d21f431a90a2" name="model/database/transformer/DefaultRecordTransformer.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="c127e86b356295af35c1cfea0623d43d" name="model/database/transformer/DefaultResultsTransformer.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="350eb3698299d4fa73c5824f0a1d6047" name="model/display/MalformedPage.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="875713b940ad4a5b03f14b0daddfa6dc" name="model/display/View.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="2f4c8bfb731923231a3967e894fa2f66" name="model/display/XML.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="407448b9dd08c100588375f7bd6e5641" name="model/display/php/PHPView.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="bef353c49277d85dff86505ccc9b4b93" name="model/display/phptal/PHPTALView.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="c66c708fa7db0779a0e66f9f41754190" name="model/display/xslt/Transformable.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="c470c52939222caabc9c95750f8d0ffe" name="model/display/xslt/Transformation.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="67d2e0fc615fdf14e8016ce010bf7a87" name="model/display/xslt/XMLTransformer.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="b6be65d4d6c185526d264e62b2aec93b" name="model/display/xslt/XSLTView.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="57ad296858328884a4ad7f83998647ba" name="model/logging/Logger.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="8ec357d248df7f7600586a16f1b6e22e" name="model/logging/LoggerManager.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="d1e4f68ffd4b1d34ebe1a59b2331fffb" name="model/request/Authenticator.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="ad03d18babbba10545d9d1dbaf52d958" name="model/request/Controller.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="a83d4fc0ff1bdbe67ba33e8ad752d92a" name="model/request/Dispatcher.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="0c8d7f85ac21939ad9cdfb8dfbb857dd" name="model/request/Request.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="ebcc75b535beeb244301149a9e8f3f64" name="model/request/Resource.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="643d6a44331da670ab66e3f72167d7f9" name="model/request/UnknownRequest.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="1d2fae2eccc7e5a4b25b3d09707fceef" name="model/util/ArrayUtil.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="7f5db1fb547034e9cbccd886e24a6236" name="model/util/Assert.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="1b303ba3a8cab0e396eb1fe009100137" name="model/util/BitString.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="15ac5077d9bd2d44469db09e221d1127" name="model/util/CSV.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="ffecfb313e73cdff9dbf6984538775c3" name="model/util/Encryption.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="10cb8c135b7da0a4f537829d65304193" name="model/util/Environment.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="d2b248ed31228f52589eae91a18137f2" name="model/util/Form.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="3fc1732f6a2312ca1ddbf4f63764e308" name="model/util/InputValidator.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="d529df006b48e0033b9b08f5aec6717f" name="model/util/PorterStemmer.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="187e81a9882a6d3368402addb8694f41" name="model/util/Sequence.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="f5d213c55608b93ade9d762c12323735" name="model/util/XMLDateTime.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="0592ea26ac6df21347c0f54081440820" name="model/util/phpmailer/PHPMailer.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="1d29cc57fb443a9035fb212ddbda39ab" name="model/util/phpmailer/POP3.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="d504a573b985d5cfa393808fa954a446" name="model/util/phpmailer/SMTP.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="4b76c1f7f5c5f0b1d8b108878564cc7f" name="model/util/phpmailer/language/phpmailer.lang-en.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="e96f8ac1739d70266fa65fadcd3188cb" name="script/addsite.php" role="php">
+    <tasks:replace from="@php_dir@" to="php_dir" type="pear-config" />
+    <tasks:replace from="@data_dir@" to="data_dir" type="pear-config" />
+   </file>
+   <file baseinstalldir="xframe" md5sum="4793b00fe59920400531f679d5afaf32" name="script/profile-log.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="44c05b54f2b21c40341e170c1d7962c5" name="test/bootstrap.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="bb4fd7ea313cbeac7b232541dcb20c81" name="test/model/database/RecordTest.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="0d39d9dd8df72580c1cc367edca09b42" name="test/model/request/RequestTest.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="6d543f5fcf71936f5fb8a6f68bbb9315" name="view/error.xsl" role="php" />
+   <file baseinstalldir="xframe" md5sum="16fd7e88d6d53045911a75235be5218e" name="view/plain-text-error.xsl" role="php" />
+   <file baseinstalldir="xframe" md5sum="0b86b0220616e2cd316c4d3618d2fead" name="www/.htaccess" role="php" />
+   <file baseinstalldir="xframe" md5sum="6902b6f213121648bc50cdc5f95b21d2" name="www/index.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="0b345d5d4aeedd87b2ed67d639d494ad" name="init.php" role="php" />
+   <file baseinstalldir="xframe" md5sum="a671d3d61324b401809b6159c702d278" name="INSTALL" role="data" />
+   <file baseinstalldir="xframe" md5sum="8ca9a8aafb6afde6e4b38fe0e38030f1" name="LICENSE" role="data" />
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.0</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>0.8.0</release>
+    <api>0.8.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2010-09-03</date>
+   <license uri="http://www.apache.org/licenses/">Apache</license>
+   <notes>
+First release
+   </notes>
+  </release>
+ </changelog>
+</package>
