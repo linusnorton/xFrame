@@ -42,9 +42,7 @@
     }
 
     public static function rebuild() {
-        foreach (explode(":", get_include_path()) as $dir) {
-            self::rebuildRootDirectory($dir.DIRECTORY_SEPARATOR);
-        }
+        self::rebuildRootDirectory(dirname(__FILE__)."/../../");
 
         foreach (self::$loadedPackages as $package) {
             self::rebuildRootDirectory($package.DIRECTORY_SEPARATOR);
