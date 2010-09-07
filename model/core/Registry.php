@@ -14,7 +14,13 @@ class Registry {
      */
     public static function init() {
         //see if we are using the pear data directory
-        $configDir = ('@data_dir@' == '@'.'data_dir@') ? dirname(__FILE__).'/../../' : '@data_dir@'.'/xframe/';
+        if ('@data_dir@' == '@'.'data_dir@') {
+            $configDir = is_dir('/etc/xframe/config') ? '/etc/xframe/' : dirname(__FILE__).'/../../';
+        }
+        else {
+            $configDir = '@data_dir@'.'/xframe/';
+        }
+
         $configDir .= 'config/';
 
         $site = $_SERVER["SERVER_NAME"] == "" ? $_SERVER["argv"][1] : $_SERVER["SERVER_NAME"];
