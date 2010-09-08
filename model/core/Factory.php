@@ -43,6 +43,7 @@
 
     public static function rebuild() {
         self::rebuildRootDirectory(dirname(__FILE__)."/../../");
+        self::rebuildRootDirectory(APP_DIR);
 
         foreach (self::$loadedPackages as $package) {
             self::rebuildRootDirectory($package.DIRECTORY_SEPARATOR);
