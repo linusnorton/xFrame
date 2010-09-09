@@ -61,34 +61,26 @@ class Record implements XML, Transformable {
     public static function load($tableName, $id, $class = "Record", $method = "create") {
         $attributes = false;
 
-        //if we're not caching or the record is not in the cache
-        if (!Registry::get("CACHE_ENABLED") || false === ($attributes = Cache::mch()->get($tableName.$id))) {
-            //lets try to get the data from the db
-            try {
-                $stmt = DB::dbh()->prepare('SELECT * FROM `'.addslashes($tableName).'` WHERE `id` = :id');
-                $stmt->bindValue(':id', $id);
-                $stmt->execute();
+        //lets try to get the data from the db
+        try {
+            $stmt = DB::dbh()->prepare('SELECT * FROM `'.addslashes($tableName).'` WHERE `id` = :id');
+            $stmt->bindValue(':id', $id);
+            $stmt->execute();
 
-                //if we dont get any records or we get multiple throw an exception
-                if ($stmt->rowCount() === 0) {
-                    throw new MissingRecord("Could not find a {$tableName} where id = {$id}");
-                }
-                if ($stmt->rowCount() > 1) {
-                    throw new MultipleRecord("Multiple records were matched");
-                }
+            //if we dont get any records or we get multiple throw an exception
+            if ($stmt->rowCount() === 0) {
+                throw new MissingRecord("Could not find a {$tableName} where id = {$id}");
             }
-            catch (PDOException $ex) {
-                //there was some kind of database error
-                throw new FrameEx($ex->getMessage());
-            }
-
-            $attributes = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            //if we're caching, put it in
-            if (Registry::get("CACHE_ENABLED")) {
-                Cache::mch()->set($tableName.$id, $attributes, false, 0);
+            if ($stmt->rowCount() > 1) {
+                throw new MultipleRecord("Multiple records were matched");
             }
         }
+        catch (PDOException $ex) {
+            //there was some kind of database error
+            throw new FrameEx($ex->getMessage());
+        }
+
+        $attributes = $stmt->fetch(PDO::FETCH_ASSOC);
 
         //call the given object's create method, this will be replaced with __STATIC__
         return call_user_func(array($class, $method), $attributes, $tableName);
@@ -204,10 +196,6 @@ class Record implements XML, Transformable {
             $code = ((int) $ex->getCode() == 0) ? 115 : $ex->getCode();
             throw new FrameEx("Error saving {$this->tableName} - ".$ex->getMessage(), $code, FrameEx::HIGH, $ex);
         }
-
-        if (Registry::get("CACHE_ENABLED")) {
-            Cache::mch()->delete($this->tableName.$this->id);
-        }
     }
 
 
@@ -266,10 +254,6 @@ class Record implements XML, Transformable {
         $stmt = DB::dbh()->prepare("DELETE FROM `".$this->tableName."` WHERE id = :id");
         $stmt->bindValue(':id', $this->attributes["id"]);
         $stmt->execute();
-
-        if (Registry::get("CACHE_ENABLED")) {
-            Cache::mch()->delete($this->tableName.$this->id);
-        }
     }
 
     /**
