@@ -151,7 +151,7 @@ class Record implements XML, Transformable {
       * Attempt to start a database transaction
       * @return boolean
       */
-     private function startTransaction() {
+     private static function startTransaction() {
          try {
              $transactional = DB::dbh()->beginTransaction();
          }
@@ -167,9 +167,11 @@ class Record implements XML, Transformable {
      *
      * @param $cascade boolean save related records as well
      */
-    public function save($cascade = false, array &$saveGraph = array()) {
+    public function save($cascade = false, array &$saveGraph = array(), $transactional = true) {
         $saveGraph[$this->hash()] = true;
-        $transactional = $this->startTransaction();
+        if ($transactional) {
+            $transactional = self::startTransaction();
+        }
 
         try {
             //before we save convert objects to ids
@@ -207,6 +209,32 @@ class Record implements XML, Transformable {
             Cache::mch()->delete($this->tableName.$this->id);
         }
     }
+
+
+    /**
+     * Save multiple records using a single transaction.
+     */
+    public static function saveAll(array $records, $cascade = false, $transactional = true) {
+        if ($transactional) {
+            $transactional = self::startTransaction();
+        }
+        try {
+            foreach ($records as $record) {
+                // Save each individual record without starting a new transaction.
+                $saveGraph = array(); // Ignored temp value for pass-by-reference. Work-around for PHP limitations.
+                $record->save($cascade, $saveGraph, false);
+            }
+            Assert::isFalse($transactional && !DB::dbh()->commit(), 'Failed to commit transaction.');
+        }
+        catch (Exception $ex) {
+            if ($transactional) {
+                DB::dbh()->rollBack();
+            }
+            $code = ((int) $ex->getCode() == 0) ? 115 : $ex->getCode();
+            throw new FrameEx("Error saving {$this->tableName} - ".$ex->getMessage(), $code, FrameEx::HIGH, $ex);
+        }
+    }
+
 
     private function createSaveSQL($flatAttributes) {
         if (empty($flatAttributes)) { // Special case for unsaved records with no explicitly set fields.
