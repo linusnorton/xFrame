@@ -210,4 +210,17 @@ class Controller {
         return self::$executionTime;
     }
 
+    /**
+     * issue with POST variable in PHP not be properly populated in some circumstances:
+     * http://getluky.net/2009/02/24/php-_post-array-empty-although-phpinput-and-raw-post-data-is-available/
+     */
+    protected function getParamsFromRawHTTPRequest() {
+        $keyValuePairs = explode("&", file_get_contents('php://input'));
+
+        foreach ($keyValuePairs as $keyValue) {
+            $data = explode("=", $keyValue);
+            $this->request->$data[0] = $data[1];
+        }
+    }
+
 }
