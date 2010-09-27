@@ -125,7 +125,9 @@ class Logger {
         $log->session_id = session_id();
         $log->execution_time = number_format(microtime(true) - Controller::getExecutionTime(), 5);
 
-        $log->save();
+        // Log wihtout transaction.
+        $saveGraph = array();
+        $log->save(false, $saveGraph, false);
     }
 
 }
