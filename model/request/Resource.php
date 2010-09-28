@@ -1,7 +1,5 @@
 <?php
 /**
- * Description of Resource
- *
  * @author Linus Norton <linusnorton@gmail.com>
  */
 class Resource extends Record {
@@ -24,6 +22,12 @@ class Resource extends Record {
         $this->cache_length = $cacheLength;
     }
 
+    /**
+     * Create resource from database record
+     * @param array $attributes
+     * @param string $tableName
+     * @return Resource
+     */
     public static function create(array $attributes, $tableName = "resource") {
         $parameters = unserialize($attributes["parameters"]);
         $parameters = is_array($parameters) ? $parameters : array();
