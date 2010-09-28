@@ -16,7 +16,7 @@ $name = readln("Website name:", "example.com");
 $path = readln("Website path:", "/var/www");
 $virtualHostPath = readln("Path to virtual hosts: ","/etc/apache2/sites-available");
 $hostsFilePath = readln("Path to hosts file:", "/etc/hosts");
-$configDir = ('@data_dir@' == '@'.'data_dir@') ? dirname(__FILE__).'/../' : '@data_dir@'.'/xframe/';
+$configDir = ('@data_dir@' == '@'.'data_dir@') ? '/etc/xframe/' : '@data_dir@'.'/xframe/';
 $configDir .= 'config/';
 
 if (is_dir($path."/".$name)) {
@@ -28,6 +28,7 @@ else {
     echo "\nCopying default application into directory...";
     $source = ('@php_dir@' == '@'.'php_dir@') ? dirname(__FILE__).'/../app' : '@php_dir@'.'/xframe/app';
     smartCopy($source, $path."/".$name);
+    unlink($path."/".$name."/.ignore");
 }
 
 if (file_exists($configDir.$name.".conf")) {
