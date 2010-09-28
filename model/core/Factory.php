@@ -100,7 +100,7 @@
      * @param &$classes array stores the classes that are found
      */
     private static function getClassesInDirectory($dir, &$classes, $zendMode = false) {
-        if (!is_dir($dir)) {
+        if (!is_dir($dir) || file_exists($dir."/.ignore")) {
             return;
         }
 
@@ -155,7 +155,7 @@
         $contents .= "//It contains the class/file map for the autoloading Factory object\n";
 
         foreach ($classes as $class => $file) {
-            $contents .= "Factory::add('{$class}','".$file."');\n";
+            $contents .= "Factory::add('{$class}','".realpath($file)."');\n";
         }
 
         fwrite($fp, $contents);
@@ -191,11 +191,11 @@
      * @param string $package
      */
     public static function boot($package) {
+        $tmpPath = self::$tmp.str_replace(DIRECTORY_SEPARATOR,"_",realpath($package));
 
         //load the class mapping
         try {
-            $path = self::$tmp.str_replace(DIRECTORY_SEPARATOR,"_",realpath($package.DIRECTORY_SEPARATOR));
-            include($path.".classes.php");
+            include($tmpPath.".classes.php");
         }
         catch (FrameEx  $ex) { /*file does not exist*/ }
 
@@ -208,7 +208,25 @@
             throw $ex;
         }
 
+        //load the class mapping
+        try {
+            include($tmpPath.".request-map.php");
+        }
+        catch (FrameEx  $ex) {
+            RequestMapGenerator::build($package);
+            include($tmpPath.".request-map.php");
+        }
+
+
         self::$loadedPackages[] = $package;
+    }
+
+    /**
+     * Returns an array of all packages currently loaded
+     * @return array
+     */
+    public static function getLoadedPackages() {
+        return self::$loadedPackages;
     }
 
 }
