@@ -219,7 +219,7 @@ class Record implements XML, Transformable {
                 DB::dbh()->rollBack();
             }
             $code = ((int) $ex->getCode() == 0) ? 115 : $ex->getCode();
-            throw new FrameEx("Error saving {$this->tableName} - ".$ex->getMessage(), $code, FrameEx::HIGH, $ex);
+            throw new FrameEx("Error saving multiple records - ".$ex->getMessage(), $code, FrameEx::HIGH, $ex);
         }
     }
 
