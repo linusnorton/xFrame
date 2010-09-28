@@ -80,4 +80,12 @@ class Dispatcher {
     public static function getListeners() {
         return self::$listeners;
     }
+
+    /**
+     * Manually set the listeners
+     * @param array $listeners
+     */
+    public static function setListeners($listeners) {
+        self::$listeners = $listeners;
+    }
 }
