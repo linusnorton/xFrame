@@ -25,7 +25,7 @@ class RequestMapGenerator {
         //for each file in the directory
         while (($file = readdir($dh)) !== false) {
             //if it is something we want to ignore...
-            if ($file == "." || $file == ".."  || $file == ".svn") {
+            if ($file == "test" || $file == "." || $file == ".."  || $file == ".svn") {
                 continue;
             }
             //if it is a directory...
