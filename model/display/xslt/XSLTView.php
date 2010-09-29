@@ -20,7 +20,7 @@ class XSLTView extends View {
     /**
      * Build the XSLT View
      */
-    public function __construct($debugMode = false,
+    public function __construct($debugMode = "",
                                 $viewDirectory = "view",
                                 $viewExtension = ".xsl",
                                 $staticIncludeDirectory = "xml",
@@ -33,7 +33,7 @@ class XSLTView extends View {
         $this->data = "";
         $this->staticIncludes = array();
 
-        if ($debugMode && Registry::get("DEBUG_ENABLED")) {
+        if ($debugMode == "xml" && Registry::get("DEBUG_ENABLED")) {
             $this->outputMode = self::OUTPUT_XML;
         }
     }

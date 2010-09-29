@@ -38,8 +38,13 @@ class Controller {
     public function  __construct(Resource $resource, Request $request) {
         $this->resource = $resource;
         $this->request = $request;
-        $viewClass = Registry::get("DEFAULT_VIEW");
-        $this->view = new $viewClass($request->debug == "xml");
+
+        $viewClass = $resource->getViewType() == null ? Registry::get("DEFAULT_VIEW") : $resource->getViewType();
+        $this->view = new $viewClass($request->debug);
+
+        if ($resource->getViewTemplate() != null) {
+            $this->view->setTemplate($resource->getViewTemplate());
+        }
 
         if (Registry::get("COMPRESS_OUTPUT")) {
             ob_start("ob_gzhandler");
