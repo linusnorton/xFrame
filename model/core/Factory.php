@@ -160,6 +160,11 @@
 
         fwrite($fp, $contents);
         fclose($fp);
+        //set so only this users group can read and write the file
+        try {
+            chmod($filename, 0660);
+        }
+        catch (FrameEx $ex) { /* we tried */ }
     }
 
     /**
