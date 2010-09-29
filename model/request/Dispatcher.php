@@ -32,7 +32,7 @@ class Dispatcher {
      * @param String $method
      * @param int $cacheLength
      * @param array $parameterMap
-	 */
+     */
     public static function addListener($requestName, $class, $method, $cacheLength = false, array $parameterMap = array(), $authenticator = null) {
         self::$listeners[$requestName] = new Resource($requestName,
                                                       $class,

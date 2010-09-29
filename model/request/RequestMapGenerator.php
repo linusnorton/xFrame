@@ -69,13 +69,24 @@ class RequestMapGenerator {
                 $mappedParams = $annotation->getAnnotation("RequestParams")->value == null ? array() : $annotation->getAnnotation("RequestParams")->value;
                 $cacheLength = $annotation->getAnnotation("CacheLength")->value == null ? array() : $annotation->getAnnotation("CacheLength")->value;
                 $authenticator = $annotation->getAnnotation("RequestAuthenticator")->value == null ? array() : $annotation->getAnnotation("RequestAuthenticator")->value;
+                $viewType = $annotation->getAnnotation("ViewType")->value == null ? array() : $annotation->getAnnotation("ViewType")->value;
+                $viewTemplate = $annotation->getAnnotation("ViewTemplate")->value == null ? array() : $annotation->getAnnotation("ViewTemplate")->value;
                 $customParams = array();
                 
                 foreach ($annotation->getAllAnnotations("CustomParam") as $custom) {
                     $customParams[$custom->name] = $custom->value;
                 }
 
-                $resource = new Resource($requestName, $method->class, $method->name, $mappedParams, $authenticator, $cacheLength, null, $customParams);
+                $resource = new Resource($requestName, 
+                                         $method->class,
+                                         $method->name,
+                                         $mappedParams,
+                                         $authenticator,
+                                         $cacheLength,
+                                         $viewType,
+                                         $viewTemplate,
+                                         null,
+                                         $customParams);
                 $string .= "Dispatcher::addResource(unserialize('".serialize($resource)."'));\n";
             }
         }

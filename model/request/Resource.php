@@ -10,6 +10,8 @@ class Resource extends Record {
                                 array $parameters = array(),
                                 $authenticator = null,
                                 $cacheLength = false,
+                                $viewType = "XSLTView",
+                                $viewTemplate = null,
                                 $tableName = "resource",
                                 array $attributes = array()) {
 
@@ -20,6 +22,8 @@ class Resource extends Record {
         $this->parameters = $parameters;
         $this->authenticator = $authenticator;
         $this->cache_length = $cacheLength;
+        $this->view_template = $viewTemplate;
+        $this->view_type = $viewType;
     }
 
     /**
@@ -38,6 +42,8 @@ class Resource extends Record {
                             $parameters,
                             $attributes["authenticator"],
                             $attributes["cache_length"],
+                            $attributes["view_type"],
+                            $attributes["view_template"],
                             $tableName,
                             $attributes);
     }
@@ -73,6 +79,17 @@ class Resource extends Record {
      */
     public function getName() {
         return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewType() {
+        return $this->view_type;
+    }
+
+    public function getViewTemplate() {
+        return $this->view_template;
     }
 
     /**
