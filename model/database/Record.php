@@ -143,7 +143,7 @@ class Record implements XML, Transformable {
       * Attempt to start a database transaction
       * @return boolean
       */
-     private static function startTransaction() {
+     protected static function startTransaction() {
          try {
              $transactional = DB::dbh()->beginTransaction();
          }
