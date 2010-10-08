@@ -108,7 +108,7 @@
         if ($dh = opendir($dir)) {
             //for each file
             while (($file = readdir($dh)) !== false) {
-                if ($file == "." || $file == ".."  || $file == ".svn" || $file == "PHPTAL") {
+                if ($file == "." || $file == ".."  || $file == ".svn") {
                     continue;
                 }
 
