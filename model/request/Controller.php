@@ -6,7 +6,6 @@
  *
  *
  * @author Linus Norton <linusnorton@gmail.com>
- * @package core
  */
 class Controller {
 
@@ -41,7 +40,7 @@ class Controller {
 
         $viewClass = $resource->getViewType() == null ? Registry::get("DEFAULT_VIEW") : $resource->getViewType();
         $this->view = new $viewClass($request->debug);
-
+        
         if ($resource->getViewTemplate() != null) {
             $this->view->setTemplate($resource->getViewTemplate());
         }
