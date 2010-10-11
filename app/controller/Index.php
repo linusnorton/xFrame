@@ -8,15 +8,24 @@
 class Index extends Controller {
 
     /**
-     * This class provides the implementation for the home request as specified
-     * in the app/init.php file
+     * This class provides the implementation for the home request. The
+     * annotations below map the "home" request to this method and sets the
+     * view to view/index.xsl
+     *
+     * @RequestName("home")
+     * @ViewTemplate("index")
      */
     public function run() {
+
+        /*
+
+        Example logging:
         $log = LoggerManager::getLogger("home");
         $log->debug("Entering Index->run() for handling of home event");
 
-        /*Example PDO/Active Record database interaction
-          needs this sql table:
+
+        Example PDO/Active Record database interaction
+        needs this sql table:
 
         CREATE TABLE test_table (
             `id` INT(11) UNSIGNED auto_increment,
@@ -101,6 +110,5 @@ class Index extends Controller {
         TableGateway::delete("test_table", Restriction::is("name", "Linus"), 3);
 
         */
-        $this->view->setTemplate("index");
     }
 }
