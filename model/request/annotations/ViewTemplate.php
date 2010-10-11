@@ -3,4 +3,4 @@
 /**
  * @author Linus Norton <linusnorton@gmail.com>
  */
-class ViewTemplates extends Annotation { }
+class ViewTemplate extends Annotation { }
