@@ -16,11 +16,24 @@ class Dispatcher {
      * @param Request $r
      * @return string
      */
-    public static function dispatch(Request $r) {        
+    public static function dispatch(Request $r) {
+        //if we have a mapping for the request
         if (array_key_exists($r->getRequestedResource(), self::$listeners)) {
+            //return the response from the controller
             return self::$listeners[$r->getRequestedResource()]->getController($r)->getResponse();
         }
 
+        //if we rebuild on 404, disable this for performance
+        if (Registry::get("AUTO_REBUILD_REQUEST_MAP")) {
+            RequestMapGenerator::buildAll(true);
+
+            //try again, in case it has just been added
+            if (array_key_exists($r->getRequestedResource(), self::$listeners)) {
+                return self::$listeners[$r->getRequestedResource()]->getController($r)->getResponse();
+            }
+        }
+
+        //otherwise 404
         header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
     }
 
