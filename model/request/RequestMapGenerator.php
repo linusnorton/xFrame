@@ -67,10 +67,10 @@ class RequestMapGenerator {
             if ($annotation->hasAnnotation("RequestName")) {
                 $requestName = $annotation->getAnnotation("RequestName")->value;
                 $mappedParams = $annotation->getAnnotation("RequestParams")->value == null ? array() : $annotation->getAnnotation("RequestParams")->value;
-                $cacheLength = $annotation->getAnnotation("CacheLength")->value == null ? array() : $annotation->getAnnotation("CacheLength")->value;
-                $authenticator = $annotation->getAnnotation("RequestAuthenticator")->value == null ? array() : $annotation->getAnnotation("RequestAuthenticator")->value;
-                $viewType = $annotation->getAnnotation("ViewType")->value == null ? array() : $annotation->getAnnotation("ViewType")->value;
-                $viewTemplate = $annotation->getAnnotation("ViewTemplate")->value == null ? array() : $annotation->getAnnotation("ViewTemplate")->value;
+                $cacheLength = $annotation->getAnnotation("CacheLength")->value == null ? false : $annotation->getAnnotation("CacheLength")->value;
+                $authenticator = $annotation->getAnnotation("RequestAuthenticator")->value == null ? null : $annotation->getAnnotation("RequestAuthenticator")->value;
+                $viewType = $annotation->getAnnotation("ViewType")->value == null ? Registry::get("DEFAULT_VIEW") : $annotation->getAnnotation("ViewType")->value;
+                $viewTemplate = $annotation->getAnnotation("ViewTemplate")->value == null ? null : $annotation->getAnnotation("ViewTemplate")->value;
                 $customParams = array();
                 
                 foreach ($annotation->getAllAnnotations("CustomParam") as $custom) {
@@ -96,8 +96,9 @@ class RequestMapGenerator {
 
     /**
      * Writes the request-map to the system temp folder.
-     * @param string $filename
+     * @param string $package
      * @param string $contents
+     * @return string
      */
     private static function writeRequestMap($package, $contents) {
         $contents = "<?php\n\n// controllers in: {$package}\n{$contents}";
@@ -112,17 +113,24 @@ class RequestMapGenerator {
             $up->setMessage("Could not write to: ".$filename);
             throw $up;
         }
+
+        return $filename;
     }
 
     /**
      * Get all the loaded packages and rebuild their request maps
+     * @param boolean $include if true, includes the file that is created
      */
-    public static function buildAll() {
+    public static function buildAll($include = false) {
         $generator = new RequestMapGenerator();
 
         foreach (Factory::getLoadedPackages() as $package) {
             $contents = $generator->buildDirectory($package);
-            self::writeRequestMap($package, $contents);
+            $filename = self::writeRequestMap($package, $contents);
+
+            if ($include) {
+                include($filename);
+            }
         }
     }
 
