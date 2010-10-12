@@ -9,5 +9,3 @@
 class MalformedPage extends FrameEx {
 
 }
-
-?>
