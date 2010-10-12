@@ -101,8 +101,7 @@ class Controller {
             $this->cacheResponse($response);
         }
         catch (FrameEx $ex) {
-            $this->processException($ex);
-            $response = $this->view->getErrorPage();
+            $response = $this->handleException($ex);
         }
 
         return $response;
@@ -153,6 +152,23 @@ class Controller {
         }
 
         return $response;
+    }
+
+    /**
+     * This is the default handler for exceptions that occur when building the page.
+     *
+     * By default it adds the exception to the page and uses the view to generate
+     * and error page.
+     *
+     * It can be overridden to provide different functionality such as persisting
+     * the exception and redirecting to an error page.
+     *
+     * @param FrameEx $ex
+     * @return string
+     */
+    protected function handleException(FrameEx $ex) {
+        $this->processException($ex);
+        return $this->view->getErrorPage();
     }
 
     /**
