@@ -33,7 +33,7 @@ class Dispatcher {
             }
         }
 
-        //otherwise 404
+        //otherwise 404 (no need to add die, execution will end anyway
         header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
     }
 
