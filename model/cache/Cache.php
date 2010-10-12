@@ -10,13 +10,12 @@
 class Cache {
     private static $instance = false;
 
-
     /**
      * Create a Memcahe instance based on the settings in the registry
      */
     private static function connect() {
         self::$instance = new Memcache();
-	}
+    }
 
     /**
      * Return the current Memcache instance or create one if one does not exist
