@@ -40,6 +40,8 @@ class Request implements XML {
         $this->parameters = array_slice($request, 1);
         //store the other params (usually from $_REQUEST)
         $this->mappedParameters = $parameters;
+        //get the $_FILES array
+        $this->files = $_FILES;
     }
 
     /**
