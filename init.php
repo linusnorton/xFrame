@@ -2,6 +2,7 @@
 
 //Object Factory
 require_once(dirname(__FILE__)."/model/core/Factory.php");
+spl_autoload_register("Factory::autoload");
 
 Factory::init();
 Controller::boot();
