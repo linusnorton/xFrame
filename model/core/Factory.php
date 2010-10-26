@@ -166,7 +166,8 @@
      */
     public static function init() {
         self::$tmp = sys_get_temp_dir().DIRECTORY_SEPARATOR;
-
+        spl_autoload_register("Factory::autoload");
+        
         //include the paths to the classes for the framework
         try {
             $baseDir = ('@php_dir@' == '@'.'php_dir@') ? dirname(__FILE__).'/../../' : '@php_dir@'.'/xframe/';
