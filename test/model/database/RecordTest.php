@@ -1,7 +1,5 @@
 <?php
 
-require_once 'PHPUnit/Framework.php';
-
 
 class RecordTest extends PHPUnit_Framework_TestCase {
 
