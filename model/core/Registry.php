@@ -13,21 +13,16 @@ class Registry {
      * Load the settings in the config directory for the current
      */
     public static function init() {
-        //see if we are using the pear data directory
-        if ('@data_dir@' == '@'.'data_dir@') {
-            $configDir = is_dir('/etc/xframe/config') ? '/etc/xframe/' : dirname(__FILE__).'/../../';
-        }
-        else {
-            $configDir = '@data_dir@'.'/xframe/';
-        }
+        $file = $_SERVER["XFRAME_CONFIG"] == "" ? "config/".$_SERVER["argv"][1].".ini" : $_SERVER["XFRAME_CONFIG"];
 
-        $configDir .= 'config/';
-
-        $site = $_SERVER["SERVER_NAME"] == "" ? $_SERVER["argv"][1] : $_SERVER["SERVER_NAME"];
-        $file = $configDir.$site.".conf";
-
+        //if the file does not exist, try to find the dev.ini
         if (!file_exists($file)) {
-            $file = $configDir."default.conf";
+            if (!file_exists("config/dev.ini")) {
+                die("Unabled to find configuration file: ".$file);
+            }
+            else {
+                $file = "config/dev.ini";
+            }
         }
 
         self::$settings = parse_ini_file($file);
@@ -81,13 +76,24 @@ class Registry {
      * Load settings from tables in the conf file
      */
     public static function loadDBSettings() {
-        $databaseSettings = Registry::get("DATABASE_SETTING");
+        $site = $_SERVER["SERVER_NAME"] == "" ? $_SERVER["argv"][1] : $_SERVER["SERVER_NAME"];
 
-        if (is_array($databaseSettings)) {
-            foreach ($databaseSettings as $table) {
-                Registry::loadFromDB($table);
+        //if (!Registry::get("CACHE_ENABLED") || false === ($settings = Cache::mch()->get($site."config"))) {
+            $databaseSettings = Registry::get("DATABASE_SETTING");
+
+            if (is_array($databaseSettings)) {
+                foreach ($databaseSettings as $table) {
+                    Registry::loadFromDB($table);
+                }
             }
-        }
+            
+            if (Registry::get("CACHE_ENABLED")) {
+                Cache::mch()->set($site."config", self::$settings);
+            }
+//        }
+//        else {
+//            Registry::$settings = $settings;
+//        }
     }
 
     /**

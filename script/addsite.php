@@ -16,8 +16,6 @@ $name = readln("Website name:", "example.com");
 $path = readln("Website path:", "/var/www");
 $virtualHostPath = readln("Path to virtual hosts: ","/etc/apache2/sites-available");
 $hostsFilePath = readln("Path to hosts file:", "/etc/hosts");
-$configDir = ('@data_dir@' == '@'.'data_dir@') ? '/etc/xframe/' : '@data_dir@'.'/xframe/';
-$configDir .= 'config/';
 
 if (is_dir($path."/".$name)) {
     echo "\nDirectory: ".$path."/".$name." already exists, skipping intial directory creation...\n";
@@ -29,16 +27,11 @@ else {
     $source = ('@php_dir@' == '@'.'php_dir@') ? dirname(__FILE__).'/../app' : '@php_dir@'.'/xframe/app';
     smartCopy($source, $path."/".$name);
     unlink($path."/".$name."/.ignore");
-}
 
-if (file_exists($configDir.$name.".conf")) {
-    echo "\nConfiguration file for {$name} already exists, skipping creation...";
-}
-else {
-    echo "\nCopying default configuration file...";
-    $configFile = file_get_contents($configDir."default.conf");
-    $configFile = str_replace("/var/www/app", $path."/".$name, $configFile);
-    file_put_contents($configDir.$name.".conf", $configFile);
+    //update the conf files
+    updateConf($path."/".$name."/config/dev.ini", $path."/".$name);
+    updateConf($path."/".$name."/config/test.ini", $path."/".$name);
+    updateConf($path."/".$name."/config/live.ini", $path."/".$name);
 }
 
 if (file_exists($virtualHostPath."/".$name)) {
@@ -65,9 +58,11 @@ else {
 echo "
 Website setup complete.
 
+If you are using a debian based system please enable the site by typing: \033[01;31msudo a2ensite {$name}\033[0m
+
 \033[01;31mPlease restart apache\033[0m and then visit {$name} in your browser to confirm setup was successful.
 
-Your configuration file is \033[01;31m{$configDir}{$name}.conf\033[0m please enter in your database credentials if required.\n\n";
+Your configuration file is \033[01;31m".realpath($path."/config/dev.ini")."\033[0m please enter in your database credentials if required.\n\n";
 
 function readln($prompt, $default = null) {
     $response = "";
@@ -89,11 +84,14 @@ function readln($prompt, $default = null) {
 
 function createVirtualHost($name, $path) {
     $webroot = ('@php_dir@' == '@'.'php_dir@') ? dirname(__FILE__).'/../www' : '@php_dir@'.'/xframe/www';
+    $webroot = realpath($webroot);
+    $path = realpath($path."/".$name);
     return '
 #CONFIG FOR WEBSITE
 <VirtualHost *:80>
         ServerName '.$name.'
 
+        SetEnv XFRAME_CONFIG "'.$path.'/config/dev.ini"
         DocumentRoot "'.$webroot.'"
         <Directory "'.$webroot.'">
                 Options Indexes FollowSymLinks MultiViews
@@ -102,8 +100,8 @@ function createVirtualHost($name, $path) {
                 allow from all
         </Directory>
 
-        Alias "/resource" "'.$path.'/'.$name.'/resource"
-        <Directory "'.$path.'/'.$name.'/resource">
+        Alias "/resource" "'.$path.'/resource"
+        <Directory "'.$path.'/resource">
                 Options Indexes FollowSymLinks MultiViews
                 AllowOverride All
         </Directory>
@@ -116,8 +114,8 @@ function createVirtualHost($name, $path) {
 <VirtualHost *:80>
         ServerName resource.'.$name.'
 
-        DocumentRoot "'.$path.'/'.$name.'/resource"
-        <Directory "'.$path.'/'.$name.'/resource">
+        DocumentRoot "'.$path.'/resource"
+        <Directory "'.$path.'/resource">
                 Options Indexes FollowSymLinks MultiViews
                 AllowOverride None
         </Directory>
@@ -126,6 +124,15 @@ function createVirtualHost($name, $path) {
         ';
 }
 
+function updateConf($filename, $path) {
+    $configFile = file_get_contents($filename);
+    $configFile = str_replace("/var/www/app", realpath($path), $configFile);
+    file_put_contents($filename, $configFile);
+}
+
+/**
+ * Taken from somewhere on http://php.net
+ */
 function smartCopy($source, $dest, $options=array('folderPermission'=>0755,'filePermission'=>0755)) {
     $result=false;
 
