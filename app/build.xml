@@ -8,23 +8,20 @@
         This file contains the phing scripts to test and deploy an xframe project
 -->
 
-
-<project name="testsite" basedir="." default="deploy">
+<project name="app" basedir="." default="deploy">
     <if>
-     <isset property="${config}"/>
-     <then>
-         <echo message="Using ${config}.conf settings" />
-     </then>
-     <else>
-        <property name="config" value="default" />
-        <echo message="Using ${config}.conf settings" />
-     </else>
+        <isset property="config"/>
+        <then>
+            <property name="config" value="${config}" />
+        </then>
+        <else>
+            <property name="config" value="dev" />
+        </else>
     </if>
-
-    <property file="./config/${config}.conf" />
-    <property name="project" value="./package/${APP_DIR}" />
-    <property name="report" value="${project}report" />
-    <property name="install" value="${project}install" />
+    <property file="config/${config}.ini" />
+    <property name="project" value="${APP_DIR}" />
+    <property name="report" value="${project}/report" />
+    <property name="install" value="${project}/install" />
 
 
     <!-- Clean -->
@@ -32,13 +29,13 @@
         <delete dir="${report}" includeemptydirs="true" verbose="true" failonerror="true" />
     </target>
 
-    <!-- Deploy -->
-    <target name="deploy" description="deploy the project">
-        <!--this is hardcoded to mysql until I find a better way-->
+    <!-- Build -->
+    <target name="build" description="build the project">
+        <!-- drop and recreate the database -->
         <exec command="mysql -h${DATABASE_HOST} -u${DATABASE_USERNAME} -p${DATABASE_PASSWORD} -e'DROP DATABASE IF EXISTS ${DATABASE_NAME}; CREATE DATABASE ${DATABASE_NAME}'"
               dir="."
               checkreturn="true" />
-        
+
         <pdo url="${DATABASE_ENGINE}:host=${DATABASE_HOST};dbname=${DATABASE_NAME}" userid="${DATABASE_USERNAME}" password="${DATABASE_PASSWORD}">
           <fileset dir="${install}">
               <include name="*.sql"/>
@@ -49,41 +46,22 @@
     </target>
 
     <!-- Test -->
-    <target depends="clean,deploy" name="test" description="tests this package">
+    <target depends="clean,build" name="test" description="tests this package">
         <mkdir dir="${report}" />
         <mkdir dir="${report}/coverage-html" />
         <mkdir dir="${report}/coverage" />
 
-        <exec outputProperty="result" command="phpunit --bootstrap=${project}test/bootstrap.php --log-junit ${report}/logfile.xml --coverage-clover ${report}/coverage/clover.xml --coverage-source ${report}/coverage --coverage-html ${report}/coverage-html/ ${project}test"/>
-        <echo message="${result}" />
-        <!--
-        <coverage-setup database="${report}/coverage.db">
-          <fileset dir="${project}">
-            <include name="**/*.php"/>
-          </fileset>
-        </coverage-setup>
-
-        <phpunit bootstrap="./bootstrap.php" printsummary="true" codecoverage="true">
-          <batchtest>
-            <fileset dir="./package/">
-              <include name="**/*Test*.php"/>
-            </fileset>
-          </batchtest>
-          <formatter type="xml" todir="${report}" outfile="logfile.xml"/>
-        </phpunit>
--->
-        <phpunitreport infile="${report}/logfile.xml"
-                       format="frames"
-                       todir="${report}"/>
-
-<!--
-        <coverage-report outfile="${report}/coverage.xml">
-            <report todir="${report}/coverage"/>
-        </coverage-report>
- -->
+        <exec passthru="true" command="phpunit -d XFRAME_CONFIG=config/${config}.ini --bootstrap=${project}test/bootstrap.php ${project}test"/>
     </target>
+
+    <!-- Coverage -->
+    <target depends="clean,build" name="coverage" description="tests this package and generates a coverage report">
+        <mkdir dir="${report}" />
+        <mkdir dir="${report}/coverage-html" />
+        <mkdir dir="${report}/coverage" />
+
+        <exec passthru="true" command="phpunit -d XFRAME_CONFIG=config/${config}.ini --bootstrap=${project}test/bootstrap.php --log-junit ${report}/logfile.xml --coverage-clover ${report}/coverage/clover.xml --coverage-html ${report}/coverage-html/ ${project}test"/>
+        <phpunitreport infile="${report}/logfile.xml" format="frames" todir="${report}"/>
+    </target>
+
 </project>
-
-
-
-
