@@ -315,7 +315,7 @@ class POP3 {
    * @param integer $size
    * @return string
    */
-  private public function getResponse ($size = 128) {
+  public function getResponse ($size = 128) {
     $pop3_response = fgets($this->pop_conn, $size);
 
     return $pop3_response;
