@@ -167,6 +167,7 @@
     public static function init() {
         self::$tmp = sys_get_temp_dir().DIRECTORY_SEPARATOR;
         spl_autoload_register("Factory::autoload");
+        Factory::$objects["Annotation"] = dirname(__FILE__)."/../util/addendum/annotations.php";
         
         //include the paths to the classes for the framework
         try {
@@ -194,7 +195,7 @@
 
         //boot
         try {
-            include($package.DIRECTORY_SEPARATOR."init.php");
+            include_once($package.DIRECTORY_SEPARATOR."init.php");
         }
         catch (FrameEx $ex) {
             $ex->setMessage("Unable to boot package: {$package}: ".$ex->getMessage());

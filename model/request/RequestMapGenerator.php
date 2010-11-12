@@ -1,7 +1,5 @@
 <?php
 
-require(dirname(__FILE__)."/../util/addendum/annotations.php");
-
 /**
  * This class analyses annotations in the controller folder of any
  * loaded package.
