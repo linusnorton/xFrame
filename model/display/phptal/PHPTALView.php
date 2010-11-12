@@ -1,7 +1,5 @@
 <?php
 
-require_once "phptal/PHPTAL.php";
-
 /**
  * PHPTAL view wrapper
  *
@@ -19,6 +17,15 @@ class PHPTALView extends View {
      */
     public function  __construct() {
         parent::__construct(APP_DIR."view".DIRECTORY_SEPARATOR, ".xhtml");
+
+        try {
+            include_once "phptal/PHPTAL.php";
+        }
+        catch(FrameEx $ex) {
+            $ex->setMessage("PHPTAL not installed");
+            throw $ex;
+        }
+        
         $this->phptal = new PHPTAL();
     }
 
