@@ -13,11 +13,14 @@ class Registry {
      * Load the settings in the config directory for the current
      */
     public static function init() {
-        $file = $_SERVER["XFRAME_CONFIG"] == "" ? "config/".$_SERVER["argv"][1].".ini" : $_SERVER["XFRAME_CONFIG"];
+        $file = $_SERVER["XFRAME_CONFIG"] == "" ? $_SERVER["argv"][1].".ini" : $_SERVER["XFRAME_CONFIG"];
 
         //if the file does not exist, try to find the dev.ini
         if (!file_exists($file)) {
-            if (!file_exists("config/dev.ini")) {
+            if (file_exists("config/".$file)) {
+                $file = "config/".$file;
+            }
+            else if (!file_exists("config/dev.ini")) {
                 die("Unabled to find configuration file: ".$file);
             }
             else {
