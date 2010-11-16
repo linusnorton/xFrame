@@ -48,6 +48,9 @@ class RequestMapGenerator {
      * @return string
      */
     private function analyseClass($file) {
+        //double check we have included addendum
+        require_once dirname(__FILE__)."/../util/addendum/annotations.php";
+
         $class = pathinfo($file , PATHINFO_FILENAME);
         try {
             $reflection = new ReflectionClass($class);
