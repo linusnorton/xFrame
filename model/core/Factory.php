@@ -23,7 +23,7 @@
         //if we have a mapping for the object
         if (isset(self::$objects[$className])) {
             try {
-                return include(self::$objects[$className]);
+                return include_once(self::$objects[$className]);
             }
             catch (FrameEx $ex) { /*drop below and return false */ }
         }
