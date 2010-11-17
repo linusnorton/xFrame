@@ -21,7 +21,7 @@ class Registry {
                 $file = "config/".$file;
             }
             else if (!file_exists("config/dev.ini")) {
-                die("Unabled to find configuration file: ".$file);
+                die("Unable to find configuration file: ".$file);
             }
             else {
                 $file = "config/dev.ini";
