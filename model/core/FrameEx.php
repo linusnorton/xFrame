@@ -190,6 +190,10 @@ class FrameEx extends Exception {
      * Handles PHP generated errors
      */
     public function errorHandler($type, $msg, $filename, $line ) {
+        if (!(error_reporting() & $type)) {
+            // This error code is not included in error_reporting
+            return;
+        }
         $errortype = array (
                         E_ERROR              => 'Error',
                         E_WARNING            => 'Warning',
