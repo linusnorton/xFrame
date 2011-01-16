@@ -9,6 +9,9 @@ use xframe\exception\ExceptionOutputter;
 use xframe\request\FrontController;
 use xframe\registry\Registry;
 use \Memcache;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Configuration;
+use \PDO;
 
 /**
  * The System class provides access to the core resources, this includes the
@@ -58,6 +61,11 @@ class System {
     private $database;
 
     /**
+     * @var EntityManager
+     */
+    private $em;
+
+    /**
      * @var Cache
      */
     private $cache;
@@ -82,6 +90,7 @@ class System {
                                 FrontController $frontController = null,
                                 Registry $registry = null,
                                 PDO $database = null,
+                                EntityManager $em = null,
                                 Memcache $cache = null) {
 
         $this->root = $root;
@@ -92,6 +101,7 @@ class System {
         $this->exceptionHandler = $exceptionHandler;
         $this->frontController = $frontController;
         $this->database = $database;
+        $this->em = $em;
         $this->cache = $cache;
     }
 
@@ -182,6 +192,36 @@ class System {
         }
 
         return $this->database;
+    }
+
+    public function getEm() {
+        if ($this->em === null) {
+            if (extension_loaded('apc')) {
+                $cache = new \Doctrine\Common\Cache\ApcCache();
+            }
+            else if (!$this->registry->get("CACHE_ENABLED")) {
+                $cache = new \Doctrine\Common\Cache\ArrayCache();
+            }
+            else {
+                $cache = new \Doctrine\Common\Cache\MemcacheCache();
+            }
+
+            $config = new Configuration();
+            $config->setMetadataCacheImpl($cache);
+            $driver = $config->newDefaultAnnotationDriver($this->root.'src');
+            $config->setMetadataDriverImpl($driver);
+            $config->setQueryCacheImpl($cache);
+            $config->setProxyDir($this->root."tmp".DIRECTORY_SEPARATOR);
+            $config->setProxyNamespace('Project\Proxies');
+
+            $rebuild = $this->registry->get("AUTO_REBUILD_PROXIES");
+            $config->setAutoGenerateProxyClasses($rebuild);
+
+            $connectionOptions = array('pdo' => $this->getDatabase());
+            $this->em = EntityManager::create($connectionOptions, $config);
+        }
+
+        return $this->em;
     }
 
     /**
