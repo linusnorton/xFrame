@@ -1,0 +1,5 @@
+#!/bin/bash
+scriptpath="$(dirname "$(readlink -f ${BASH_SOURCE[0]})")"
+rm $scriptpath/../doc -Rf
+mkdir $scriptpath/../doc
+phpdoc -d $scriptpath/../src -t $scriptpath/../doc
