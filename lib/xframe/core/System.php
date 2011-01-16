@@ -199,11 +199,11 @@ class System {
             if (extension_loaded('apc')) {
                 $cache = new \Doctrine\Common\Cache\ApcCache();
             }
-            else if (!$this->registry->get("CACHE_ENABLED")) {
-                $cache = new \Doctrine\Common\Cache\ArrayCache();
+            else if ($this->registry->get("CACHE_ENABLED")) {
+                $cache = new \Doctrine\Common\Cache\MemcacheCache();
             }
             else {
-                $cache = new \Doctrine\Common\Cache\MemcacheCache();
+                $cache = new \Doctrine\Common\Cache\ArrayCache();
             }
 
             $config = new Configuration();
