@@ -2,6 +2,8 @@
 
 namespace xframe\view;
 use \PHPTAL;
+use xframe\registry\Registry;
+
 /**
  * PHPTAL view wrapper
  *
@@ -16,8 +18,15 @@ class PHPTALView extends View {
 
     /**
      * Constructor sets up the PHPTAL object
+     * @param Registry $registry
+     * @param string $root
+     * @param string $template
+     * @param boolean $debug
      */
-    public function  __construct($root, $template, $debug = false) {
+    public function  __construct(Registry $registry,
+                                 $root,
+                                 $template,
+                                 $debug = false) {
         parent::__construct(
             $root."view".DIRECTORY_SEPARATOR,
             ".xhtml",

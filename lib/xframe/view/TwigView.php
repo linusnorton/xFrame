@@ -3,6 +3,7 @@
 namespace xframe\view;
 use \Twig_Environment;
 use \Twig_Loader_Filesystem;
+use xframe\registry\Registry;
 
 /**
  * TwigView is the view for Fabien Potiencier's Twig templating language.
@@ -23,20 +24,25 @@ class TwigView extends View {
 
     /**
      * Creates the Twig objects
-     * 
+     *
+     * @param Registry $registry
      * @param string $root
      * @param string $template
-     * @param boolean $debug 
+     * @param boolean $debug
      */
-    public function  __construct($root, $template, $debug = false) {
-        parent::__construct("", ".html", $template);
+    public function  __construct(Registry $registry,
+                                 $root,
+                                 $template,
+                                 $debug = false) {
+        parent::__construct("", ".twig", $template);
         $this->model = array();
         
         $this->twig = new Twig_Environment(
             new Twig_Loader_Filesystem($root."view".DIRECTORY_SEPARATOR),
             array(
                 'cache' => $root."tmp".DIRECTORY_SEPARATOR,
-                'debug' => $debug
+                'debug' => $debug,
+                'auto_reload' => $registry->get("AUTO_REBUILD_TWIG")
             )
         );
     }

@@ -36,6 +36,7 @@ class RequestMapGenerator {
         //include addendum
         require_once $system->root."lib/addendum/annotations.php";
 
+        Addendum::ignore("Entity");
         Addendum::setClassnames(
             array(
                 "Request" => "xframe\\request\\annotation\\Request",
@@ -121,7 +122,7 @@ class RequestMapGenerator {
                 $string .= "return new {$method->class}(\$this->system,";
                 $string .= "\$request,";
                 $string .= var_export($method->name, true).", ";
-                $string .= "new {$view}(\$this->system->root, ".var_export($template, true).", \$request->debug), ";
+                $string .= "new {$view}(\$this->system->registry, \$this->system->root, ".var_export($template, true).", \$request->debug), ";
                 $string .= var_export($mappedParams, true).", ";
                 $string .= var_export($filter, true).", ";
                 $string .= var_export($cacheLength, true)." );";
