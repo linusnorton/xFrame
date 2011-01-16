@@ -136,7 +136,7 @@
 
 		public function instantiateAnnotation($class, $parameters, $targetReflection = false) {
 			$class = Addendum::resolveClassName($class);
-			if(is_subclass_of($class, 'Annotation') && !Addendum::ignores($class) || $class == 'Annotation') {
+			if(!Addendum::ignores($class) && is_subclass_of($class, 'Annotation') || $class == 'Annotation') {
 				$annotationReflection = new ReflectionClass($class);
 				return $annotationReflection->newInstance($parameters, $targetReflection);
 			}
