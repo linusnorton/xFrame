@@ -179,12 +179,13 @@ class System {
         if ($this->database === null) {
             $db = $this->registry->get("DATABASE_ENGINE");
             $host = $this->registry->get("DATABASE_HOST");
+            $port = $this->registry->get("DATABASE_PORT");
             $name = $this->registry->get("DATABASE_NAME");
             $user = $this->registry->get("DATABASE_USERNAME");
             $pass = $this->registry->get("DATABASE_PASSWORD");
 
             $this->database = new PDO(
-                $db.":host=".$host.";dbname=".$name,
+                $db.":host=".$host.";dbname=".$name. ($port ? ';port='. $port : null),
                 $user,
                 $pass
             );
