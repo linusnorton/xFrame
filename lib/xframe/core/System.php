@@ -209,7 +209,12 @@ class System {
 
             $config = new Configuration();
             $config->setMetadataCacheImpl($cache);
-            $driver = $config->newDefaultAnnotationDriver($this->root.'src');
+            $driver = $config->newDefaultAnnotationDriver(
+                array(
+                    $this->root.'src',
+                    $this->root.'lib/xframe'
+                )
+            );
             $config->setMetadataDriverImpl($driver);
             $config->setQueryCacheImpl($cache);
             $config->setProxyDir($this->root."tmp".DIRECTORY_SEPARATOR);
