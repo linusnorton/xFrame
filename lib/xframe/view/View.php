@@ -70,8 +70,4 @@ abstract class View {
      */
     public abstract function execute();
 
-    /**
-     * Provide a fallback error page
-     */
-    public abstract function getErrorPage();
 }

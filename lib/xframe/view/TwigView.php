@@ -68,15 +68,6 @@ class TwigView extends View {
     }
 
     /**
-     * Fall back to a default error view.
-     * @return string
-     */
-    public function getErrorPage() {
-        //$this->template = ROOT.Registry::get("ERROR_VIEW");
-        return $this->execute();
-    }
-
-    /**
      * Pass the magic set on to Twig
      * @param string $key
      * @param mixed $value
