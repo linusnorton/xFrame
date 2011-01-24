@@ -29,6 +29,9 @@ $autoloader->register();
 $system = new System($root);
 $system->boot();
 
+//include addendum
+require_once $system->root."lib/addendum/annotations.php";
+
 $configFile = getcwd() . DIRECTORY_SEPARATOR . 'cli-config.php';
 
 $helperSet = null;
