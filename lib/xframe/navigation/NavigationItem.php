@@ -1,5 +1,7 @@
 <?php
 
+namespace xframe\navigation;
+
 /**
  * NavigationItem has a name, a link and optional children
  *
@@ -50,5 +52,35 @@ class NavigationItem {
         $this->link = $link;
         $this->parent = $parent;
         $this->children = $children;
-    }  
+    }
+
+    /**
+     * @return string
+     */
+    public function getName() {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLink() {
+        return $this->link;
+    }
+
+    /**
+     * @return NavigationItem
+     */
+    public function getParent() {
+        return $this->parent;
+    }
+
+    /**
+     * @return array of {@link NavigationItem}
+     */
+    public function getChildren() {
+        return $this->children;
+    }
+
+
 }
