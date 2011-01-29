@@ -3,7 +3,6 @@
 namespace xframe\request;
 use xframe\core\System;
 use xframe\view\View;
-use xframe\util\Container;
 use \Exception;
 
 /**
@@ -50,8 +49,15 @@ class Controller {
     private $method;
 
     /**
-     *
+     * Constructor
+     * 
+     * @param System $system
      * @param Request $request
+     * @param string $method
+     * @param View $view
+     * @param array $parameterMap
+     * @param Prefilter $prefilter
+     * @param int $cacheLength
      */
     public function  __construct(System $system,
                                  Request $request,
