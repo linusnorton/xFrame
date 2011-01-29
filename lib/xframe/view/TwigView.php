@@ -34,7 +34,7 @@ class TwigView extends View {
                                  $root,
                                  $template,
                                  $debug = false) {
-        parent::__construct("", ".twig", $template);
+        parent::__construct("", ".html", $template);
         $this->model = array();
         
         $this->twig = new Twig_Environment(
