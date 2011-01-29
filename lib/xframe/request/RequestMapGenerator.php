@@ -37,6 +37,7 @@ class RequestMapGenerator {
         require_once $system->root."lib/addendum/annotations.php";
 
         Addendum::ignore("Entity");
+        Addendum::ignore("MappedSuperclass");
         Addendum::setClassnames(
             array(
                 "Request" => "xframe\\request\\annotation\\Request",
