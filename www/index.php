@@ -17,11 +17,8 @@ require_once($root.'lib/xframe/autoloader/Autoloader.php');
 $autoloader = new Autoloader($root);
 $autoloader->register();
 
-$system = new System($root);
+$system = new System($root, $_SERVER["CONFIG"]);
 $system->boot();
-
-//$map = new xframe\request\RequestMapGenerator($system);
-//$map->scan($root."src");
 
 $request = new Request($_SERVER['REQUEST_URI'],$_REQUEST,$_SERVER['PHP_SELF']);
 $system->getFrontController()->dispatch($request);
