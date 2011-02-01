@@ -3,15 +3,25 @@
 namespace xframe\util;
 
 /**
- * Contain for arbitrary data, provides __get and __set methods
+ * Container for arbitrary data, provides __get and __set methods can easily
+ * be used as a dependency injection container or generic model/data container
  *
  * @author Linus Norton <linusnorton@gmail.com>
+ * @package util
  */
 class Container {
-    private $attributes;
+    
+    /**
+     * Associative array storing container attributes
+     * @var array
+     */
+    protected $attributes;
 
-    public function __construct() {
-        $this->attributes = array();
+    /**
+     * @param array $defaults
+     */
+    public function __construct(array $defaults = array()) {
+        $this->attributes = $defaults;
     }
 
     /**
@@ -43,4 +53,24 @@ class Container {
     public function __isset($key) {
         return isset($this->attributes[$key]);
     }
+
+    /**
+     * Provides support for getters and setters
+     *
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
+     */
+    public function __call($method, array $arguments) {
+        $action = substr($method ,0, 3);
+        $property = lcfirst(substr($method, 3));
+
+        switch ($action) {
+            case "get":
+                return $this->__get($property);
+            case "set":
+                $this->__set($property, current($arguments));
+        }
+    }
+
 }
