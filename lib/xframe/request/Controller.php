@@ -1,7 +1,7 @@
 <?php
 
 namespace xframe\request;
-use xframe\core\System;
+use xframe\core\DependencyInectionContainer;
 use xframe\view\View;
 use \Exception;
 
@@ -14,9 +14,9 @@ use \Exception;
 class Controller {
 
     /**
-     * @var System
+     * @var DependencyInjectionContainer
      */
-    protected $system;
+    protected $dic;
 
     /**
      * @var Request
@@ -51,7 +51,7 @@ class Controller {
     /**
      * Constructor
      * 
-     * @param System $system
+     * @param DependencyInjectionContainer $dic
      * @param Request $request
      * @param string $method
      * @param View $view
@@ -59,20 +59,20 @@ class Controller {
      * @param Prefilter $prefilter
      * @param int $cacheLength
      */
-    public function  __construct(System $system,
+    public function  __construct(DependencyInjectionContainer $dic,
                                  Request $request,
                                  $method,
                                  View $view,
                                  array $parameterMap = array(),
                                  Prefilter $prefilter = null,
                                  $cacheLength = false) {
-        $this->system = $system;
+        $this->dic = $dic;
         $this->request = $request;
         $this->request->applyParameterMap($parameterMap);
         $this->method = $method;
         $this->prefilter = $prefilter;
         $this->cacheLength = $cacheLength;
-        $this->cacheEnabled = $this->system->registry->get("CACHE_ENABLED");
+        $this->cacheEnabled = $this->dic->registry->get("CACHE_ENABLED");
         $this->view = $view;
     }
 
@@ -123,7 +123,7 @@ class Controller {
      */
     protected function cacheResponse($response) {
         if ($this->cacheEnabled && $this->cacheLength !== false) {
-            $this->system->cache->set(
+            $this->dic->cache->set(
                 $this->request->hash(),
                 $response,
                 false,
@@ -159,7 +159,7 @@ class Controller {
     protected function getResponseFromCache() {
         //see if we can grab it from the cache
         if ($this->cacheEnabled && $this->cacheLength !== false) {
-            return $this->system->cache->get($this->request->hash());
+            return $this->dic->cache->get($this->request->hash());
         }
         return false;
     }

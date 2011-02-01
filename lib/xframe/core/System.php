@@ -23,93 +23,32 @@ use \PDO;
  * @author Linus Norton <linusnorton@gmail.com>
  * @package core
  */
-class System {
-
-    /**
-     * @var string root directory
-     */
-    private $root;
-
-    /**
-     * @var string path to configuration ini
-     */
-    private $configFilename;
-
-    /**
-     * @var ErrorHandler
-     */
-    private $errorHandler;
-
-    /**
-     * @var ExceptionHandler
-     */
-    private $exceptionHandler;
-
-    /**
-     * @var FrontController
-     */
-    private $frontController;
-
-    /**
-     * @var Registry
-     */
-    private $registry;
-
-    /**
-     * @var PDO
-     */
-    private $database;
-
-    /**
-     * @var EntityManager
-     */
-    private $em;
-
-    /**
-     * @var Cache
-     */
-    private $cache;
+class System extends DependencyInectionContainer {
     
     /**
-     * If the errorHandler, exceptionHandler, frontController or registry are
-     * passed as null a default object will be created the first time they are
-     * accessed.
-     *
      * @param string $root
      * @param string $configFilename
-     * @param ErrorHandler $errorHandler
-     * @param ExceptionHandler $exceptionHandler
-     * @param FrontController $frontController
-     * @param Registry $registry
-     * @param PDO $database
      */
-    public function __construct($root,
-                                $configFilename = "config/dev.ini",
-                                ErrorHandler $errorHandler = null,
-                                ExceptionHandler $exceptionHandler = null,
-                                FrontController $frontController = null,
-                                Registry $registry = null,
-                                PDO $database = null,
-                                EntityManager $em = null,
-                                Memcache $cache = null) {
+    public function __construct($root, $configFilename) {
+        parent::__construct(array(
+            "root" => $root,
+            "tmp" => $root."tmp".DIRECTORY_SEPARATOR,
+            "configFilename" => "config".$configFilename.".ini",
+        ));
 
-        $this->root = $root;
-        $this->tmp = $root."tmp".DIRECTORY_SEPARATOR;
-        $this->configFilename = $configFilename;        
-        $this->registry = $registry;
-        $this->errorHandler = $errorHandler;
-        $this->exceptionHandler = $exceptionHandler;
-        $this->frontController = $frontController;
-        $this->database = $database;
-        $this->em = $em;
-        $this->cache = $cache;
+        $this->setDefaultDatabase();
+        $this->setDefaultEm();
+        $this->setDefaultErrorHandler();
+        $this->setDefaultExceptionHandler();
+        $this->setDefaultFrontController();
+        $this->setDefaultRegistry();
     }
 
     /**
      * Register the error and exception handler, load the registry
      */
     public function boot() {
-        $this->getRegistry()->load($this->configFilename, $this->root);
+        $this->getRegistry()->load($this->configFilename, $this->root);;
         $this->getErrorHandler()->register();
         $this->getExceptionHandler()->register();
         $this->getExceptionHandler()->attach(new Logger());
@@ -132,75 +71,70 @@ class System {
     }
 
     /**
-     * @return ErrorHandler
+     * Set the lambda for errorHandler
      */
-    public function getErrorHandler() {
-        if ($this->errorHandler === null) {
-            $this->errorHandler = new ErrorHandler();
-        }
-
-        return $this->errorHandler;
+    private function setDefaultErrorHandler() {
+        $this->add("errorHandler", function ($dic) {
+            return new ErrorHandler();
+        });
     }
 
     /**
-     * @return ExceptionHandler
+     * Set the default ExceptionHandler
      */
-    public function getExceptionHandler() {
-        if ($this->exceptionHandler === null) {
-            $this->exceptionHandler = new ExceptionHandler();
-        }
-
-        return $this->exceptionHandler;
+    private function setDefaultExceptionHandler() {
+        $this->add("exceptionHandler", function ($dic) {
+            return new ExceptionHandler();
+        });
     }
 
     /**
-     * @return FrontController
+     * Set the lambda for frontController
      */
-    public function getFrontController() {
-        if ($this->frontController === null) {
-            $this->frontController = new FrontController($this);
-        }
-
-        return $this->frontController;
+    private function setDefaultFrontController() {
+        $this->add("frontController", function ($dic) {
+            return new FrontController($dic);
+        });
     }
 
     /**
-     * @return Registry
+     * Set the lambda for registry
      */
-    public function getRegistry() {
-        if ($this->registry === null) {
-            $this->registry = new Registry();
-        }
-
-        return $this->registry;
+    private function setDefaultRegistry() {
+        $this->add("registry", function ($dic) {
+            return new Registry();
+        });
     }
 
-    public function getDatabase() {
-        if ($this->database === null) {
-            $db = $this->registry->get("DATABASE_ENGINE");
-            $host = $this->registry->get("DATABASE_HOST");
-            $port = $this->registry->get("DATABASE_PORT");
-            $name = $this->registry->get("DATABASE_NAME");
-            $user = $this->registry->get("DATABASE_USERNAME");
-            $pass = $this->registry->get("DATABASE_PASSWORD");
+    /**
+     * Set the lambda for database
+     */
+    private function setDefaultDatabase() {
+        $this->add("database", function ($dic) {
+            $db = $dic->registry->get("DATABASE_ENGINE");
+            $host = $dic->registry->get("DATABASE_HOST");
+            $port = $dic->registry->get("DATABASE_PORT");
+            $name = $dic->registry->get("DATABASE_NAME");
+            $user = $dic->registry->get("DATABASE_USERNAME");
+            $pass = $dic->registry->get("DATABASE_PASSWORD");
 
-            $this->database = new PDO(
-                $db.":host=".$host.";dbname=".$name. ($port ? ';port='. $port : null),
+            $database = new PDO(
+                $db.":host=".$host.";dbname=".$name.(!$port ?: ';port='.$port),
                 $user,
                 $pass
             );
-            $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        }
+            $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        return $this->database;
+            return $database;
+        });
     }
 
-    public function getEm() {
-        if ($this->em === null) {
+    private function setDefaultEm() {
+        $this->add("database", function ($dic) {
             if (extension_loaded('apc')) {
                 $cache = new \Doctrine\Common\Cache\ApcCache();
             }
-            else if ($this->registry->get("CACHE_ENABLED")) {
+            else if ($dic->registry->get("CACHE_ENABLED")) {
                 $cache = new \Doctrine\Common\Cache\MemcacheCache();
             }
             else {
@@ -211,51 +145,20 @@ class System {
             $config->setMetadataCacheImpl($cache);
             $driver = $config->newDefaultAnnotationDriver(
                 array(
-                    $this->root.'src',
-                    $this->root.'lib/xframe'
+                    $dic->root.'src',
+                    $dic->root.'lib/xframe'
                 )
             );
             $config->setMetadataDriverImpl($driver);
             $config->setQueryCacheImpl($cache);
-            $config->setProxyDir($this->root."tmp".DIRECTORY_SEPARATOR);
+            $config->setProxyDir($dic->tmp.DIRECTORY_SEPARATOR);
             $config->setProxyNamespace('Project\Proxies');
 
-            $rebuild = $this->registry->get("AUTO_REBUILD_PROXIES");
+            $rebuild = $dic->registry->get("AUTO_REBUILD_PROXIES");
             $config->setAutoGenerateProxyClasses($rebuild);
 
-            $connectionOptions = array('pdo' => $this->getDatabase());
-            $this->em = EntityManager::create($connectionOptions, $config);
-        }
-
-        return $this->em;
-    }
-
-    /**
-     * Return the path to the project root
-     * @return string
-     */
-    public function getRoot() {
-        return $this->root;
-    }
-
-    /**
-     * Return the path to the temporary directory
-     * @return string
-     */
-    public function getTmp() {
-        return $this->tmp;
-    }
-
-    /**
-     * Provide public read-only access to private variables via the public
-     * getters. This allows users to easily access $system->database but also
-     * ensures that they are setup correctly by using the getter
-     *
-     * @param string $name
-     * @return mixed
-     */
-    public function __get($name) {
-        $method = "get".ucfirst($name);
-        return $this->$method();
+            $connectionOptions = array('pdo' => $dic->getDatabase());
+            return EntityManager::create($connectionOptions, $config);
+        });
     }
 }

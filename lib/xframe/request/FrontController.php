@@ -2,7 +2,7 @@
 
 namespace xframe\request;
 
-use xframe\core\System;
+use xframe\core\DependencyInjectionContainer;
 
 /**
  * @author Linus Norton <linusnorton@gmail.com>
@@ -15,9 +15,9 @@ class FrontController {
 
     /**
      * Stores the root directory and provides access to the database handle
-     * @var System
+     * @var DependencyInjectionContainer
      */
-    private $system;
+    private $dic;
 
     /**
      * Default handler for 404 requests
@@ -27,11 +27,11 @@ class FrontController {
 
     /**
      * Setup the initial state
-     * @param System $system
+     * @param DependencyInjectionContainer $dic
      */
-    public function __construct(System $system,
+    public function __construct(DependencyInjectionContainer $dic,
                                 Controller $notFoundController = null) {
-        $this->system = $system;
+        $this->dic = $dic;
         $this->notFoundController = $notFoundController;
     }
     
@@ -40,14 +40,14 @@ class FrontController {
      * @param Request $request 
      */
     public function dispatch(Request $request) {
-        $filename = $this->system->tmp.$request->getRequestedResource().".php";
+        $filename = $this->dic->tmp.$request->getRequestedResource().".php";
         //if we have a mapping for the request
         if (file_exists($filename)) {
             //return the response from the controller
             $controller = require($filename);
         }
         //if we rebuild on 404, disable this for performance
-        else if ($this->system->registry->get("AUTO_REBUILD_REQUEST_MAP")) {
+        else if ($this->dic->registry->get("AUTO_REBUILD_REQUEST_MAP")) {
             $this->rebuildRequestMap();
 
             //try again, in case it has just been added
@@ -76,7 +76,7 @@ class FrontController {
     }
 
     private function rebuildRequestMap() {
-        $mapper = new RequestMapGenerator($this->system);
-        $mapper->scan($this->system->root."src");
+        $mapper = new RequestMapGenerator($this->dic);
+        $mapper->scan($this->dic->root."src");
     }
 }

@@ -7,7 +7,7 @@ use \Exception;
 use \ReflectionMethod;
 use \ReflectionAnnotatedMethod;
 use \Addendum;
-use xframe\core\System;
+use xframe\core\DependencyInjectionContainer;
 
 /**
  * This class analyses class annotations to create request map files for each
@@ -21,20 +21,20 @@ class RequestMapGenerator {
      */
     private $includeDirs;
     /**
-     * @var System
+     * @var DependencyInjectionContainer
      */
-    private $system;
+    private $dic;
 
-    public function __construct(System $system) {
-        $this->system = $system;
+    public function __construct(DependencyInjectionContainer $dic) {
+        $this->dic = $dic;
         
         $this->includeDirs = array(
-            $system->root."src".DIRECTORY_SEPARATOR,
-            $system->root."lib".DIRECTORY_SEPARATOR
+            $dic->root."src".DIRECTORY_SEPARATOR,
+            $dic->root."lib".DIRECTORY_SEPARATOR
         );
         
         //include addendum
-        require_once $system->root."lib/addendum/annotations.php";
+        require_once $dic->root."lib/addendum/annotations.php";
 
         Addendum::ignore("Entity");
         Addendum::ignore("MappedSuperclass");
@@ -111,7 +111,7 @@ class RequestMapGenerator {
                 $mappedParams = $annotation->getAnnotation("Params")->value == null ? array() : $annotation->getAnnotation("Params")->value;
                 $cacheLength = $annotation->getAnnotation("CacheLength")->value == null ? false : $annotation->getAnnotation("CacheLength")->value;
                 $filter = $annotation->getAnnotation("Prefilter")->value == null ? null : $annotation->getAnnotation("Prefilter")->value;
-                $view = $annotation->getAnnotation("View")->value == null ? $this->system->registry->get("DEFAULT_VIEW") : $annotation->getAnnotation("View")->value;
+                $view = $annotation->getAnnotation("View")->value == null ? $this->dic->registry->get("DEFAULT_VIEW") : $annotation->getAnnotation("View")->value;
                 $template = $annotation->getAnnotation("Template")->value == null ? $request : $annotation->getAnnotation("Template")->value;
                 $customParams = array();
 
@@ -120,15 +120,15 @@ class RequestMapGenerator {
                 }
 
                 $string = "<?php\n\n";
-                $string .= "return new {$method->class}(\$this->system,";
+                $string .= "return new {$method->class}(\$this->dic,";
                 $string .= "\$request,";
                 $string .= var_export($method->name, true).", ";
-                $string .= "new {$view}(\$this->system->registry, \$this->system->root, ".var_export($template, true).", \$request->debug), ";
+                $string .= "new {$view}(\$this->dic->registry, \$this->dic->root, ".var_export($template, true).", \$request->debug), ";
                 $string .= var_export($mappedParams, true).", ";
                 $string .= var_export($filter, true).", ";
                 $string .= var_export($cacheLength, true)." );";
                 
-                file_put_contents($this->system->tmp.$request.".php", $string);
+                file_put_contents($this->dic->tmp.$request.".php", $string);
             }
         }
     }
