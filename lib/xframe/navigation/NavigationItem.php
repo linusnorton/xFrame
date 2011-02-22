@@ -8,10 +8,7 @@ namespace xframe\navigation;
  * @author Linus Norton <linusnorton@gmail.com>
  * @package navigation
  *
- * @Entity
- * @InheritanceType("SINGLE_TABLE")
- * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"NavigationItem" = "NavigationItem"})
+ * @MappedSuperclass
  */
 class NavigationItem {
 
@@ -42,11 +39,12 @@ class NavigationItem {
      * Constructor
      * @param string $name
      * @param string $link
+     * @param NavigationItem $parent
      * @param array $children
      */
     public function __construct($name, 
                                 $link,
-                                NavigationItem $parent,
+                                NavigationItem $parent = null,
                                 array $children = array()) {
         $this->name = $name;
         $this->link = $link;
