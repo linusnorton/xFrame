@@ -1,6 +1,7 @@
 <?php
 
 namespace xframe\core;
+use xframe\util\Container;
 
 /**
  * Used to store the applications dependencies.
