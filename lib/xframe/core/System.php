@@ -23,19 +23,19 @@ use \PDO;
  * @author Linus Norton <linusnorton@gmail.com>
  * @package core
  */
-class System extends DependencyInectionContainer {
+class System extends DependencyInjectionContainer {
     
     /**
      * @param string $root
-     * @param string $configFilename
+     * @param string $config
      */
-    public function __construct($root, $configFilename) {
+    public function __construct($root, $config) {
         parent::__construct(array(
             "root" => $root,
             "tmp" => $root."tmp".DIRECTORY_SEPARATOR,
-            "configFilename" => "config".$configFilename.".ini",
-        ));
-
+            "configFilename" => "config".DIRECTORY_SEPARATOR.$config.".ini",
+        ));        
+        
         $this->setDefaultDatabase();
         $this->setDefaultEm();
         $this->setDefaultErrorHandler();
@@ -117,9 +117,9 @@ class System extends DependencyInectionContainer {
             $name = $dic->registry->get("DATABASE_NAME");
             $user = $dic->registry->get("DATABASE_USERNAME");
             $pass = $dic->registry->get("DATABASE_PASSWORD");
-
+            
             $database = new PDO(
-                $db.":host=".$host.";dbname=".$name.(!$port ?: ';port='.$port),
+                "{$db}:host={$host};dbname=".$name.($port?';port='.$port:''),
                 $user,
                 $pass
             );
@@ -130,7 +130,7 @@ class System extends DependencyInectionContainer {
     }
 
     private function setDefaultEm() {
-        $this->add("database", function ($dic) {
+        $this->add("em", function ($dic) {
             if (extension_loaded('apc')) {
                 $cache = new \Doctrine\Common\Cache\ApcCache();
             }
