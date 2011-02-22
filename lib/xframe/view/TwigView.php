@@ -75,5 +75,13 @@ class TwigView extends View {
     public function __set($key, $value) {
         $this->add($value, $key);
     }
+    
+    /**
+     * @param scalar $key
+     * @return mixed
+     */
+    public function __get($key) {
+        return $this->model[$key];
+    }
 }
 
