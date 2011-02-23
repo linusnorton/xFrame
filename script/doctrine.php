@@ -26,7 +26,7 @@ require_once($root.'lib/xframe/autoloader/Autoloader.php');
 $autoloader = new Autoloader($root);
 $autoloader->register();
 
-$system = new System($root);
+$system = new System($root, "dev");
 $system->boot();
 
 //include addendum
