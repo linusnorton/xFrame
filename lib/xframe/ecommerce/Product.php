@@ -42,12 +42,33 @@ class Product {
         $this->price = $price;
         $this->category = $category;
     }
+    
+    /**
+     * @return integer
+     */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
+     * @param integer $id 
+     */
+    public function setId($id) {
+        $this->id = $id;
+    }
 
     /**
      * @return string
      */
     public function getName() {
         return $this->name;
+    }
+
+    /**
+     * @param string $name 
+     */
+    public function setName($name) {
+        $this->name = $name;
     }
 
     /**
@@ -58,9 +79,23 @@ class Product {
     }
 
     /**
+     * @param integer $price 
+     */
+    public function setPrice($price) {
+        $this->price = $price;
+    }
+
+    /**
      * @return Category
      */
     public function getCategory() {
         return $this->category;
+    }
+
+    /**
+     * @param Category $category 
+     */
+    public function setCategory(Category $category) {
+        $this->category = $category;
     }
 }
