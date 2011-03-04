@@ -97,4 +97,12 @@ class ExceptionHandler implements SplSubject {
     public function getLastException() {
         return end($this->exceptions);
     }
+
+    /**
+     * @return array
+     */
+    public function getObservers() {
+        return $this->observers;
+    }
+
 }
