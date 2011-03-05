@@ -104,14 +104,22 @@ class Basket {
      * @param Product $product
      * @param int $quantity
      */
-    public function remove($product, $quantity = 0) { 
-        $productID = $product->getId();
-        
+    public function remove(Product $product, $quantity = 0) { 
+        $this->removeById($product->getId());
+    }
+    
+    /**
+     * Remove the product from the basket using it's product id
+     * @param type $productID
+     * @param type $quantity 
+     */
+    public function removeById($productID, $quantity = 0) {
         //if 0 remove all
         if ($quantity == 0) {
             unset($this->products[$productID]);
         }
         else if (array_key_exists($productID, $this->products)) {
+            
             $this->products[$productID]['quantity'] -= $quantity;
             if ($this->products[$productID]['quantity'] < 1) {
                 unset($this->products[$productID]);
