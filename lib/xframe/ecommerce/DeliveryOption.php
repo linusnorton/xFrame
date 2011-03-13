@@ -25,10 +25,6 @@ class DeliveryOption {
      * @Column(type="integer")
      */
     private $price;
-    /**
-     * @Column(type="boolean")
-     */
-    private $taxInclusive;
     
     /**
      *
@@ -36,10 +32,9 @@ class DeliveryOption {
      * @param int $price
      * @param boolean $taxInclusive 
      */
-    function __construct($name, $price, $taxInclusive) {
+    function __construct($name, $price) {
         $this->name = $name;
         $this->price = $price;
-        $this->taxInclusive = $taxInclusive;
     }
     
     /**
@@ -82,20 +77,6 @@ class DeliveryOption {
      */
     public function setPrice($price) {
         $this->price = $price;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function getTaxInclusive() {
-        return $this->taxInclusive;
-    }
-
-    /**
-     * @param boolean $taxInclusive 
-     */
-    public function setTaxInclusive($taxInclusive) {
-        $this->taxInclusive = $taxInclusive;
     }
 }
 

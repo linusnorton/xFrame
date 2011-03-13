@@ -65,6 +65,13 @@ class Basket {
     public function setDeliveryOption(DeliveryOption $deliveryOption) {
         $this->deliveryOption = $deliveryOption;
     }
+    
+    /**
+     * Reset the delivery option to null
+     */
+    public function clearDeliveryOption() {
+        $this->deliveryOption = null;
+    }
 
     /**
      * @return boolean
@@ -150,6 +157,19 @@ class Basket {
         }
 
         return $total;
+    }
+    
+    public function getTotal() {
+        $total = 0;
+        foreach ($this->products as $basketItem) {
+            $total += $basketItem['object']->getPrice() * $basketItem['quantity'];
+        }
+        
+        if ($this->deliveryOption != null) {
+            $total += $this->deliveryOption->getPrice();
+        }
+        
+        return $total;        
     }
 }
 
