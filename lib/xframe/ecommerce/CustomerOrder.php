@@ -78,18 +78,40 @@ class CustomerOrder {
         $this->lastUpdated = $lastUpdated;
     }
 
+    /**
+     * Add items from the basket
+     * @param array $basketItems 
+     */
     public function addBasketItems(array $basketItems) {
-        
         foreach ($basketItems as $item) {
             $this->orderItems[] = new OrderItem(
                 $this,
                 $item["object"]->getId(), 
+                $item["object"]->getName(),
                 $item["object"]->getPrice(), 
                 $item["quantity"]
             );
         }
     }
     
+    /**
+     * @return int
+     */
+    public function getSubTotal() {
+        $total = 0;
+        foreach ($this->orderItems as $item) {
+            $total += $item->getQuantity() * $item->getPrice();
+        }
+        
+        return $total;
+    }
+    
+    /**
+     * @return int
+     */
+    public function getTotal() {
+        return $this->getSubTotal() + $this->deliveryCost;
+    }
     
     public function getId() {
         return $this->id;
