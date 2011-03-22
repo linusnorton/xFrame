@@ -1,7 +1,7 @@
 <?php
 
 namespace xframe\ecommerce\paypal;
-use xframe\ecommerce\Basket;
+use xframe\ecommerce\CustomerOrder;
 
 /**
  * PayPalForm
@@ -11,9 +11,9 @@ use xframe\ecommerce\Basket;
  */
 class PayPalForm {
     /**
-     * @var Customerbasket
+     * @var CustomerOrder
      */
-    private $basket;
+    private $order;
     private $payPalAccount;
     private $domain;
     private $failURL;
@@ -25,7 +25,7 @@ class PayPalForm {
     
     /**
      *
-     * @param Basket $basket
+     * @param order $order
      * @param string $paypalAccount
      * @param string $domain
      * @param string $failURL
@@ -34,7 +34,7 @@ class PayPalForm {
      * @param string $location
      * @param string $currencyCode 
      */
-    public function __construct(Basket $basket,
+    public function __construct(CustomerOrder $order,
                                 $paypalAccount,
                                 $domain,
                                 $failURL,
@@ -43,7 +43,7 @@ class PayPalForm {
                                 $location,
                                 $currencyCode,
                                 $action) {
-        $this->basket  = $basket;
+        $this->order  = $order;
         $this->payPalAccount = $paypalAccount;
         $this->domain = $domain;
         $this->failURL = $failURL;
@@ -56,6 +56,7 @@ class PayPalForm {
     
     public function getFields() {        
         $fields = array(
+            'custom' => $this->order->getId(),
             'cmd' => '_cart',
             'business' => $this->payPalAccount,
             'domain' => $this->domain,
@@ -64,17 +65,17 @@ class PayPalForm {
             'cancel_return' => "http://".$this->domain.$this->failURL,
             'return' => "http://".$this->domain.$this->successURL,
             'notify_url' => "http://".$this->domain.$this->ipnURL,
-            'handling_cart' => number_format($this->basket->getDeliveryOption()->getPrice() / 100, 2),
+            'handling_cart' => number_format($this->order->getDeliveryCost() / 100, 2),
             'lc' => $this->location,
             'rm' => '2',
             'upload' => '1'
         );
         
         $i = 1;
-        foreach ($this->basket->getProducts() as $item) {
-            $fields['item_name_'.$i] = $item['object']->getName();
-            $fields['amount_'.$i] = number_format($item['object']->getPrice() / 100, 2);
-            $fields['quantity_'.$i] = $item['quantity'];;
+        foreach ($this->order->getOrderItems() as $item) {
+            $fields['item_name_'.$i] = $item->getName();
+            $fields['amount_'.$i] = number_format($item->getPrice() / 100, 2);
+            $fields['quantity_'.$i] = $item->getQuantity();
         }
             
         return $fields;
