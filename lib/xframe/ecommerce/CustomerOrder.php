@@ -112,6 +112,20 @@ class CustomerOrder {
     public function getTotal() {
         return $this->getSubTotal() + $this->deliveryCost;
     }
+
+    public function getOrderString($currency) {
+        $string = "";
+
+        foreach ($this->orderItems as $item) {
+            $unit = $item->getQuantity() == 1 ? 'unit' : 'units';
+
+            $string .= "{$item->getQuantity()} {$unit} of ";
+            $string .= "{$item->getName()} @ {$currency}";
+            $string .= number_format($item->getPrice() / 100, 2)."\n";
+        }
+
+        return $string;
+    }
     
     public function getId() {
         return $this->id;
