@@ -135,7 +135,7 @@ class System extends DependencyInjectionContainer {
                 $cache = new \Doctrine\Common\Cache\ApcCache();
             }
             else if ($dic->registry->get("CACHE_ENABLED")) {
-                $cache = new \Doctrine\Common\Cache\MemcacheCache($this->cache);
+                $cache = new \Doctrine\Common\Cache\MemcacheCache($dic->cache);
             }
             else {
                 $cache = new \Doctrine\Common\Cache\ArrayCache();
