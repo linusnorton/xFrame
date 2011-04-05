@@ -58,7 +58,7 @@ class System extends DependencyInjectionContainer {
         $this->getExceptionHandler()->attach(new Mailer($recipients));
 
         if ($this->cache === null && $this->registry->get("CACHE_ENABLED")) {
-            $this->cache = new Memache();
+            $this->cache = new Memcache();
             $this->cache->addServer(
                 $this->registry->get("MEMCACHE_HOST"),
                 $this->registry->get("MEMCACHE_PORT")
