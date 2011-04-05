@@ -57,12 +57,8 @@ class System extends DependencyInjectionContainer {
         $recipients = $this->registry->get("ADMIN");
         $this->getExceptionHandler()->attach(new Mailer($recipients));
 
-        if ($this->cache === null && $this->registry->get("CACHE_ENABLED")) {
-            $this->cache = new Memcache();
-            $this->cache->addServer(
-                $this->registry->get("MEMCACHE_HOST"),
-                $this->registry->get("MEMCACHE_PORT")
-            );
+        if ($this->registry->get("CACHE_ENABLED")) {
+            $this->getDefaultCache();
         }
 
         if (!headers_sent()) {
@@ -129,6 +125,24 @@ class System extends DependencyInjectionContainer {
         });
     }
 
+    /**
+     * Set the lambda function for the memcache
+     */
+    private function getDefaultCache() {
+        $this->add("cache", function ($dic) {
+            $cache = new Memcache();
+            $cache->addServer(
+                $dic->registry->get("MEMCACHE_HOST"),
+                $dic->registry->get("MEMCACHE_PORT")
+            );
+
+            return $cache;
+        });
+    }
+
+    /**
+     * Set up doctrine
+     */
     private function setDefaultEm() {
         $this->add("em", function ($dic) {
             if (extension_loaded('apc')) {
