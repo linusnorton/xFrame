@@ -76,6 +76,7 @@ class PayPalForm {
             $fields['item_name_'.$i] = $item->getName();
             $fields['amount_'.$i] = number_format($item->getPrice() / 100, 2);
             $fields['quantity_'.$i] = $item->getQuantity();
+            $i++;
         }
             
         return $fields;
