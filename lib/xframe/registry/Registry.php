@@ -51,7 +51,7 @@ class Registry {
      * @return mixed
      */
     public function get($key) {
-        return $this->settings[$key];
+        return isset($this->settings[$key]) ? $this->settings[$key] : null;
     }
 
     /**
