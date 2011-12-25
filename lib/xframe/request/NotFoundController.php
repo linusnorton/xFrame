@@ -18,6 +18,6 @@ class NotFoundController extends Controller {
      */
     public function handleRequest() {        
         header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
-        die();
+        die("Not found.");
     }
 }

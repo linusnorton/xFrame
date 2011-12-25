@@ -1,6 +1,7 @@
 <?php
 
 namespace xframe\request;
+use \Exception;
 
 /**
  * @author Linus Norton <linusnorton@gmail.com>
@@ -26,9 +27,8 @@ class Request {
     public function __construct($requestURI,
                                 array $parameters = array(),
                                 $phpSelf = "/index.php") {
-
         //get the base directory
-        $baseDirectory = substr($phpSelf, 0, -10);
+        $baseDirectory = substr($phpSelf, 0, - strlen($phpSelf));
         //remove from the URI
         $request = str_replace($baseDirectory, "", $requestURI);
         //see if there is a query attached
@@ -44,8 +44,7 @@ class Request {
         //get the parameters out of the request URI
         $this->mappedParameters = array_slice($request, 1);
         //store the other params (usually from $_REQUEST)
-        $this->parameters = $parameters;
-        //$this->getParamsFromRawHTTPRequest();
+        $this->parameters = $parameters;        
         //get the $_FILES array
         $this->files = $_FILES;
         $this->cookie = $_COOKIE;
@@ -60,9 +59,29 @@ class Request {
      * @param array $map
      */
     public function applyParameterMap(array $map) {
+        // use the given map to put the parameters in an associative array
         foreach ($this->mappedParameters as $paramNum => $value) {
+            // if there is no key value for this param, throw an exception
+            if (!isset($map[$paramNum])) {
+                throw new Exception("Param #{$paramNum} ({$value}) is not mapped");
+            }
+            
             $this->parameters[$map[$paramNum]] = $value;
         }
+    }
+    
+    /**
+     * @return array
+     */
+    public function getMappedParameters() {
+        return $this->mappedParameters;
+    }
+    
+    /**
+     * @param array $parameters 
+     */
+    public function setMappedParameters(array $parameters) {
+        $this->mappedParameters = $parameters;
     }
 
     /**
@@ -129,19 +148,6 @@ class Request {
         return md5($this->requestedResource.
                    implode($this->parameters).
                    implode(array_keys($this->parameters)));
-    }
-
-    /**
-     * issue with POST variable in PHP not be properly populated in some circumstances:
-     * http://getluky.net/2009/02/24/php-_post-array-empty-although-phpinput-and-raw-post-data-is-available/
-     */
-    private function getParamsFromRawHTTPRequest() {
-        $keyValuePairs = explode("&", file_get_contents('php://input'));
-
-        foreach ($keyValuePairs as $keyValue) {
-            $data = explode("=", $keyValue);
-            $this->parameters[$data[0]] = $data[1];
-        }
     }
 
 }

@@ -107,32 +107,49 @@ class RequestMapGenerator {
 
             //if it is a request handler
             if ($annotation->hasAnnotation("Request")) {
-                $request = $annotation->getAnnotation("Request")->value;
-                $mappedParams = $this->getOrReturn($annotation, "Params", array());
-                $cacheLength =  $this->getOrReturn($annotation, "CacheLength", false);
-                $filter =  $this->getOrReturn($annotation, "Prefilter", null);
-                $view =  $this->getOrReturn($annotation, "View", $this->dic->registry->get("DEFAULT_VIEW"));
-                $template = $this->getOrReturn($annotation, "Template", $request);
-                $customParams = array();
+                $this->processRequest($annotation);
+            }     
+        }
+    }
+    
+    /**
+     * Create the cache file for the request
+     * 
+     * @param ReflectionAnnotatedMethod $annotation 
+     */
+    private function processRequest(ReflectionAnnotatedMethod $annotation) {
+        $request = $annotation->getAnnotation("Request")->value;
+        $mappedParams = $this->getOrReturn($annotation, "Params", array());
+        $cacheLength =  $this->getOrReturn($annotation, "CacheLength", false);
+        $filter =  $this->getOrReturn($annotation, "Prefilter", null);
+        $view =  $this->getOrReturn($annotation, "View", $this->dic->registry->get("DEFAULT_VIEW"));
+        $template = $this->getOrReturn($annotation, "Template", $request);
+        $customParams = array();
 
-                foreach ($annotation->getAllAnnotations("CustomParam") as $custom) {
-                    $customParams[$custom->name] = $custom->value;
-                }
+        foreach ($annotation->getAllAnnotations("CustomParam") as $custom) {
+            $customParams[$custom->name] = $custom->value;
+        }
 
-                $newLine = PHP_EOL.'    ';
-                $string = "<?php".PHP_EOL.PHP_EOL;
-                $string .= "// Automatically generated code, do not edit.".PHP_EOL;
-                $string .= "return new {$method->class}({$newLine}";
-                $string .= "\$this->dic,{$newLine}";
-                $string .= "\$request,{$newLine}";
-                $string .= var_export($method->name, true).",{$newLine}";
-                $string .= "new {$view}(\$this->dic->registry, \$this->dic->root, ".var_export($template, true).", \$request->debug),{$newLine}";
-                $string .= str_replace(PHP_EOL, "", var_export($mappedParams, true)).",{$newLine}";
-                $string .= var_export($filter, true).",{$newLine}";
-                $string .= var_export($cacheLength, true). PHP_EOL. ");";
-                
-                file_put_contents($this->dic->tmp.$request.".php", $string);
-            }
+        $newLine = PHP_EOL.'    ';
+        $fileContents = "<?php".PHP_EOL.PHP_EOL;
+        $fileContents .= "// Automatically generated code, do not edit.".PHP_EOL;
+        $fileContents .= "return new {$annotation->class}({$newLine}";
+        $fileContents .= "\$this->dic,{$newLine}";
+        $fileContents .= "\$request,{$newLine}";
+        $fileContents .= var_export($annotation->name, true).",{$newLine}";
+        $fileContents .= "new {$view}(\$this->dic->registry, \$this->dic->root, ";
+        $fileContents .= var_export($template, true).", \$request->debug),{$newLine}";
+        $fileContents .= str_replace(PHP_EOL, "", var_export($mappedParams, true)).",{$newLine}";
+        $fileContents .= var_export($filter, true).",{$newLine}";
+        $fileContents .= var_export($cacheLength, true). PHP_EOL. ");";
+
+        $filename = $this->dic->tmp.$request.".php";
+
+        try {
+            file_put_contents($filename, $fileContents);
+        }
+        catch (Exception $e) {
+            throw new Exception("Could not create request cache file: ".$filename, 0, $e);
         }
     }
     
