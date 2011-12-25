@@ -108,28 +108,42 @@ class RequestMapGenerator {
             //if it is a request handler
             if ($annotation->hasAnnotation("Request")) {
                 $request = $annotation->getAnnotation("Request")->value;
-                $mappedParams = $annotation->getAnnotation("Params")->value == null ? array() : $annotation->getAnnotation("Params")->value;
-                $cacheLength = $annotation->getAnnotation("CacheLength")->value == null ? false : $annotation->getAnnotation("CacheLength")->value;
-                $filter = $annotation->getAnnotation("Prefilter")->value == null ? null : $annotation->getAnnotation("Prefilter")->value;
-                $view = $annotation->getAnnotation("View")->value == null ? $this->dic->registry->get("DEFAULT_VIEW") : $annotation->getAnnotation("View")->value;
-                $template = $annotation->getAnnotation("Template")->value == null ? $request : $annotation->getAnnotation("Template")->value;
+                $mappedParams = $this->getOrReturn($annotation, "Params", array());
+                $cacheLength =  $this->getOrReturn($annotation, "CacheLength", false);
+                $filter =  $this->getOrReturn($annotation, "Prefilter", null);
+                $view =  $this->getOrReturn($annotation, "View", $this->dic->registry->get("DEFAULT_VIEW"));
+                $template = $this->getOrReturn($annotation, "Template", $request);
                 $customParams = array();
 
                 foreach ($annotation->getAllAnnotations("CustomParam") as $custom) {
                     $customParams[$custom->name] = $custom->value;
                 }
 
-                $string = "<?php\n\n";
-                $string .= "return new {$method->class}(\$this->dic,";
-                $string .= "\$request,";
-                $string .= var_export($method->name, true).", ";
-                $string .= "new {$view}(\$this->dic->registry, \$this->dic->root, ".var_export($template, true).", \$request->debug), ";
-                $string .= var_export($mappedParams, true).", ";
-                $string .= var_export($filter, true).", ";
-                $string .= var_export($cacheLength, true)." );";
+                $newLine = PHP_EOL.'    ';
+                $string = "<?php".PHP_EOL.PHP_EOL;
+                $string .= "// Automatically generated code, do not edit.".PHP_EOL;
+                $string .= "return new {$method->class}({$newLine}";
+                $string .= "\$this->dic,{$newLine}";
+                $string .= "\$request,{$newLine}";
+                $string .= var_export($method->name, true).",{$newLine}";
+                $string .= "new {$view}(\$this->dic->registry, \$this->dic->root, ".var_export($template, true).", \$request->debug),{$newLine}";
+                $string .= str_replace(PHP_EOL, "", var_export($mappedParams, true)).",{$newLine}";
+                $string .= var_export($filter, true).",{$newLine}";
+                $string .= var_export($cacheLength, true). PHP_EOL. ");";
                 
                 file_put_contents($this->dic->tmp.$request.".php", $string);
             }
         }
+    }
+    
+    /**
+     * Return the given parameter if it exists or the $default if not
+     * @param ReflectionAnnotatedMethod $annotation
+     * @param string $param
+     * @param mixed $default
+     * @return mixed
+     */
+    private function getOrReturn(ReflectionAnnotatedMethod $annotation, $param, $default) {
+        return $annotation->hasAnnotation($param) ? $annotation->getAnnotation($param)->value : $default;
     }
 }
