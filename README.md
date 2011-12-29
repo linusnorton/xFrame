@@ -1,6 +1,8 @@
 PHP xFrame
 ==========
 
+A lightweight MVC framework
+
 Features
 --------
 
@@ -34,7 +36,7 @@ Create directory structure
 
     $ xframe --create-project /var/www/demo
 
-Ensure you have created your virtual host, enabled mod_rewrite and restarted apache
+Ensure you have created your [virtual host](https://github.com/linusnorton/xFrame/wiki/Example-virtual-host), enabled mod_rewrite, restarted apache and edited /etc/hosts if necessary
 
 Getting Started
 ---------------
@@ -42,9 +44,4 @@ Getting Started
 Enter the domain you entered in the virtual host and test the set up was successful
 
 Start hacking /src
-
- - Adding requests
- - Database access
- -- Doctrine
- - CLI
 
