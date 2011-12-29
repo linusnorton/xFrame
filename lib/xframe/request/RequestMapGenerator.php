@@ -66,7 +66,7 @@ class RequestMapGenerator {
         while (($file = readdir($dh)) !== false) {
             $path = $dir.DIRECTORY_SEPARATOR.$file;
             //if it is something we want to ignore...
-            if ($file == '.' || $file == '..'  || $file == '.svn') {
+            if ($file == '.' || $file == '..' || $file == '.svn') {
                 continue;
             }
             //if it is a directory...
