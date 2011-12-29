@@ -27,11 +27,13 @@ class TwigView extends View {
      *
      * @param Registry $registry
      * @param string $root
+     * @param string $tmpDir
      * @param string $template
      * @param boolean $debug
      */
     public function  __construct(Registry $registry,
                                  $root,
+                                 $tmpDir,
                                  $template,
                                  $debug = false) {
         parent::__construct("", ".html", $template);
@@ -40,7 +42,7 @@ class TwigView extends View {
         $this->twig = new Twig_Environment(
             new Twig_Loader_Filesystem($root."view".DIRECTORY_SEPARATOR),
             array(
-                'cache' => $root."tmp".DIRECTORY_SEPARATOR,
+                'cache' => $tmpDir,
                 'debug' => $debug,
                 'auto_reload' => $registry->get("AUTO_REBUILD_TWIG")
             )

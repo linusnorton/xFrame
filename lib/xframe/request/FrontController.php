@@ -40,23 +40,26 @@ class FrontController {
      * @param Request $request 
      */
     public function dispatch(Request $request) {
-        $filename = $this->dic->tmp.$request->getRequestedResource().".php";
+        $filename = $this->dic->tmp.$request->getRequestedResource().'.php';
+        
         //if we have a mapping for the request
         if (file_exists($filename)) {
             //return the response from the controller
             $controller = require($filename);
         }
         //if we rebuild on 404, disable this for performance
-        else if ($this->dic->registry->get("AUTO_REBUILD_REQUEST_MAP")) {
+        else if ($this->dic->registry->get('AUTO_REBUILD_REQUEST_MAP')) {
             $this->rebuildRequestMap();
-
+            $filename = $this->dic->tmp.$request->getRequestedResource().'.php';
+            
             //try again, in case it has just been added
             if (file_exists($filename)) {
                 $controller = require($filename);
             }
         }
 
-        if (!$controller instanceof Controller) {
+        // if we still don't have a controller 404 it
+        if (!isset($controller)) {
             $controller = $this->get404Controller();
         }
 
@@ -77,6 +80,6 @@ class FrontController {
 
     private function rebuildRequestMap() {
         $mapper = new RequestMapGenerator($this->dic);
-        $mapper->scan($this->dic->root."src");
+        $mapper->scan($this->dic->root.'src');
     }
 }

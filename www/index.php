@@ -12,13 +12,13 @@ use xframe\request\Request;
  */
 
 $root = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
-require_once($root.'lib/xframe/autoloader/Autoloader.php');
+require($root.'lib/xframe/autoloader/Autoloader.php');
 
 $autoloader = new Autoloader($root);
 $autoloader->register();
 
-$system = new System($root, $_SERVER["CONFIG"]);
+$system = new System($root, $_SERVER['CONFIG']);
 $system->boot();
 
-$request = new Request($_SERVER['REQUEST_URI'],$_REQUEST,$_SERVER['PHP_SELF']);
+$request = new Request($_SERVER['REQUEST_URI'], $_REQUEST);
 $system->getFrontController()->dispatch($request);

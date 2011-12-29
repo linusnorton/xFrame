@@ -22,23 +22,17 @@ class Request {
      *
      * @param string $requestURI
      * @param array $parameters
-     * @param string $phpSelf
      */
-    public function __construct($requestURI,
-                                array $parameters = array(),
-                                $phpSelf = "/index.php") {
-        //get the base directory
-        $baseDirectory = substr($phpSelf, 0, - strlen($phpSelf));
-        //remove from the URI
-        $request = str_replace($baseDirectory, "", $requestURI);
+    public function __construct($requestURI, array $parameters = array()) {
+        $request = $requestURI;
         //see if there is a query attached
-        $end = strpos($request, "?");
+        $end = strpos($request, '?');
         //remove the query from the request
         $request = $end === false ? substr($request, 1) : substr($request, 1, $end - 1);
         //check for blank request
-        $request = ($request == '') ? 'index' : $request;
+        $request = $request == '' ? 'index' : $request;
         //support for urls with request/param/param
-        $request = explode("/", $request);
+        $request = explode('/', $request);
         //get the request name
         $this->requestedResource = $request[0];
         //get the parameters out of the request URI
@@ -115,7 +109,7 @@ class Request {
 
     /**
      * Magic function overload. If you try to set a variable that doesnt exist
-     * this function is called. So setting $e->face = "your" when the variable
+     * this function is called. So setting $e->face = 'your' when the variable
      * face doesn't exists sets it in the interal array for later access.
      *
      * @param mixed $key

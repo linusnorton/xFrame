@@ -14,7 +14,6 @@ use xframe\request\Request;
 
 $_SERVER['REQUEST_URI'] = isset($argv[1]) ? '/'.str_replace('--', '', $argv[1]) : '/cli-index';
 $_REQUEST = array();
-$_SERVER['PHP_SELF'] = '/';
 $params = array();
 
 // process the cli arguments
@@ -41,7 +40,7 @@ $autoloader->register();
 $system = new System($root, $_SERVER["CONFIG"]);
 $system->boot();
 
-$request = new Request($_SERVER['REQUEST_URI'],$_REQUEST,$_SERVER['PHP_SELF']);
+$request = new Request($_SERVER['REQUEST_URI'], $_REQUEST);
 $request->setMappedParameters($params);
 $system->getFrontController()->dispatch($request);
 

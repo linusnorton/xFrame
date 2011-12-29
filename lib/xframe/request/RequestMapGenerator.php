@@ -25,6 +25,9 @@ class RequestMapGenerator {
      */
     private $dic;
 
+    /**
+     * @param DependencyInjectionContainer $dic 
+     */
     public function __construct(DependencyInjectionContainer $dic) {
         $this->dic = $dic;
         
@@ -49,6 +52,11 @@ class RequestMapGenerator {
                 "Template" => "xframe\\request\\annotation\\Template"
             )
         );
+        
+        // make sure we can write to the tmp directory or use the sys tmp
+        if (!is_writable($this->dic->tmp)) {
+            $this->dic->tmp = sys_get_temp_dir().DIRECTORY_SEPARATOR;
+        }
     }
 
     /**
@@ -137,7 +145,7 @@ class RequestMapGenerator {
         $fileContents .= "\$this->dic,{$newLine}";
         $fileContents .= "\$request,{$newLine}";
         $fileContents .= var_export($annotation->name, true).",{$newLine}";
-        $fileContents .= "new {$view}(\$this->dic->registry, \$this->dic->root, ";
+        $fileContents .= "new {$view}(\$this->dic->registry, \$this->dic->root, \$this->dic->tmp, ";
         $fileContents .= var_export($template, true).", \$request->debug),{$newLine}";
         $fileContents .= str_replace(PHP_EOL, "", var_export($mappedParams, true)).",{$newLine}";
         $fileContents .= var_export($filter, true).",{$newLine}";

@@ -16,8 +16,11 @@ class NotFoundController extends Controller {
     /**
      * Send back a 404 response
      */
-    public function handleRequest() {        
-        header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
-        die("Not found.");
+    public function handleRequest(Request $request) {  
+        if (PHP_SAPI !== 'cli') {
+            header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found');
+        }
+        
+        die('Resource: '.$request->getRequestedResource().' not found.'.PHP_EOL);
     }
 }

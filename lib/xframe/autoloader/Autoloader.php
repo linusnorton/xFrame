@@ -36,9 +36,10 @@ class Autoloader {
      */
     public function __construct($root, $classExtension = '.php') {
         $this->paths = array();
-        $this->paths[] = $root."src";
-        $this->paths[] = $root."lib";
-        $this->paths[] = $root."test";
+        $this->paths[] = $root.'src';
+        $this->paths[] = $root.'lib';
+        $this->paths[] = $root.'test';
+        $this->paths[] = __DIR__.'/../../';
         
         $this->classExtension = $classExtension;
     }

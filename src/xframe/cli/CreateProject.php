@@ -16,18 +16,32 @@ class CreateProject extends Controller {
      */
     public function run() {
         $this->view->destination = $this->request->path;
+        
         // copy the entire folder
         $this->recursiveCopy($this->dic->root, $this->request->path);
         
-        // remove xframe and rebuild
+        // clean directories
         $this->recursiveDelete($this->request->path.'/src/xframe');        
         $this->recursiveDelete($this->request->path.'/lib');
         $this->recursiveDelete($this->request->path.'/tmp');
         $this->recursiveDelete($this->request->path.'/log');
         
-        mkdir($this->request->path.'/lib', 0755);
-        mkdir($this->request->path.'/tmp');        
+        // remove view files
+        unlink($this->request->path.'/view/cli-index.html');
+        unlink($this->request->path.'/view/create-project.html');
+        
+        // rebuild directory structure
+        mkdir($this->request->path.'/lib');
+        chmod($this->request->path.'/lib', 0755);
+        mkdir($this->request->path.'/tmp');
+        chmod($this->request->path.'/tmp', 0777);
         mkdir($this->request->path.'/log');
+        chmod($this->request->path.'/log', 0777);
+        
+        // hack the index.php
+        $index = file_get_contents($this->request->path.'/www/index.php');
+        $index = str_replace('$root.\'','\'xframe/', $index);
+        file_put_contents($this->request->path.'/www/index.php', $index);
     }
     
     /**
