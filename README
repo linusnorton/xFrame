@@ -1,0 +1,50 @@
+PHP xFrame
+==========
+
+Features
+--------
+
+* Incredibly fast (boot in 2.2ms)
+* Simple autoloading
+* Dependency injection container
+* Annotation based request mapping
+* Phing build, test and documentation scripts
+* Multiple view types: Twig (default), PHPTAL, pure PHP
+* Doctrine2 integration (optional)
+
+Installation
+------------
+
+Pear installation
+
+    $ pear config-set auto_discover 1
+    $ pear install pear.linusnorton.co.uk/xFrame
+
+Install with Doctrine2 (Optional)
+
+    $ pear config-set auto_discover 1
+    $ pear install --alldeps pear.linusnorton.co.uk/xFrame
+
+(Note that PHP5.3 is required and APC is recommended)
+
+Setup
+-----
+
+Create directory structure
+
+    $ xframe --create-project /var/www/demo
+
+Ensure you have created your virtual host, enabled mod_rewrite and restarted apache
+
+Getting Started
+---------------
+
+Enter the domain you entered in the virtual host and test the set up was successful
+
+Start hacking /src
+
+ - Adding requests
+ - Database access
+ -- Doctrine
+ - CLI
+
