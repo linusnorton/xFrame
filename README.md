@@ -12,6 +12,7 @@ Features
 * Annotation based request mapping
 * Phing build, test and documentation scripts
 * Multiple view types: Twig (default), PHPTAL, pure PHP
+* Inbuilt caching
 * Doctrine2 integration (optional)
 
 Installation
@@ -41,7 +42,9 @@ Ensure you have created your [virtual host](https://github.com/linusnorton/xFram
 Getting Started
 ---------------
 
-Enter the domain you entered in the virtual host and test the set up was successful
+Enter the domain you entered in the virtual host and test the set up was successful.
 
-Start hacking /src
-
+* Start hacking /src
+* [read about request mapping](https://github.com/linusnorton/xFrame/wiki/Request-Mapping)
+* [read about the phing script](https://github.com/linusnorton/xFrame/wiki/Using-the-Phing-Script)
+* [read about adding CLI targets](https://github.com/linusnorton/xFrame/wiki/Creating-CLI-Targets)
