@@ -1,7 +1,7 @@
 <?php
 
 namespace demo\controller;
-use xframe\request\Controller;
+use \xframe\request\Controller;
 
 /**
  * Endpoint for the xFrame CLI, displays help
