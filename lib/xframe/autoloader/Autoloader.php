@@ -7,11 +7,11 @@ namespace xframe\autoloader;
  * locate it, this means you can use the PEAR naming convention or you can use
  * your nnamespace. For instance:
  *
- * xframe\autoloader\Autoloader = xframe/core/Autoloader.php
+ * xframe\core\Autoloader = xframe/core/Autoloader.php
  *
  * or
  *
- * xframe_autoloader_Autoloader = xframe/core/Autoloader.php
+ * xframe_core_Autoloader = xframe/core/Autoloader.php
  *
  * @author Linus Norton <linusnorton@gmail.com>
  * @package autoloader
@@ -19,9 +19,9 @@ namespace xframe\autoloader;
 class Autoloader {
     
     /**
-     * @var string root of the application, used by the autoloader to find files
+     * @var array of paths to be added to the include path
      */
-    private $root;
+    private $paths;
 
     /**
      * @var string classExtension filename extension of class files
@@ -35,8 +35,21 @@ class Autoloader {
      * @param string $classExtension
      */
     public function __construct($root, $classExtension = '.php') {
-        $this->root = $root;
+        $this->paths = array();
+        $this->paths[] = $root."src";
+        $this->paths[] = $root."lib";
+        $this->paths[] = $root."test";
+        
         $this->classExtension = $classExtension;
+    }
+    
+    /**
+     * Add an include path to the autoloader
+     * 
+     * @param string $path 
+     */
+    public function addPath($path) {
+        $this->paths[] = $path;
     }
 
     /**
@@ -44,9 +57,13 @@ class Autoloader {
      * adds the src, lib and test directories to the include path.
      */
     public function register() {
-        set_include_path(get_include_path().PATH_SEPARATOR.$this->root."src"
-                                           .PATH_SEPARATOR.$this->root."lib"
-                                           .PATH_SEPARATOR.$this->root."test");
+        $includePaths = get_include_path();
+        
+        foreach ($this->paths as $path) {
+            $includePaths .= PATH_SEPARATOR.$path;
+        }
+        
+        set_include_path($includePaths);
         spl_autoload_register(array($this, 'loader'));
     }
 
