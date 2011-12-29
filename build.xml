@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="build" basedir=".">
+    <if>
+        <isset property="config"/>
+        <else>
+            <property name="config" value="dev" />
+        </else>
+    </if>
+    <if>
+        <isset property="testPath"/>
+        <else>
+            <property name="testPath" value="" />
+        </else>
+    </if>
+    
+    <property name="basedir" value="." />
+    <property name="report" value="${basedir}/report/" />
+
+    <!-- remove the cache and log folders -->
+    <target name="clean">
+        <delete dir="${basedir}/log"/>
+        <delete dir="${basedir}/tmp"/>
+        <delete dir="${report}"/>
+    </target>
+    
+    <!-- create the cache and log folders, add configs if they don't exist -->
+    <target name="build" depends="clean">
+        <mkdir dir="${basedir}/log"/>
+        <chmod file="${basedir}/log" mode="0777" />
+
+        <mkdir dir="${basedir}/tmp"/>
+        <chmod file="${basedir}/tmp" mode="0777" />        
+        
+        <mkdir dir="${report}"/>        
+        <chmod file="${report}" mode="0777" />                       
+    </target>    
+
+    <!-- run the unit tests -->
+    <target name="test">        
+        <exec passthru="true" command="phpunit -d session.name=${config} -c ${basedir}/test/phpunit.xml ${testPath}"/>
+    </target>
+
+    <!-- run the unit tests and generate the coverage report -->
+    <target name="coverage">
+        <delete dir="${report}" />
+        <mkdir dir="${report}" />
+        
+        <exec outputProperty="result"
+              passthru="true"
+              command="phpunit -d session.name=${config} -c ${basedir}/test/phpunit.xml --log-junit ${report}/logfile.xml --coverage-html ${report}/coverage-html/ $[testPath}"/>
+    </target>
+        
+</project>
