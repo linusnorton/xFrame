@@ -1,16 +1,15 @@
 <?php
 
 namespace xframe\core;
-use xframe\exception\ErrorHandler;
-use xframe\exception\Logger;
-use xframe\exception\Mailer;
-use xframe\exception\ExceptionHandler;
-use xframe\exception\ExceptionOutputter;
-use xframe\request\FrontController;
-use xframe\registry\Registry;
+use \xframe\exception\ErrorHandler;
+use \xframe\exception\Logger;
+use \xframe\exception\ExceptionHandler;
+use \xframe\exception\ExceptionOutputter;
+use \xframe\request\FrontController;
+use \xframe\registry\Registry;
 use \Memcache;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Configuration;
+use \Doctrine\ORM\EntityManager;
+use \Doctrine\ORM\Configuration;
 use \PDO;
 
 /**
@@ -54,14 +53,9 @@ class System extends DependencyInjectionContainer {
         $this->getExceptionHandler()->attach(new Logger());
         $this->getExceptionHandler()->attach(new ExceptionOutputter());
 
-        $recipients = $this->registry->get('ADMIN');
-        $this->getExceptionHandler()->attach(new Mailer($recipients));
-
         if ($this->registry->get('CACHE_ENABLED')) {
             $this->getDefaultCache();
-        }
-        
-        session_start();        
+        }               
     }
 
     /**

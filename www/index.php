@@ -1,8 +1,8 @@
 <?php
 
-use xframe\autoloader\Autoloader;
-use xframe\core\System;
-use xframe\request\Request;
+use \xframe\autoloader\Autoloader;
+use \xframe\core\System;
+use \xframe\request\Request;
 
 /**
  * @author Linus Norton <linusnorton@gmail.com>

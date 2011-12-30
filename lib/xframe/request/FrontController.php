@@ -2,7 +2,7 @@
 
 namespace xframe\request;
 
-use xframe\core\DependencyInjectionContainer;
+use \xframe\core\DependencyInjectionContainer;
 
 /**
  * @author Linus Norton <linusnorton@gmail.com>

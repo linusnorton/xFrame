@@ -7,7 +7,7 @@ use \Exception;
 use \ReflectionMethod;
 use \ReflectionAnnotatedMethod;
 use \Addendum;
-use xframe\core\DependencyInjectionContainer;
+use \xframe\core\DependencyInjectionContainer;
 
 /**
  * This class analyses class annotations to create request map files for each
