@@ -44,7 +44,10 @@ Getting Started
 
 Enter the domain you entered in the virtual host and test the set up was successful.
 
-* Start hacking /src
+* Start hacking `src/demo/controller/Index.php` and `view/index.html`
 * [read about request mapping](https://github.com/linusnorton/xFrame/wiki/Request-Mapping)
+* [read about the dependency injection container](https://github.com/linusnorton/xFrame/wiki/Dependency-Injection-Container)
+* [read about bootstrapping](https://github.com/linusnorton/xFrame/wiki/Bootstrap)
+* [read about Doctrine2 integration](https://github.com/linusnorton/xFrame/wiki/Doctrine2-Integration)
 * [read about the phing script](https://github.com/linusnorton/xFrame/wiki/Using-the-Phing-Script)
 * [read about adding CLI targets](https://github.com/linusnorton/xFrame/wiki/Creating-CLI-Targets)
