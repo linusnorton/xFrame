@@ -49,5 +49,6 @@ Enter the domain you entered in the virtual host and test the set up was success
 * [read about the dependency injection container](https://github.com/linusnorton/xFrame/wiki/Dependency-Injection-Container)
 * [read about bootstrapping](https://github.com/linusnorton/xFrame/wiki/Bootstrap)
 * [read about Doctrine2 integration](https://github.com/linusnorton/xFrame/wiki/Doctrine2-Integration)
-* [read about the phing script](https://github.com/linusnorton/xFrame/wiki/Using-the-Phing-Script)
+* [read about the testing and the phing script](https://github.com/linusnorton/xFrame/wiki/Using-the-Phing-Script)
 * [read about adding CLI targets](https://github.com/linusnorton/xFrame/wiki/Creating-CLI-Targets)
+* [read about the exception mailer](https://github.com/linusnorton/xFrame/wiki/Exception-Mailer)
