@@ -1,0 +1,12 @@
+
+body {
+    margin: 30px auto;
+    width: 1000px;
+    font-family: helvetica,arial;
+    line-height: 1.4em;
+}
+
+a {
+    color: #4183C4;
+    text-decoration: none;
+}
