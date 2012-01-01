@@ -20,13 +20,13 @@ Installation
 
 Pear installation
 
-    $ pear config-set auto_discover 1
-    $ pear install pear.linusnorton.co.uk/xFrame
+    $ sudo pear config-set auto_discover 1
+    $ sudo pear install pear.linusnorton.co.uk/xFrame
 
 Install with Doctrine2 (Optional)
 
-    $ pear config-set auto_discover 1
-    $ pear install --alldeps pear.linusnorton.co.uk/xFrame
+    $ sudo pear config-set auto_discover 1
+    $ sudo pear install --alldeps pear.linusnorton.co.uk/xFrame
 
 (Note that PHP5.3 is required and APC is recommended)
 
