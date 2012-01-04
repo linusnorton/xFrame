@@ -21,7 +21,7 @@ class Container {
      * @param array $defaults
      */
     public function __construct(array $defaults = array()) {
-        $this->attributes = $defaults;
+        $this->attributes = &$defaults;
     }
 
     /**

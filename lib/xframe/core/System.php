@@ -11,6 +11,7 @@ use \Memcache;
 use \Doctrine\ORM\EntityManager;
 use \Doctrine\ORM\Configuration;
 use \PDO;
+use \xframe\request\Session;
 
 /**
  * The System class provides access to the core resources, this includes the
@@ -41,6 +42,7 @@ class System extends DependencyInjectionContainer {
         $this->setDefaultExceptionHandler();
         $this->setDefaultFrontController();
         $this->setDefaultRegistry();
+        $this->setDefaultSession();
     }
 
     /**
@@ -153,7 +155,7 @@ class System extends DependencyInjectionContainer {
             $driver = $config->newDefaultAnnotationDriver(
                 array(
                     $dic->root.'src',
-                    $dic->root.'lib/xframe'
+                    $dic->root.'lib'
                 )
             );
             $config->setMetadataDriverImpl($driver);
@@ -166,6 +168,17 @@ class System extends DependencyInjectionContainer {
 
             $connectionOptions = array('pdo' => $dic->getDatabase());
             return EntityManager::create($connectionOptions, $config);
+        });
+    }
+    
+    /**
+     * Set up the default session handler
+     */
+    private function setDefaultSession() {
+        $this->add('session', function($dic) {
+            session_start();
+            
+            return new Session(&$_SESSION, true);
         });
     }
 }

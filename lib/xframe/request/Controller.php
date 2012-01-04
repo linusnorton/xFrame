@@ -183,7 +183,7 @@ class Controller {
      * This method is class before the controller method is called
      */
     protected function init() {
-        session_start(); 
+        
     }
 
 }
