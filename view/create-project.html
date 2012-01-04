@@ -1,4 +1,31 @@
 
+##########################################################
+# EXAMPLE VIRTUAL HOST                                   #
+##########################################################
+<VirtualHost *:80>
+        ServerName example.org
+        SetEnv CONFIG dev
+
+        DocumentRoot "{{destination}}/www"
+        <Directory "{{destination}}/www">
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        RewriteEngine on
+        RewriteOptions inherit
+
+        ErrorLog {{destination}}/log/error.log
+</VirtualHost>
+
+##########################################################
+# EXAMPLE /etc/hosts                                     #
+##########################################################
+127.0.0.1    example.org
+
+
 Created project in {{destination}}
 Please set up your virtual hosts and restart apache.
 

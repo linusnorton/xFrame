@@ -22,6 +22,11 @@ class ExceptionOutputter implements SplObserver {
      * @param SplSubject $subject
      */
     public function update(SplSubject $subject) {
-        echo "<pre>".$subject->getLastException()."</pre>";
+        if (PHP_SAPI === 'cli') {
+            echo $subject->getLastException().PHP_EOL;            
+        }
+        else {
+            echo "<pre>".$subject->getLastException()."</pre>";            
+        }
     }
 }
