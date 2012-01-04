@@ -42,7 +42,6 @@ class System extends DependencyInjectionContainer {
         $this->setDefaultExceptionHandler();
         $this->setDefaultFrontController();
         $this->setDefaultRegistry();
-        $this->setDefaultSession();
     }
 
     /**
@@ -168,17 +167,6 @@ class System extends DependencyInjectionContainer {
 
             $connectionOptions = array('pdo' => $dic->getDatabase());
             return EntityManager::create($connectionOptions, $config);
-        });
-    }
-    
-    /**
-     * Set up the default session handler
-     */
-    private function setDefaultSession() {
-        $this->add('session', function($dic) {
-            session_start();
-            
-            return new Session(&$_SESSION, true);
         });
     }
 }
