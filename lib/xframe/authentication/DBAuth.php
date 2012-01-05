@@ -34,7 +34,7 @@ class DBAuth implements Authenticator {
      */
     public function authenticate($identity, $credential) {
         $stmt = $pdo->prepare(
-            "SELECT * FROM `{$this->table}` 
+            "SELECT 1 FROM `{$this->table}`
              WHERE `{$this->identityColumn}` = :identity
              AND `{$this->credentialColumn}` = :credential
              LIMIT 1"
