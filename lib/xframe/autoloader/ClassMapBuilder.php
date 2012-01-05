@@ -21,7 +21,7 @@ class ClassMapBuilder {
     private $fileTypes;
 
     /**
-     * @var array the classes found under the root directory
+     * @var array the classes and interfaces found under the root directory
      */
     private $classes;
 
@@ -90,7 +90,7 @@ class ClassMapBuilder {
             $token = $tokens[$i];
 
              if (is_array($token)) {
-                if ($token[0] == T_CLASS) {
+                if ($token[0] == T_CLASS || $token[0] == T_INTERFACE) {
                     //get the class name
                     for ($j = $i + 1; $j < $numTokens; $j++) {
                         if ($tokens[$j][0] == T_STRING) {
