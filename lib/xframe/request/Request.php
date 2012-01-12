@@ -54,13 +54,17 @@ class Request {
      */
     public function applyParameterMap(array $map) {
         // use the given map to put the parameters in an associative array
-        foreach ($this->mappedParameters as $paramNum => $value) {
+        foreach ($map as $paramNum => $parameter) {
             // if there is no key value for this param, throw an exception
-            if (!isset($map[$paramNum])) {
-                throw new Exception("Param #{$paramNum} ({$value}) is not mapped");
+            if ($parameter->isRequired() && !isset($this->mappedParameters[$paramNum])) {
+                throw new RequiredParameterEx("Parameter #{$paramNum}({$parameter->getName()}) has not been provided and is required");
             }
+            if (!isset($this->mappedParameters[$paramNum])) {
+                $this->mappedParameters[$paramNum] = $parameter->getDefault();
+            }
+            $parameter->validate($this->mappedParameters[$paramNum]);
             
-            $this->parameters[$map[$paramNum]] = $value;
+            $this->parameters[$parameter->getName()] = $this->mappedParameters[$paramNum];
         }
     }
     

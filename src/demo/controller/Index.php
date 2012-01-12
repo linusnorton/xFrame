@@ -13,7 +13,7 @@ class Index extends Controller {
     /**
      * @Request("index")
      * @Parameter(name="userId", validator="Digit(1,1000000)", required=true)
-     * @Parameter(name="username", validator="RegEx('i/u[0-9]{3}[a-z]/')", required=false, default="unknown")
+     * @Parameter(name="username", validator="RegEx('/u[0-9]{3}[a-z]/i')", required=false, default="unknown")
      */
     public function run() {
         echo "<pre>";

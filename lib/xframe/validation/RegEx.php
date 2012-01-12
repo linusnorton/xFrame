@@ -40,7 +40,7 @@ class Regex implements Validator {
      * @return boolean
      */
     public function validate($value) {
-        return (boolean)preg_match($this->pattern, $value, null, $this->flags, $this->offset);
+        return (boolean)preg_match($this->pattern, $value, $null, $this->flags, $this->offset);
     }
 
 }

@@ -45,5 +45,43 @@ class Parameter {
         $this->default = $default;
     }
 
+    /**
+     *
+     * @return boolean
+     */
+    public function isRequired() {
+        return $this->required;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getName() {
+        return $this->name;
+    }
+
+    /**
+     *
+     * @return mixed
+     */
+    public function getDefault() {
+        return $this->default;
+    }
+
+    /**
+     *
+     * @return boolean
+     */
+    public function validate($value) {
+        if ($this->validator == null) {
+            return true;
+        }
+        if ($this->validator->validate($value)) {
+            return true;
+        }
+        throw new InvalidParameterEx("Value {$value} is not valid for parameter {$this->name} using validator ".get_class($this->validator).".");
+    }
+
 }
 
