@@ -48,7 +48,7 @@ class RequestMapGenerator {
                 "Prefilter" => "xframe\\request\\annotation\\Prefilter",
                 "CacheLength" => "xframe\\request\\annotation\\CacheLength",
                 "CustomParam" => "xframe\\request\\annotation\\CustomParam",
-                "Params" => "xframe\\request\\annotation\\Params",
+                "Parameter" => "xframe\\request\\annotation\\Parameter",
                 "Template" => "xframe\\request\\annotation\\Template"
             )
         );
@@ -127,7 +127,7 @@ class RequestMapGenerator {
      */
     private function processRequest(ReflectionAnnotatedMethod $annotation) {
         $request = $annotation->getAnnotation("Request")->value;
-        $mappedParams = $this->getOrReturn($annotation, "Params", array());
+        $mappedParams = $annotation->getAllAnnotations("Parameter");
         $cacheLength =  $this->getOrReturn($annotation, "CacheLength", false);
         $filter =  $this->getOrReturn($annotation, "Prefilter", null);
         $view =  $this->getOrReturn($annotation, "View", $this->dic->registry->get("DEFAULT_VIEW"));
@@ -147,7 +147,15 @@ class RequestMapGenerator {
         $fileContents .= var_export($annotation->name, true).",{$newLine}";
         $fileContents .= "new {$view}(\$this->dic->registry, \$this->dic->root, \$this->dic->tmp, ";
         $fileContents .= var_export($template, true).", \$request->debug),{$newLine}";
-        $fileContents .= str_replace(PHP_EOL, "", var_export($mappedParams, true)).",{$newLine}";
+        $fileContents .= "array({$newLine}";
+        
+        foreach ($mappedParams as $param) {
+            $fileContents .= 'new xframe\request\Parameter(\''.$param->name.'\',' . $newLine;
+            $fileContents .= $param->validator ? 'new '.$param->validator.',' . $newLine : "null,{$newLine}";
+            $fileContents .= var_export($param->required, true) . ",{$newLine}";
+            $fileContents .= var_export($param->default, true) . "),";
+        }
+        $fileContents .= "),{$newLine}";
         $fileContents .= var_export($filter, true).",{$newLine}";
         $fileContents .= var_export($cacheLength, true). PHP_EOL. ");";
 

@@ -12,7 +12,7 @@ class CreateProject extends Controller {
 
     /**
      * @Request("create-project")
-     * @Params({"path"});
+     * @Parameter(name="path");
      */
     public function run() {
         $path = $this->request->path;
