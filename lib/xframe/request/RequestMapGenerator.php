@@ -148,9 +148,10 @@ class RequestMapGenerator {
         $fileContents .= "new {$view}(\$this->dic->registry, \$this->dic->root, \$this->dic->tmp, ";
         $fileContents .= var_export($template, true).", \$request->debug),{$newLine}";
         $fileContents .= "array({$newLine}";
+        
         foreach ($mappedParams as $param) {
             $fileContents .= 'new xframe\request\Parameter(\''.$param->name.'\',' . $newLine;
-            $fileContents .= ($param->validator) ? 'new '.$param->validator.',' . $newLine : "null,{$newLine}";
+            $fileContents .= $param->validator ? 'new '.$param->validator.',' . $newLine : "null,{$newLine}";
             $fileContents .= var_export($param->required, true) . ",{$newLine}";
             $fileContents .= var_export($param->default, true) . "),";
         }

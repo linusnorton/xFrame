@@ -1,7 +1,12 @@
 <?php
-namespace xframe\request;
-use xframe\validation\Validator;
 
+namespace xframe\request;
+
+use \xframe\validation\Validator;
+
+/**
+ * Request parameter. Encapsulates the validation logic 
+ */
 class Parameter {
 
     /**
@@ -17,7 +22,6 @@ class Parameter {
     private $validator;
 
     /**
-     * Whether or not this parameter is required
      * @var boolean
      */
     private $required;
@@ -29,7 +33,6 @@ class Parameter {
     private $default;
 
     /**
-     *
      * @param string $name
      * @param Validator $validator
      * @param boolean $required
@@ -70,16 +73,15 @@ class Parameter {
     }
 
     /**
-     *
      * @return boolean
      */
     public function validate($value) {
-        if ($this->validator == null) {
+        //if there is no validator, or the value validates return true
+        if ($this->validator == null || $this->validator->validate($value)) {
             return true;
         }
-        if ($this->validator->validate($value)) {
-            return true;
-        }
+        
+        // otherwise there was an error validating
         throw new InvalidParameterEx("Value {$value} is not valid for parameter {$this->name} using validator ".get_class($this->validator).".");
     }
 

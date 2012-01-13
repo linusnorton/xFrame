@@ -40,8 +40,8 @@ class Request {
         //store the other params (usually from $_REQUEST)
         $this->parameters = $parameters;        
         //get the $_FILES array
-        $this->files = $_FILES;
-        $this->cookie = $_COOKIE;
+        $this->files = &$_FILES;
+        $this->cookie = &$_COOKIE;
     }
 
     /**
@@ -49,22 +49,28 @@ class Request {
      *
      * loop over the parameters from the request URI and inject them into the
      * parameters given in the constructor (usually these come from $_REQUEST)
-     *
+     * 
      * @param array $map
      */
-    public function applyParameterMap(array $map) {
+    public function applyParameterMap(array &$map) {
         // use the given map to put the parameters in an associative array
-        foreach ($map as $paramNum => $parameter) {
-            // if there is no key value for this param, throw an exception
-            if ($parameter->isRequired() && !isset($this->mappedParameters[$paramNum])) {
-                throw new RequiredParameterEx("Parameter #{$paramNum}({$parameter->getName()}) has not been provided and is required");
-            }
-            if (!isset($this->mappedParameters[$paramNum])) {
-                $this->mappedParameters[$paramNum] = $parameter->getDefault();
-            }
-            $parameter->validate($this->mappedParameters[$paramNum]);
+        foreach ($map as $i => $parameter) {
             
-            $this->parameters[$parameter->getName()] = $this->mappedParameters[$paramNum];
+            // if there is no key value for this param, throw an exception
+            if ($parameter->isRequired() && !isset($this->mappedParameters[$i])) {
+                throw new RequiredParameterEx("Parameter #{$i}({$parameter->getName()}) has not been provided and is required");
+            }
+            
+            // if there is no value, try to get the default value
+            if (!isset($this->mappedParameters[$i])) {
+                $this->mappedParameters[$i] = $parameter->getDefault();
+            }
+            
+            // pass the parameter through the request validation
+            $parameter->validate($this->mappedParameters[$i]);  
+            
+            // add the parameter
+            $this->parameters[$parameter->getName()] = $this->mappedParameters[$i];
         }
     }
     
@@ -97,10 +103,7 @@ class Request {
     }
 
     /**
-     * Magic function overload. If a variable on this object is accessed but
-     * it doesnt exist try get it from the params array. This means that you
-     * can now give an array like $_POST or $_GET in the constructor and then
-     * access the fields like $e->myVar etc. Enjoy.
+     * Magic function overload. Allows east access to the request parameters.
      *
      * @param mixed $key
      * @return mixed
@@ -112,9 +115,7 @@ class Request {
     }
 
     /**
-     * Magic function overload. If you try to set a variable that doesnt exist
-     * this function is called. So setting $e->face = 'your' when the variable
-     * face doesn't exists sets it in the interal array for later access.
+     * Magic function overload. Allows easy access to the request parameters
      *
      * @param mixed $key
      * @param mixed $value
@@ -125,6 +126,7 @@ class Request {
 
     /**
      * Unset the given variable
+     * 
      * @param mixed $key
      */
     public function __unset($key) {

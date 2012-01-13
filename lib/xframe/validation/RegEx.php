@@ -2,25 +2,25 @@
 
 namespace xframe\validation;
 
+/**
+ * Provides regular expression validation of strings 
+ */
 class Regex implements Validator {
 
     /**
-     *
      * @var string
      */
-    protected $pattern;
+    private $pattern;
 
     /**
-     *
      * @var int
      */
-    protected $flags;
+    private $flags;
 
     /**
-     *
      * @var offset
      */
-    protected $offset;
+    private $offset;
 
     /**
      *
@@ -36,11 +36,20 @@ class Regex implements Validator {
 
     /**
      * Checkes if a given value matches a regular expression pattern
+     * 
      * @param mixed $value
      * @return boolean
      */
     public function validate($value) {
-        return (boolean)preg_match($this->pattern, $value, $null, $this->flags, $this->offset);
+        $result = preg_match(
+            $this->pattern, 
+            $value, 
+            null, 
+            $this->flags, 
+            $this->offset
+        );
+        
+        return (boolean) $result;
     }
 
 }

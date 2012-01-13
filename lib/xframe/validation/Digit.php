@@ -2,22 +2,22 @@
 
 namespace xframe\validation;
 
+/**
+ * Validate an input as a numeric digit 
+ */
 class Digit implements Validator {
 
     /**
-     *
      * @var int
      */
     private $min;
 
     /**
-     *
      * @var int
      */
     private $max;
 
     /**
-     *
      * @param int $min
      * @param int $max
      */
@@ -29,6 +29,7 @@ class Digit implements Validator {
     /**
      * Checkes if a given value contains only digits and is within the min and
      * max constraints
+     * 
      * @param mixed $value
      * @return boolean
      */
