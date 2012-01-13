@@ -48,7 +48,6 @@ class RequestMapGenerator {
                 "Prefilter" => "xframe\\request\\annotation\\Prefilter",
                 "CacheLength" => "xframe\\request\\annotation\\CacheLength",
                 "CustomParam" => "xframe\\request\\annotation\\CustomParam",
-                "Params" => "xframe\\request\\annotation\\Params",
                 "Parameter" => "xframe\\request\\annotation\\Parameter",
                 "Template" => "xframe\\request\\annotation\\Template"
             )
