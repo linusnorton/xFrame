@@ -44,7 +44,7 @@ class Regex implements Validator {
         $result = preg_match(
             $this->pattern, 
             $value, 
-            null, 
+            $null,
             $this->flags, 
             $this->offset
         );
