@@ -16,7 +16,7 @@ class Request {
     private $mappedParameters;
 
     public $files;
-    public $cookies;
+    public $cookie;
     
     /**
      *
