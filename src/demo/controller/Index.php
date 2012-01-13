@@ -12,8 +12,8 @@ class Index extends Controller {
 
     /**
      * @Request("index")
-     * @Parameter(name="userId", validator="Digit(1,1000000)", required=true)
-     * @Parameter(name="username", validator="RegEx('/u[0-9]{3}[a-z]/i')", required=false, default="u123A")
+     * @Parameter(name="userId", validator="\xframe\validation\Digit(1,1000000)", required=true)
+     * @Parameter(name="username", validator="\xframe\validation\RegEx('/u[0-9]{3}[a-z]/i')", required=false, default="u123A")
      */
     public function run() {
         echo "<pre>";

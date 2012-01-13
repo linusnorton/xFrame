@@ -150,7 +150,7 @@ class RequestMapGenerator {
         $fileContents .= "array({$newLine}";
         foreach ($mappedParams as $param) {
             $fileContents .= 'new xframe\request\Parameter(\''.$param->name.'\',' . $newLine;
-            $fileContents .= ($param->validator) ? 'new xframe\validation\\'.$param->validator.',' . $newLine : "null,{$newLine}";
+            $fileContents .= ($param->validator) ? 'new '.$param->validator.',' . $newLine : "null,{$newLine}";
             $fileContents .= var_export($param->required, true) . ",{$newLine}";
             $fileContents .= var_export($param->default, true) . "),";
         }
