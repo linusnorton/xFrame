@@ -156,7 +156,7 @@ class RequestMapGenerator {
             $fileContents .= var_export($param->default, true) . "),";
         }
         $fileContents .= "),{$newLine}";
-        $fileContents .= var_export($filter, true).",{$newLine}";
+        $fileContents .= $filter != null ? "new {$filter},{$newLine}" : "null,{$newLine}";
         $fileContents .= var_export($cacheLength, true). PHP_EOL. ");";
 
         $filename = $this->dic->tmp.$request.".php";
