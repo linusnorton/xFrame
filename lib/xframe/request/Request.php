@@ -45,12 +45,9 @@ class Request {
         //get the $_FILES array
         $this->files = &$_FILES;
         $this->cookie = &$_COOKIE;
-        $this->server = array();
-        if (is_array($_SERVER)) {
-            $this->server = &$_SERVER;
-        }
-        $this->https = (boolean) $this->server['HTTPS'] == 'on' || $this->server['HTTP_X_SECURE'] == 'true';
-        $this->cli = (boolean) php_sapi_name() == 'cli';
+        $this->server = &$_SERVER;
+        $this->https = $this->server['HTTPS'] == 'on' || $this->server['HTTP_X_SECURE'] == 'true';
+        $this->cli = php_sapi_name() == 'cli';
     }
 
     /**

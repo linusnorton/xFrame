@@ -14,11 +14,11 @@ class ForceHTTPS implements Prefilter {
      * @param Request $request
      * @param Controller $controller
      */
-	public function run(Request $request, Controller $controller) {
+    public function run(Request $request, Controller $controller) {
         if (!$request->https) {
             $controller->redirect("https://" . $request->server['SERVER_NAME'] . $request->server['REQUEST_URI']);
         }
     }
-	
+
 }
 

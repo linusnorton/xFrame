@@ -16,11 +16,11 @@ class ForceCLI implements Prefilter {
      * @param Controller $controller
      * @throws Exception
      */
-	public function run(Request $request, Controller $controller) {
+    public function run(Request $request, Controller $controller) {
         if (!$request->cli) {
             throw new Exception("This request must be performed on the CLI.");
         }
     }
-	
+    
 }
 
