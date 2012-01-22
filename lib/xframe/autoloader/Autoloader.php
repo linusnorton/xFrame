@@ -76,7 +76,7 @@ class Autoloader {
      */
     public function loader($class) {
         $filename = str_replace(array('\\', '_'), DIRECTORY_SEPARATOR, $class);
-        @include $filename.$this->classExtension;
+        include $filename.$this->classExtension;
     }
    
 }

@@ -14,6 +14,9 @@ class Request {
     private $requestedResource;
     private $parameters;
     private $mappedParameters;
+    private $server;
+    private $https;
+    private $cli;
 
     public $files;
     public $cookie;
@@ -42,6 +45,9 @@ class Request {
         //get the $_FILES array
         $this->files = &$_FILES;
         $this->cookie = &$_COOKIE;
+        $this->server = &$_SERVER;
+        $this->https = $this->server['HTTPS'] == 'on' || $this->server['HTTP_X_SECURE'] == 'true';
+        $this->cli = php_sapi_name() == 'cli';
     }
 
     /**
