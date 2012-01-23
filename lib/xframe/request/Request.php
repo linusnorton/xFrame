@@ -14,10 +14,10 @@ use \xframe\util\Container;
 class Request extends Container {
     private $requestedResource;
     private $mappedParameters;
-    private $server;
-    private $https;
-    private $cli;
-
+    
+    public $server;
+    public $https;
+    public $cli;
     public $files;
     public $cookie;
     
@@ -47,7 +47,7 @@ class Request extends Container {
         $this->files = &$_FILES;
         $this->cookie = &$_COOKIE;
         $this->server = &$_SERVER;
-        $this->https = $this->server['HTTPS'] == 'on' || $this->server['HTTP_X_SECURE'] == 'true';
+        $this->https = isset($this->server['HTTPS']) || isset($this->server['HTTP_X_SECURE']);
         $this->cli = php_sapi_name() == 'cli';
     }
 
