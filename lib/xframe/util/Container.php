@@ -31,7 +31,9 @@ class Container {
      * @return mixed
      */
     public function __get($key) {
-        return $this->attributes[$key];
+        if (array_key_exists($key, $this->attributes)) {
+            return $this->attributes[$key];
+        }
     }
 
     /**
@@ -52,6 +54,15 @@ class Container {
      */
     public function __isset($key) {
         return isset($this->attributes[$key]);
+    }
+
+    /**
+     * Unset the given variable
+     *
+     * @param mixed $key
+     */
+    public function __unset($key) {
+        unset($this->attributes[$key]);
     }
 
     /**
