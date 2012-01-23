@@ -3,7 +3,7 @@
 namespace xframe\view;
 use \Twig_Environment;
 use \Twig_Loader_Filesystem;
-use xframe\registry\Registry;
+use \xframe\registry\Registry;
 
 /**
  * TwigView is the view for Fabien Potiencier's Twig templating language.
@@ -17,10 +17,6 @@ class TwigView extends View {
      */
     private $twig;
 
-    /**
-     * @var array
-     */
-    private $model;
 
     /**
      * Creates the Twig objects
@@ -50,40 +46,13 @@ class TwigView extends View {
     }
 
     /**
-     * Add data to the Twig view
-     * @param mixed $data
-     * @param mixed $key
-     */
-    public function add($data, $key = null) {
-        if ($key != null) {
-            $this->model[$key] = $data;
-        }
-    }
-
-    /**
      * Use Twig to generate some HTML
      * @return string
      */
     public function execute() {
         $template = $this->twig->loadTemplate($this->template);
-        return $template->render($this->model);
+        return $template->render($this->attributes);
     }
 
-    /**
-     * Pass the magic set on to Twig
-     * @param string $key
-     * @param mixed $value
-     */
-    public function __set($key, $value) {
-        $this->add($value, $key);
-    }
-    
-    /**
-     * @param scalar $key
-     * @return mixed
-     */
-    public function __get($key) {
-        return $this->model[$key];
-    }
 }
 

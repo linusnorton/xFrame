@@ -2,7 +2,7 @@
 
 namespace xframe\view;
 use \PHPTAL;
-use xframe\registry\Registry;
+use \xframe\registry\Registry;
 
 /**
  * PHPTAL view wrapper
@@ -25,6 +25,7 @@ class PHPTALView extends View {
      */
     public function  __construct(Registry $registry,
                                  $root,
+                                 $tmpDir,
                                  $template,
                                  $debug = false) {
         parent::__construct(
@@ -33,17 +34,6 @@ class PHPTALView extends View {
             $template
         );
         $this->phptal = new PHPTAL();
-    }
-
-    /**
-     * Add data to the PHPTAL view
-     * @param mixed $data
-     * @param mixed $key
-     */
-    public function add($data, $key = null) {
-        if ($key != null) {
-            $this->phptal->$key = $data;
-        }
     }
 
     /**
@@ -61,7 +51,16 @@ class PHPTALView extends View {
      * @param mixed $value
      */
     public function __set($key, $value) {
-        $this->add($value, $key);
+        $this->phptal->$key = $value;
     }
+
+    /**
+     * Pass the magic get on to PHPTAL
+     * @param string $key
+     */
+    public function __get($key) {
+        return $this->phptal->$key;
+    }
+
 }
 

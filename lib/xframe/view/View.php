@@ -2,13 +2,14 @@
 
 namespace xframe\view;
 use \Exception;
+use \xframe\util\Container;
 
 /**
  * This interface specifies the requirements for a view.
  *
  * @author Linus Norton <linusnorton@gmail.com>
  */
-abstract class View {
+abstract class View extends Container {
     protected $template;
     protected $parameters;
     protected $viewDirectory;
@@ -19,6 +20,8 @@ abstract class View {
      * Initialize the view
      */
     public function __construct($viewDirectory, $viewExtension, $template) {
+        parent::__construct();
+
         $this->parameters = array();
         $this->exceptions = array();
         $this->viewDirectory = $viewDirectory;
@@ -58,12 +61,6 @@ abstract class View {
     public function clearExceptions() {
         $this->exceptions = array();
     }
-
-    /**
-     * Add data to the view
-     * @param $data
-     */
-    public abstract function add($data, $key = null);
 
     /**
      * Generate the contents of the page response
