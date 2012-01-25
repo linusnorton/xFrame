@@ -1,8 +1,8 @@
 <?php
 namespace xframe\request\prefilter;
-use xframe\request\Prefilter;
-use xframe\request\Request;
-use xframe\request\Controller;
+use \xframe\request\Prefilter;
+use \xframe\request\Request;
+use \xframe\request\Controller;
 use \Exception;
 
 /**

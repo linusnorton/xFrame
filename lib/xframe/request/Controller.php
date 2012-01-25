@@ -1,8 +1,8 @@
 <?php
 
 namespace xframe\request;
-use xframe\core\DependencyInjectionContainer;
-use xframe\view\View;
+use \xframe\core\DependencyInjectionContainer;
+use \xframe\view\View;
 use \Exception;
 
 /**
@@ -29,9 +29,9 @@ class Controller {
     protected $view;
     
     /**
-     * @var Prefilter
+     * @var array of Prefilter
      */
-    private $prefilter;
+    private $prefilters;
 
     /**
      * @var int
@@ -56,7 +56,7 @@ class Controller {
      * @param string $method
      * @param View $view
      * @param array $parameterMap
-     * @param Prefilter $prefilter
+     * @param array $prefilters
      * @param int $cacheLength
      */
     public function  __construct(DependencyInjectionContainer $dic,
@@ -64,13 +64,13 @@ class Controller {
                                  $method,
                                  View $view,
                                  array $parameterMap = array(),
-                                 Prefilter $prefilter = null,
+                                 array $prefilters = array(),
                                  $cacheLength = false) {
         $this->dic = $dic;
         $this->request = $request;
         $this->request->applyParameterMap($parameterMap);
         $this->method = $method;
-        $this->prefilter = $prefilter;
+        $this->prefilters = $prefilters;
         $this->cacheLength = $cacheLength;
         $this->cacheEnabled = $this->dic->registry->get("CACHE_ENABLED");
         $this->view = $view;
@@ -107,7 +107,7 @@ class Controller {
      */
     public function handleRequest() {
         //if we continue running after the prefilter has run
-        if ($this->runPrefilter()) {
+        if ($this->runPrefilters()) {
             //process the response
             $response = $this->processRequest();
             //cache the response
@@ -170,12 +170,15 @@ class Controller {
      *
      * @return boolean
      */
-    protected function runPrefilter() {
-        //if there is a prefilter for this request, run it
-        if ($this->prefilter instanceof Prefilter) {
-            return $this->prefilter->run($this->request, $this);
+    protected function runPrefilters() {
+        // run each prefilter
+        foreach ($this->prefilters as $filter) {
+            // if there is a prefilter for this request, run it
+            if ($filter instanceof Prefilter && !$filter->run($this->request, $this)) {
+                return false;
+            }
         }
-        //if no prefilter, continue execution
+        // all prefilters passed
         return true;
     }
 

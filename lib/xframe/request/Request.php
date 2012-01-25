@@ -103,6 +103,15 @@ class Request extends Container {
     }
 
     /**
+     * Add the given parameters to the request
+     *
+     * @param array $parameters
+     */
+    public function addParameters(array $parameters) {
+        $this->attributes = array_merge($this->attributes, $parameters);
+    }
+
+    /**
      * Return a hash of the Request
      */
     public function hash() {

@@ -129,9 +129,15 @@ class RequestMapGenerator {
         $request = $annotation->getAnnotation("Request")->value;
         $mappedParams = $annotation->getAllAnnotations("Parameter");
         $cacheLength =  $this->getOrReturn($annotation, "CacheLength", false);
-        $filter =  $this->getOrReturn($annotation, "Prefilter", null);
         $view =  $this->getOrReturn($annotation, "View", $this->dic->registry->get("DEFAULT_VIEW"));
         $template = $this->getOrReturn($annotation, "Template", $request);
+
+        $prefilters = array();
+
+        foreach ($annotation->getAllAnnotations("Prefilter") as $prefilter) {
+            $prefilters[] = $prefilter->value;
+        }
+
         $customParams = array();
 
         foreach ($annotation->getAllAnnotations("CustomParam") as $custom) {
@@ -141,6 +147,11 @@ class RequestMapGenerator {
         $newLine = PHP_EOL.'    ';
         $fileContents = "<?php".PHP_EOL.PHP_EOL;
         $fileContents .= "// Automatically generated code, do not edit.".PHP_EOL;
+
+        if (count($customParams) > 0) {
+            $fileContents .= "\$request->addParameters(".var_export($customParams, true).");".PHP_EOL;
+        }
+        
         $fileContents .= "return new {$annotation->class}({$newLine}";
         $fileContents .= "\$this->dic,{$newLine}";
         $fileContents .= "\$request,{$newLine}";
@@ -156,7 +167,13 @@ class RequestMapGenerator {
             $fileContents .= var_export($param->default, true) . "),";
         }
         $fileContents .= "),{$newLine}";
-        $fileContents .= $filter != null ? "new {$filter},{$newLine}" : "null,{$newLine}";
+        $fileContents .= "array(";
+
+        foreach ($prefilters as $filter) {
+            $fileContents .= "new {$filter}, ";
+        }
+
+        $fileContents .= "),{$newLine}";
         $fileContents .= var_export($cacheLength, true). PHP_EOL. ");";
 
         $filename = $this->dic->tmp.$request.".php";

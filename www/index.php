@@ -5,8 +5,6 @@ use \xframe\core\System;
 use \xframe\request\Request;
 
 /**
- * @author Linus Norton <linusnorton@gmail.com>
- *
  * Welcome to xFrame. This file is the entry point for the front controller.
  * It registers the autoloader, boots the framework and dispatches the request.
  */
