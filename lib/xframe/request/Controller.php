@@ -1,8 +1,8 @@
 <?php
 
 namespace xframe\request;
-use xframe\core\DependencyInjectionContainer;
-use xframe\view\View;
+use \xframe\core\DependencyInjectionContainer;
+use \xframe\view\View;
 use \Exception;
 
 /**
