@@ -15,7 +15,8 @@ class ForceHTTPS implements Prefilter {
      * @param Controller $controller
      */
     public function run(Request $request, Controller $controller) {
-        if (!$request->https) {
+        // if its not a HTTPS or CLI request, redirect
+        if (!$request->https && !$request->cli) {
             $controller->redirect("https://" . $request->server['SERVER_NAME'] . $request->server['REQUEST_URI']);
         }
     }
