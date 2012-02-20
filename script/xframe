@@ -1,4 +1,4 @@
 #!/usr/bin/env php
 <?php
 
-require "xframe/script/xframe.php";
+require __DIR__."/xframe.php";
