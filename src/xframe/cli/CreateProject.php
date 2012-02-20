@@ -46,9 +46,20 @@ class CreateProject extends Controller {
         chmod($path.'/log', 0777);
         
         // hack the index.php
-        $index = file_get_contents($path.'/www/index.php');
-        $index = str_replace('$root.\'','\'xframe/', $index);
-        file_put_contents($path.'/www/index.php', $index);
+        $this->resetRoot($path.'/www/index.php');
+        $this->resetRoot($path.'/script/xframe.php');
+        $this->resetRoot($path.'/test/bootstrap.php');
+    }
+
+    /**
+     * Reset the root path in the given file
+     * 
+     * @param string $filename
+     */
+    private function resetRoot($filename) {
+        $content = file_get_contents($filename);
+        $content = str_replace('$root.\'', '\'xframe/', $content);
+        file_put_contents($filename, $content);
     }
     
     /**
