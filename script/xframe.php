@@ -32,7 +32,7 @@ $_SERVER['CONFIG'] = isset($_REQUEST['config']) ? $_REQUEST['config'] : 'dev';
 unset($_REQUEST['config']);
 
 $root = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
-require_once($root.'lib/xframe/autoloader/Autoloader.php');
+require($root.'lib/xframe/autoloader/Autoloader.php');
 
 $autoloader = new Autoloader($root);
 $autoloader->register();
