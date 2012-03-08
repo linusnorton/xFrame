@@ -6,13 +6,9 @@ interface Authenticator {
     /**
      * @param string $identity
      * @param string $credential
-     */
-    public function authenticate($identity, $credential);
-    
-    /**
      * @return \xframe\authentication\Result
      */
-    public function getResult();
+    public function authenticate($identity, $credential);
 
 }
 

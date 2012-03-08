@@ -50,16 +50,17 @@ class PDOAuthenticator implements Authenticator {
     /**
      * @param string $identity
      * @param string $credential
+     * @return \xframe\authentication\Result
      */
     public function authenticate($identity, $credential) {
 
         try {
-            $result = $this->fetchDbResult($identity);
-            $this->processDbResult($result, $credential);
+            $dbResult = $this->fetchDbResult($identity);
+            $this->processDbResult($dbResult, $credential);
 
         } catch (\Exception $ex) {
-            $this->result->setCode(Result::GENERAL_FAILURE);
-            $this->result->setMessages(
+            $result->setCode(Result::GENERAL_FAILURE);
+            $result->setMessages(
                 array(
                     "code" => $ex->getCode(),
                     "message" => $ex->getMessage(),
@@ -69,13 +70,6 @@ class PDOAuthenticator implements Authenticator {
                 )
             );
         }
-        return $this;
-    }
-
-    /**
-     * @return \xframe\authentication\Result
-     */
-    public function getResult() {
         return $this->result;
     }
 
