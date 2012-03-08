@@ -59,8 +59,8 @@ class PDOAuthenticator implements Authenticator {
             $this->processDbResult($dbResult, $credential);
 
         } catch (\Exception $ex) {
-            $result->setCode(Result::GENERAL_FAILURE);
-            $result->setMessages(
+            $this->result->setCode(Result::GENERAL_FAILURE);
+            $this->result->setMessages(
                 array(
                     "code" => $ex->getCode(),
                     "message" => $ex->getMessage(),
