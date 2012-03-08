@@ -70,10 +70,10 @@ class Result {
     }
 
     /**
-     * Used to allow simpler checking of authentication
+     * True if the code is success
      * @return boolean
      */
-    public function __toString() {
+    public function isValid() {
         return $this->code === self::SUCCESS;
     }
 
