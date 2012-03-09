@@ -10,7 +10,7 @@ use \xframe\registry\Registry;
  *
  * @author Linus Norton <linusnorton@gmail.com>
  */
-class TwigView extends View {
+class TwigView extends TemplateView {
     
     /**
      * @var Twig

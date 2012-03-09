@@ -24,7 +24,7 @@ class Controller {
     protected $request;
 
     /**
-     * @var View
+     * @var \xframe\view\View
      */
     protected $view;
     

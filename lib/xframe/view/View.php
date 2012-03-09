@@ -5,36 +5,20 @@ use \Exception;
 use \xframe\util\Container;
 
 /**
- * This interface specifies the requirements for a view.
- *
- * @author Linus Norton <linusnorton@gmail.com>
+ * This abstract class specifies the requirements for a view.
  */
 abstract class View extends Container {
-    protected $template;
     protected $parameters;
-    protected $viewDirectory;
-    protected $viewExtension;
     protected $exceptions;
 
     /**
      * Initialize the view
      */
-    public function __construct($viewDirectory, $viewExtension, $template) {
+    public function __construct() {
         parent::__construct();
 
         $this->parameters = array();
         $this->exceptions = array();
-        $this->viewDirectory = $viewDirectory;
-        $this->viewExtension = $viewExtension;
-        $this->setTemplate($template);
-    }
-
-    /**
-     * Set the view template file
-     * @param string $template
-     */
-    public function setTemplate($template) {
-        $this->template = $this->viewDirectory.$template.$this->viewExtension;
     }
 
     /**
