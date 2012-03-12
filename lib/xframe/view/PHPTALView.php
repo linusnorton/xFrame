@@ -9,7 +9,7 @@ use \xframe\registry\Registry;
  *
  * @author Linus Norton <linusnorton@gmail.com>
  */
-class PHPTALView extends View {
+class PHPTALView extends TemplateView {
 
     /**
      * @var PHPTAL

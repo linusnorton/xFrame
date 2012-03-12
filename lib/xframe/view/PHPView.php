@@ -6,7 +6,7 @@ use \xframe\registry\Registry;
 /**
  * PHPView is the view for the pure PHP view scripts.
  */
-class PHPView extends View {
+class PHPView extends TemplateView {
     
     /**
      * @var boolean
