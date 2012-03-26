@@ -39,6 +39,7 @@ class RequestMapGenerator {
         //include addendum
         require_once "addendum/annotations.php";
 
+        Addendum::ignore("Table");
         Addendum::ignore("Entity");
         Addendum::ignore("MappedSuperclass");
         Addendum::setClassnames(
