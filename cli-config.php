@@ -19,5 +19,5 @@ $system = new System($root, "dev");
 $system->boot();
 
 $helperSet = new \Symfony\Component\Console\Helper\HelperSet(array(
-    'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($system->em)
+    'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($system->plugin->em)
 ));

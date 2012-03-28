@@ -8,8 +8,6 @@ use \xframe\exception\ExceptionOutputter;
 use \xframe\request\FrontController;
 use \xframe\registry\Registry;
 use \Memcache;
-use \Doctrine\ORM\EntityManager;
-use \Doctrine\ORM\Configuration;
 use \PDO;
 use \xframe\request\Session;
 
@@ -37,11 +35,11 @@ class System extends DependencyInjectionContainer {
         ));        
         
         $this->setDefaultDatabase();
-        $this->setDefaultEm();
         $this->setDefaultErrorHandler();
         $this->setDefaultExceptionHandler();
         $this->setDefaultFrontController();
         $this->setDefaultRegistry();
+        $this->setDefaultPluginContainer();
     }
 
     /**
@@ -119,6 +117,23 @@ class System extends DependencyInjectionContainer {
     }
 
     /**
+     * Sets up the project plugins with access to the dic
+     */
+    private function setDefaultPluginContainer() {
+        $this->add('plugin', function($dic) {
+            $pluginContainer = new DependencyInjectionContainer();
+            foreach ($dic->registry->get("plugin") as $key => $plugin) {
+                $pluginContainer->add($key,function($pDic) use ($dic) {
+                    $p = new $plugin($dic);
+                    return $p->init();
+                });
+            }
+
+            return $pluginContainer;
+        });
+    }
+
+    /**
      * Set the lambda function for the memcache
      */
     private function getDefaultCache() {
@@ -130,43 +145,6 @@ class System extends DependencyInjectionContainer {
             );
 
             return $cache;
-        });
-    }
-
-    /**
-     * Set up doctrine
-     */
-    private function setDefaultEm() {
-        $this->add('em', function ($dic) {
-            if (extension_loaded('apc')) {
-                $cache = new \Doctrine\Common\Cache\ApcCache();
-            }
-            else if ($dic->registry->get('CACHE_ENABLED')) {
-                $cache = new \Doctrine\Common\Cache\MemcacheCache();
-                $cache->setMemcache($dic->cache);
-            }
-            else {
-                $cache = new \Doctrine\Common\Cache\ArrayCache();
-            }
-
-            $config = new Configuration();
-            $config->setMetadataCacheImpl($cache);
-            $driver = $config->newDefaultAnnotationDriver(
-                array(
-                    $dic->root.'src',
-                    $dic->root.'lib'
-                )
-            );
-            $config->setMetadataDriverImpl($driver);
-            $config->setQueryCacheImpl($cache);
-            $config->setProxyDir($dic->tmp.DIRECTORY_SEPARATOR);
-            $config->setProxyNamespace('Project\Proxies');
-
-            $rebuild = $dic->registry->get('AUTO_REBUILD_PROXIES');
-            $config->setAutoGenerateProxyClasses($rebuild);
-
-            $connectionOptions = array('pdo' => $dic->getDatabase());
-            return EntityManager::create($connectionOptions, $config);
         });
     }
 }
