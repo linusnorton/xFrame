@@ -15,18 +15,18 @@ class Role {
 
     /**
      *
-     * @var stdClass
+     * @var \stdClass
      */
     protected $children;
 
     /**
      *
      * @param string $name
-     * @param stdClass $children
+     * @param \stdClass $children
      */
-    public function __construct($name, stdClass $children = null) {
+    public function __construct($name, \stdClass $children = null) {
         $this->name = $name;
-        $this->children = $children == null ? new stdClass() : $children;
+        $this->children = $children == null ? new \stdClass() : $children;
     }
 
     /**
@@ -39,7 +39,7 @@ class Role {
 
     /**
      *
-     * @return stdClass
+     * @return \stdClass
      */
     public function getChildren() {
         return $this->children;
@@ -53,6 +53,10 @@ class Role {
     public function addChild(Role $role) {
         $this->children->{$role->getName()} = $role;
         return $this;
+    }
+
+    public function __toString() {
+        return $this->name;
     }
 
 }

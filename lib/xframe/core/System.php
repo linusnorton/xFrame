@@ -122,8 +122,8 @@ class System extends DependencyInjectionContainer {
     private function setDefaultPluginContainer() {
         $this->add('plugin', function($dic) {
             $pluginContainer = new DependencyInjectionContainer();
-            foreach ($dic->registry->get("plugin") as $key => $plugin) {
-                $pluginContainer->add($key,function($pDic) use ($dic) {
+            foreach ($dic->registry->get("PLUGIN") as $key => $plugin) {
+                $pluginContainer->add($key,function($pDic) use ($dic, $plugin) {
                     $p = new $plugin($dic);
                     return $p->init();
                 });

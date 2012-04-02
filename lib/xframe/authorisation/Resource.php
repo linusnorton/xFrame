@@ -22,11 +22,11 @@ class Resource {
     /**
      *
      * @param string $name
-     * @param stdClass $children
+     * @param \stdClass $children
      */
-    public function __construct($name, stdClass $children = null) {
+    public function __construct($name, \stdClass $children = null) {
         $this->name = $name;
-        $this->children = $children == null ? new stdClass() : $children;
+        $this->children = $children == null ? new \stdClass() : $children;
     }
 
     /**
@@ -39,7 +39,7 @@ class Resource {
 
     /**
      *
-     * @return stdClass
+     * @return \stdClass
      */
     public function getChildren() {
         return $this->children;
@@ -47,12 +47,16 @@ class Resource {
 
     /**
      * Adds a child role to this role.
-     * @param \xframe\authorisation\Role $role
-     * @return \xframe\authorisation\Role
+     * @param \xframe\authorisation\Resource $role
+     * @return \xframe\authorisation\Resource
      */
-    public function addChild(Role $role) {
-        $this->children->{$role->getName()} = $role;
+    public function addChild(Resource $resource) {
+        $this->children->{$resource->getName()} = $resource;
         return $this;
+    }
+
+    public function __toString() {
+        return $this->name;
     }
 
 }
