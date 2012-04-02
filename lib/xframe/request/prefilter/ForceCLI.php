@@ -8,7 +8,7 @@ use \Exception;
 /**
  * Forces a request to be performed on the CLI
  */
-class ForceCLI implements Prefilter {
+class ForceCLI extends Prefilter {
 
     /**
      * Checks if the current request is being made on the cli and throws an Exception if not

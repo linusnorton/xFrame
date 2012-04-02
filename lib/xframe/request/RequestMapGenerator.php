@@ -170,7 +170,7 @@ class RequestMapGenerator {
         $fileContents .= "array(";
 
         foreach ($prefilters as $filter) {
-            $fileContents .= "new {$filter}, ";
+            $fileContents .= "new {$filter}(\$this->dic), ";
         }
 
         $fileContents .= "),{$newLine}";
