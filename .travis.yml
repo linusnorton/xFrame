@@ -4,4 +4,4 @@ php:
   - 5.4
 env:
   - CONFIG=dev
-script: phpunit --bootstrap=test/bootstrap.php
+script: phpunit --bootstrap=./test/bootstrap.php ./test/
