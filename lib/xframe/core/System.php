@@ -42,6 +42,7 @@ class System extends DependencyInjectionContainer {
         $this->setDefaultExceptionHandler();
         $this->setDefaultFrontController();
         $this->setDefaultRegistry();
+        $this->setDefaultPluginContainer();
     }
 
     /**
@@ -115,6 +116,23 @@ class System extends DependencyInjectionContainer {
             $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             return $database;
+        });
+    }
+
+    /**
+     * Sets up the project plugins with access to the dic
+     */
+    private function setDefaultPluginContainer() {
+        $this->add('plugin', function($dic) {
+            $pluginContainer = new DependencyInjectionContainer();
+            foreach ($dic->registry->get("PLUGIN") as $key => $plugin) {
+                $pluginContainer->add($key,function($pDic) use ($dic, $plugin) {
+                    $p = new $plugin($dic);
+                    return $p->init();
+                });
+            }
+
+            return $pluginContainer;
         });
     }
 

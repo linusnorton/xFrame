@@ -7,7 +7,7 @@ use \xframe\request\Controller;
 /**
  * Forces a web request to be over https
  */
-class ForceHTTPS implements Prefilter {
+class ForceHTTPS extends Prefilter {
 
     /**
      * Checks if the current request is secure and redirects to a secure protocol if not
