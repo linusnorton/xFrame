@@ -52,3 +52,5 @@ Enter the domain you entered in the virtual host and test the set up was success
 * [read about the testing and the phing script](https://github.com/linusnorton/xFrame/wiki/Using-the-Phing-Script)
 * [read about adding CLI targets](https://github.com/linusnorton/xFrame/wiki/Creating-CLI-Targets)
 * [read about the exception mailer](https://github.com/linusnorton/xFrame/wiki/Exception-Mailer)
+* [read about using plugins](https://github.com/linusnorton/xFrame/wiki/Using-plugins)
+* [read about using the ACL](https://github.com/linusnorton/xFrame/wiki/Using-the-ACL)
