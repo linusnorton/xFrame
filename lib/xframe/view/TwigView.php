@@ -43,6 +43,10 @@ class TwigView extends TemplateView {
                 'auto_reload' => $registry->get("AUTO_REBUILD_TWIG")
             )
         );
+
+        if ($debug) {
+            $this->twig->addExtension(new \Twig_Extension_Debug());
+        }
     }
 
     /**
