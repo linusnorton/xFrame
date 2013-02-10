@@ -32,7 +32,7 @@ class TwigView extends TemplateView {
                                  $tmpDir,
                                  $template,
                                  $debug = false) {
-        parent::__construct("", ".html", $template);
+        parent::__construct("", "." . $registry->get("TEMPLATE_EXTENSION"), $template);
         $this->model = array();
         
         $this->twig = new Twig_Environment(

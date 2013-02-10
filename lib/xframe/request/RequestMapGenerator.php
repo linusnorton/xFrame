@@ -41,6 +41,7 @@ class RequestMapGenerator {
 
         Addendum::ignore("Table");
         Addendum::ignore("Entity");
+        Addendum::ignore("IgnoreAnnotation");
         Addendum::ignore("MappedSuperclass");
         Addendum::setClassnames(
             array(
