@@ -11,7 +11,6 @@ use \Memcache;
 use \Doctrine\ORM\EntityManager;
 use \Doctrine\ORM\Configuration;
 use \PDO;
-use \xframe\request\Session;
 
 /**
  * The System class provides access to the core resources, this includes the
@@ -53,7 +52,15 @@ class System extends DependencyInjectionContainer {
         $this->getErrorHandler()->register();
         $this->getExceptionHandler()->register();
         $this->getExceptionHandler()->attach(new Logger());
-        $this->getExceptionHandler()->attach(new ExceptionOutputter());
+        $handlers = $this->registry->get('EX_HANDLERS');
+        
+        if (count($handlers) == 0) {
+            $this->getExceptionHandler()->attach(new ExceptionOutputter());
+        } else {
+            foreach ($handlers as $handler) {
+                $this->getExceptionHandler()->attach(new $handler());
+            }
+        }
 
         if ($this->registry->get('CACHE_ENABLED')) {
             $this->getDefaultCache();
