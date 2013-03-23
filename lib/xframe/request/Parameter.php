@@ -40,7 +40,7 @@ class Parameter {
      */
     public function __construct($name,
                                 Validator $validator = null,
-                                $required = false,
+                                $required = true,
                                 $default = null) {
         $this->name = $name;
         $this->validator = $validator;
@@ -82,8 +82,6 @@ class Parameter {
         }
         
         // otherwise there was an error validating
-        throw new InvalidParameterEx("Value {$value} is not valid for parameter {$this->name} using validator ".get_class($this->validator).".");
+        throw new InvalidParameterEx("Value '{$value}' is not valid for parameter '{$this->name}' using validator ".get_class($this->validator).".");
     }
-
 }
-

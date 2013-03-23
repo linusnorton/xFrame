@@ -5,7 +5,7 @@ namespace xframe\validation;
 /**
  * Provides regular expression validation of strings 
  */
-class Regex implements Validator {
+class RegEx implements Validator {
 
     /**
      * @var string
@@ -51,5 +51,4 @@ class Regex implements Validator {
         
         return (boolean) $result;
     }
-
 }

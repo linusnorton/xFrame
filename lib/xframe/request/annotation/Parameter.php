@@ -7,6 +7,6 @@ class Parameter extends Annotation {
     
     public $name;
     public $validator;
-    public $required = false;
+    public $required = true;
     public $default;
 }
