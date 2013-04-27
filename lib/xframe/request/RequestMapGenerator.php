@@ -181,6 +181,20 @@ class RequestMapGenerator {
         $filename = $this->dic->tmp.$request.".php";
 
         try {
+            if (strpos($request, "/") !== false) {
+                $folders = explode("/", $request);
+                array_pop($folders);
+                $currentPath = $this->dic->tmp;
+                
+                foreach ($folders as $folder) {
+                    if (!is_dir($currentPath . $folder)) {
+                        mkdir($currentPath . $folder);
+                    }
+                    
+                    $currentPath .= $folder . DIRECTORY_SEPARATOR;
+                }
+            }
+
             file_put_contents($filename, $fileContents);
         }
         catch (Exception $e) {
