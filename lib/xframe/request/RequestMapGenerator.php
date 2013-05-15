@@ -125,10 +125,16 @@ class RequestMapGenerator {
     /**
      * Create the cache file for the request
      * 
-     * @param ReflectionAnnotatedMethod $annotation 
+     * @param ReflectionAnnotatedMethod $annotation
+     * @throws Exception
      */
     private function processRequest(ReflectionAnnotatedMethod $annotation) {
         $request = $annotation->getAnnotation("Request")->value;
+
+        if (strpos($request, "/") !== false) {
+            throw new Exception("Invalid request value ('{$request}') in anotation - containts '/'", 0, null);
+        }
+
         $mappedParams = $annotation->getAllAnnotations("Parameter");
         $cacheLength =  $this->getOrReturn($annotation, "CacheLength", false);
         $view =  $this->getOrReturn($annotation, "View", $this->dic->registry->get("DEFAULT_VIEW"));
@@ -181,20 +187,6 @@ class RequestMapGenerator {
         $filename = $this->dic->tmp.$request.".php";
 
         try {
-            if (strpos($request, "/") !== false) {
-                $folders = explode("/", $request);
-                array_pop($folders);
-                $currentPath = $this->dic->tmp;
-                
-                foreach ($folders as $folder) {
-                    if (!is_dir($currentPath . $folder)) {
-                        mkdir($currentPath . $folder);
-                    }
-                    
-                    $currentPath .= $folder . DIRECTORY_SEPARATOR;
-                }
-            }
-
             file_put_contents($filename, $fileContents);
         }
         catch (Exception $e) {
