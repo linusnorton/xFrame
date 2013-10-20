@@ -28,14 +28,14 @@ class CreateProject extends Controller {
         $this->recursiveCopy($this->dic->root, $path);
         
         // clean directories
-        $this->recursiveDelete($path.'/src/xframe');        
+        $this->recursiveDelete($path.'/src/xframe');
         $this->recursiveDelete($path.'/lib');
         $this->recursiveDelete($path.'/tmp');
         $this->recursiveDelete($path.'/log');
         
         // remove view files
-        unlink($path.'/view/cli-index.html');
-        unlink($path.'/view/create-project.html');
+        unlink($path.'/view/cli-index.twig');
+        unlink($path.'/view/create-project.twig');
         
         // rebuild directory structure
         mkdir($path.'/lib');
@@ -127,7 +127,7 @@ class CreateProject extends Controller {
         }
         
         return $result;
-    }    
+    }
     
     /**
      * Recursively delete a directory
@@ -138,7 +138,7 @@ class CreateProject extends Controller {
              $objects = scandir($dir); 
              foreach ($objects as $object) { 
                  if ($object != "." && $object != "..") { 
-                    if (filetype($dir."/".$object) == "dir") {                        
+                    if (filetype($dir."/".$object) == "dir") {
                         $this->recursiveDelete($dir."/".$object); 
                     }
                     else {
@@ -148,7 +148,7 @@ class CreateProject extends Controller {
              } 
              reset($objects); 
              rmdir($dir); 
-         } 
-     }     
+         }
+     }
 }
 
