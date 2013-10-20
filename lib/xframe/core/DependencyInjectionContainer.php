@@ -6,6 +6,14 @@ use xframe\util\Container;
 /**
  * Used to store the applications dependencies.
  *
+ * @property \PDO $database Default database
+ * @property \Doctrine\ORM\EntityManager $em
+ * @property \xframe\exception\ErrorHandler $errorHandler
+ * @property \xframe\exception\ExceptionHandler $exceptionHandler
+ * @property \xframe\request\FrontController $frontController
+ * @property \xframe\registry\Registry $registry
+ * @property DependencyInjectionContainer $plugin Contains set of \xframe\plugin\Plugin objects
+ * @property \Memcache $cache Default cache, if it is enabled
  * @author Linus Norton <linusnorton@gmail.com>
  */
 class DependencyInjectionContainer extends Container {
