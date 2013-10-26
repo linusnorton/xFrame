@@ -1,0 +1,17 @@
+{
+    "name": "xframe/xFrame",
+    "type": "library",
+    "description": "A lightweight annotation based MVC framework",
+    "keywords": ["mvc", "framework"],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3"
+    },
+    "autoload": {
+        "psr-0": {
+            "addendum\\": "lib/",
+            "xframe\\": "lib/"
+        }
+    },
+    "bin": ["script/xframe", "script/xframe.php"]
+}
