@@ -1,8 +1,13 @@
 {
-    "name": "xframe/xFrame",
+    "name": "linusnorton/xframe",
     "type": "library",
     "description": "A lightweight annotation based MVC framework",
     "keywords": ["mvc", "framework"],
+    "authors": [
+        {
+            "name": "Linus Norton"
+        }
+    ],
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.3"
