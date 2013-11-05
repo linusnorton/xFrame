@@ -64,7 +64,7 @@ class System extends DependencyInjectionContainer {
 
         if ($this->registry->get('CACHE_ENABLED')) {
             $this->getDefaultCache();
-        }               
+        }
     }
 
     /**

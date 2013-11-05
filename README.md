@@ -44,7 +44,7 @@ Getting Started
 
 Enter the domain you entered in the virtual host and test the set up was successful.
 
-* Start hacking `src/demo/controller/Index.php` and `view/index.html`
+* Start hacking `src/demo/controller/Index.php` and `view/index.twig`
 * [read about request mapping](https://github.com/linusnorton/xFrame/wiki/Request-Mapping)
 * [read about the dependency injection container](https://github.com/linusnorton/xFrame/wiki/Dependency-Injection-Container)
 * [read about bootstrapping](https://github.com/linusnorton/xFrame/wiki/Bootstrap)

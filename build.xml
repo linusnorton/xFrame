@@ -30,14 +30,14 @@
         <chmod file="${basedir}/log" mode="0777" />
 
         <mkdir dir="${basedir}/tmp"/>
-        <chmod file="${basedir}/tmp" mode="0777" />        
+        <chmod file="${basedir}/tmp" mode="0777" />
         
-        <mkdir dir="${report}"/>        
-        <chmod file="${report}" mode="0777" />                       
+        <mkdir dir="${report}"/>
+        <chmod file="${report}" mode="0777" />
     </target>    
 
     <!-- run the unit tests -->
-    <target name="test">        
+    <target name="test">
         <exec passthru="true" command="phpunit -d session.name=${config} -c ${basedir}/test/phpunit.xml ${testPath}"/>
     </target>
 

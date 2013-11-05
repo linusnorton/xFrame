@@ -17,7 +17,6 @@ class TwigView extends TemplateView {
      */
     private $twig;
 
-
     /**
      * Creates the Twig objects
      *
@@ -32,7 +31,7 @@ class TwigView extends TemplateView {
                                  $tmpDir,
                                  $template,
                                  $debug = false) {
-        parent::__construct("", "." . $registry->get("TEMPLATE_EXTENSION"), $template);
+        parent::__construct("", ".twig", $template);
         $this->model = array();
         
         $this->twig = new Twig_Environment(
@@ -57,6 +56,4 @@ class TwigView extends TemplateView {
         $template = $this->twig->loadTemplate($this->template);
         return $template->render($this->attributes);
     }
-
 }
-
