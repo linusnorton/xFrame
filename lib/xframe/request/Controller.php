@@ -141,10 +141,12 @@ class Controller {
 
         //if it wasn't in the cache or the cache is not on...
         if ($response === false) {
-            //preform the init
+            //perform the init
             $this->init();
             //execute controller method
             $this->{$this->method}();
+            //execute post controller action. yes, same idea as ZF
+            $this->postDispatch();
             //use the view to generate the response
             $response = $this->view->execute();
         }
@@ -183,10 +185,12 @@ class Controller {
     }
 
     /**
-     * This method is class before the controller method is called
+     * This method is called before the controller method is called
      */
-    protected function init() {
-        
-    }
+    protected function init() {}
 
+    /**
+     * This method is called after the controller method is called
+     */
+    protected function postDispatch() {}
 }

@@ -60,10 +60,10 @@ class FrontController {
 
         // if we still don't have a controller 404 it
         if (!isset($controller)) {
-            $controller = $this->get404Controller();
+            $controller = $this->get404Controller($request);
         }
 
-        $controller->handleRequest($request);
+        $controller->handleRequest();
     }
     
     /**
