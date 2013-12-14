@@ -7,7 +7,7 @@ namespace xframe\request;
  *
  * @author Linus Norton <linusnorton@gmail.com>
  */
-class NotFoundController {
+class NotFoundController extends Controller {
 
     private $request;
 
@@ -18,7 +18,7 @@ class NotFoundController {
     /**
      * Send back a 404 response
      */
-    public function handleRequest(Request $request) {
+    public function handleRequest() {
         if (PHP_SAPI !== 'cli') {
             header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found');
         }

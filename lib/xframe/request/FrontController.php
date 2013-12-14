@@ -67,12 +67,12 @@ class FrontController {
     }
     
     /**
-     *
+     * @param Request $request
      * @return Controller
      */
-    public function get404Controller() { 
+    public function get404Controller($request) {
         if ($this->notFoundController === null) {
-            $this->notFoundController = new NotFoundController();
+            $this->notFoundController = new NotFoundController($request);
         }
         
         return $this->notFoundController;
